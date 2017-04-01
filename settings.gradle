@@ -1,0 +1,14 @@
+rootProject.name = 'gql'
+
+include 'gql-ast'
+include 'gql-dsl'
+
+/**
+ * This looks for gradle files that match submodule names with the
+ * .gradle suffix instead the default build.gradle naming. So if a
+ * given module is `core` then there should be a `core.gradle` file.
+ */
+rootProject.children.each { project ->
+  project.buildFileName = "${project.name}.gradle"
+  assert project.buildFile.isFile()
+}

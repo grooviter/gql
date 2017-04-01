@@ -1,0 +1,13 @@
+ext.libs = [
+  graphql_java: 'com.graphql-java:graphql-java:2.3.0',
+  groovy_all: 'org.codehaus.groovy:groovy-all:2.4.10',
+  asteroid: 'com.github.grooviter:asteroid:0.2.4',
+  spock: 'org.spockframework:spock-core:1.0-groovy-2.4',
+  junit: 'junit:junit:4.12'
+]
+
+ext.folders = [
+  compiler: 'src/conf/compiler.groovy',
+  codenarc: 'src/conf/codenarc.groovy',
+  groovydoc: 'src/docs/groovydoc'
+]
