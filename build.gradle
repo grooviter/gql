@@ -2,28 +2,11 @@ plugins {
   id 'jacoco'
   id 'groovy'
   id 'codenarc'
+  id 'org.asciidoctor.convert' version '1.5.3'
 }
 
 repositories {
   jcenter()
-}
-
-sourceSets {
-  groovydoc {
-    resources {
-      srcDir project.properties.folder_groovydoc
-    }
-  }
-}
-
-codenarc {
-    configFile = new File(projectDir, folder_codenarc)
-    ignoreFailures = true
-    reportFormat = 'html'
-}
-
-tasks.withType(GroovyCompile) {
-    groovyOptions.configurationScript = new File(projectDir, folder_compiler)
 }
 
 dependencies {
@@ -35,6 +18,33 @@ dependencies {
   testCompile 'junit:junit:4.12'
 }
 
+sourceSets {
+  groovydoc {
+    resources {
+      srcDir folder_groovydoc
+    }
+  }
+}
+
+compileGroovy {
+  groovyOptions.configurationScript = new File(projectDir, folder_compiler)
+}
+
+codenarc {
+    configFile = new File(projectDir, folder_codenarc)
+    ignoreFailures = true
+    reportFormat = codenarc_format
+}
+
 groovydoc {
   classpath = sourceSets.groovydoc.output + classpath
+}
+
+asciidoctor {
+	attributes 'endpoint-url': 'http://github.com/grooviter/gql',
+             'source-highlighter': 'coderay',
+             'imagesdir': './images',
+             'toc': 'left',
+             'icons': 'font',
+             'toclevels': 3
 }
