@@ -1,5 +1,6 @@
 package gql
 
+import graphql.ExecutionResult
 import spock.lang.Specification
 
 import graphql.GraphQLError
@@ -79,6 +80,7 @@ class DSLSpec extends Specification {
 
   void 'build a simple type with more than one field'() {
     when: 'building the type'
+    // tag::typeWithMoreThanOneField[]
     GraphQLObjectType type = DSL.type('Droid') {
       description'simple droid'
       field('name') {
@@ -94,6 +96,7 @@ class DSLSpec extends Specification {
         type GraphQLInt
       }
     }
+    // end::typeWithMoreThanOneField[]
 
     then: 'the type should have the name and desc'
     type.name == 'Droid'
@@ -141,18 +144,20 @@ class DSLSpec extends Specification {
 
   void 'execute query with static value'() {
     when: 'building the type'
-    GraphQLSchema schema = DSL.schema {
-      query('helloQuery') {
-        description'simple droid'
-        field('hello') {
+    // tag::simpleSchema[]
+    GraphQLSchema schema = DSL.schema { // <1>
+      query('helloQuery') { // <2>
+        description'simple droid'// <3>
+        field('hello') { // <4>
           description'name of the droid'
           type GraphQLString
           staticValue 'world'
         }
       }
     }
+    // end::simpleSchema[]
 
-    and: 'executing a query against that schema'
+    and: 'executing a queryString against that schema'
     Map<String,Map> dataMap = DSL
       .execute(schema, '{ hello }')
       .data
@@ -182,7 +187,7 @@ class DSLSpec extends Specification {
       }
     }
 
-    and: 'executing a query against that schema'
+    and: 'executing a queryString against that schema'
     Map<String,Map> dataMap = DSL
       .execute(schema, queryString)
       .data
@@ -190,7 +195,7 @@ class DSLSpec extends Specification {
     then: 'we should get the expected name'
     dataMap.lastFilm.title == 'SPECTRE'
 
-    where: 'executed query is'
+    where: 'executed queryString is'
     queryString = '''
       {
         lastFilm {
@@ -221,7 +226,7 @@ class DSLSpec extends Specification {
       }
     }
 
-    and: 'executing a query against that schema'
+    and: 'executing a queryString against that schema'
     List<GraphQLError> errors = DSL
       .execute(schema, queryString)
       .errors
@@ -229,7 +234,7 @@ class DSLSpec extends Specification {
     then: 'we should get the expected name'
     errors.find() instanceof ValidationError
 
-    where: 'executed query is'
+    where: 'executed queryString is'
     queryString = '''
       {
         lastFilm
@@ -263,14 +268,14 @@ class DSLSpec extends Specification {
       }
     }
 
-    and: 'executing a query against that schema'
+    and: 'executing a queryString against that schema'
     def result = DSL.execute(schema, queryString, [year: "1962"])
 
     then: 'we should get the expected name'
     !result.errors
     result.data.byYear.title == 'DR. NO'
 
-    where: 'executed query is'
+    where: 'executed queryString is'
     queryString = '''
       query FindBondByYear($year: String) {
         byYear(year: $year) {
@@ -307,14 +312,14 @@ class DSLSpec extends Specification {
       }
     }
 
-    and: 'executing a query against that schema'
+    and: 'executing a queryString against that schema'
     def result = DSL.execute(schema, queryString)
 
     then: 'we should get the expected name'
     !result.errors
     result.data.byYear.title == 'DR. NO'
 
-    where: 'executed query is'
+    where: 'executed queryString is'
     queryString = '''
       query FindBondByYear {
         byYear(year: "1962") {
@@ -323,5 +328,117 @@ class DSLSpec extends Specification {
         }
       }
     '''
+  }
+
+  void 'execute static typed query'() {
+    when: 'building the type'
+    GraphQLObjectType filmType = DSL.type('film') {
+      field('title') {
+        description 'title of the film'
+        type GraphQLString
+      }
+      field('year') {
+        description 'title of the film'
+        type GraphQLString
+      }
+      field('bond') {
+        description 'Actor playing James Bond'
+        type GraphQLString
+      }
+    }
+
+    and: 'building the schema'
+    GraphQLSchema schema = DSL.schema {
+      query('QueryRoot') {
+        field('byYear') {
+          type filmType
+          fetcher Queries.&findByYear
+          argument('year') {
+            type GraphQLString
+          }
+        }
+      }
+    }
+
+    and: 'executing a queryString against that schema'
+    // tag::staticQuery[]
+    ExecutionResult result = DSL.execute(schema) {
+      query('byYear', [year: '1962']) {
+        returns(Film) {
+          title
+          year
+        }
+        alias 'first'
+      }
+
+      query('byYear', [year: '2015']) {
+        returns {
+          title
+          year
+          bond
+        }
+        alias 'last'
+      }
+    }
+    // end::staticQuery[]
+
+    then: 'there should not be any error'
+    !result.errors
+
+    and: 'we should get the expected values'
+    result.data.first.title == 'DR. NO'
+    result.data.first.year == '1962'
+    result.data.last.title == 'SPECTRE'
+    result.data.last.year == '2015'
+    result.data.last.bond == 'Daniel Craig'
+  }
+
+  void 'fails to retrieve wrong type fields'() {
+    given: 'a schema'
+    GraphQLObjectType filmType = DSL.type('film') {
+      field('title') {
+        description 'title of the film'
+        type GraphQLString
+      }
+      field('year') {
+        description 'title of the film'
+        type GraphQLString
+      }
+      field('bond') {
+        description 'Actor playing James Bond'
+        type GraphQLString
+      }
+    }
+
+    and: 'building the schema'
+    GraphQLSchema schema = DSL.schema {
+      query('QueryRoot') {
+        field('byYear') {
+          type filmType
+          fetcher Queries.&findByYear
+          argument('year') {
+            type GraphQLString
+          }
+        }
+      }
+    }
+
+    when: 'trying to retrieve a wrong field'
+    DSL.execute(schema) {
+      query('byYear', [year: "1962"]) {
+        returns(Film) {
+          wrongField
+        }
+      }
+    }
+
+    then: 'an exception should be thrown before executing the query'
+    thrown(IllegalStateException)
+  }
+
+  class Film {
+    String title
+    String bond
+    Integer year
   }
 }

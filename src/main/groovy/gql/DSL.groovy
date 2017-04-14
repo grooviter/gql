@@ -1,10 +1,12 @@
 package gql
 
+import gql.dsl.QueryBuilder
 import gql.dsl.SchemaBuilder
 import gql.dsl.ObjectTypeBuilder
 
 import graphql.GraphQL
 import graphql.ExecutionResult
+import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLSchema
 import graphql.schema.GraphQLObjectType
 
@@ -53,7 +55,7 @@ final class DSL {
    * <br/>
    * <pre><code class="groovy">
    * GraphQLSchema schema = DSL.schema {
-   *   query('QueryRoot') {
+   *   queryString('QueryRoot') {
    *     field('hello') {
    *         type GraphQLString
    *         staticValue 'world'
@@ -76,7 +78,7 @@ final class DSL {
   }
 
   /**
-   * Executes the query against the underlying schema without any
+   * Executes the queryString against the underlying schema without any
    * specific context.
    * <br/>
    * <pre><code class="groovy">
@@ -86,7 +88,7 @@ final class DSL {
    * }
    *
    * GraphQLSchema schema = DSL.schema {
-   *   query('QueryRoot') {
+   *   queryString('QueryRoot') {
    *     field('byYear') {
    *       type filmType
    *       fetcher Queries.&findLastFilm
@@ -98,7 +100,7 @@ final class DSL {
    * }
    *
    * String queryString = '''
-   *   query FinBondFilmByYear($year: String){
+   *   queryString FinBondFilmByYear($year: String){
    *     byYear(year: $year) {
    *        title
    *        year
@@ -111,8 +113,8 @@ final class DSL {
    *  .data
    * </code></pre>
    *
-   * @param schema the schema defining the query
-   * @param query the query string
+   * @param schema the schema defining the queryString
+   * @param query the queryString string
    * @param
    * @return an instance of {@link ExecutionResult}
    * @since 0.1.0
@@ -123,7 +125,35 @@ final class DSL {
     /* GraphQL java assumes arguments can't be empty if you're using
        the method that allows arguments */
     return arguments ?
-      graphQL.execute(query, null, arguments) :
+      graphQL.execute(query, null as DataFetchingEnvironment, arguments) :
       graphQL.execute(query, null)
+  }
+
+  /**
+   * Builds GraphQL queries top wrapper
+   * <br/>
+   * <pre><code class="groovy"
+   * DSL.executeQuery(schema) {
+   *   queryString('byYear', Film, year: 1962) {
+   *     title
+   *     year
+   *   }
+   *   queryString('lastFilm') {
+   *     ['title']
+   *   }
+   * }
+   * </code></pre>
+   *
+   * @param variables variables used in nested queries
+   * @param queries closure wrapping different queries to be executed remotely
+   * @return a map with all the response
+   * @since 0.1.0
+   */
+  static ExecutionResult execute(GraphQLSchema schema, @DelegatesTo(QueryBuilder) Closure queries) {
+    Closure<QueryBuilder> clos = queries.clone() as Closure<QueryBuilder>
+    QueryBuilder builderSource = new QueryBuilder()
+    QueryBuilder builderResult = builderSource.with(clos) ?: builderSource
+
+    return execute(schema, builderResult.build())
   }
 }
