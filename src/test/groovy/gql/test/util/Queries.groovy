@@ -2,7 +2,9 @@ package gql.test.util
 
 import groovy.json.JsonSlurper
 import graphql.schema.DataFetchingEnvironment
+import groovy.util.logging.Slf4j
 
+@Slf4j
 class Queries {
 
   @SuppressWarnings('UnusedMethodParameter')
@@ -21,7 +23,8 @@ class Queries {
     def datasetData = new JsonSlurper().parse(inputStream) as List<Map>
     def filmByYear = datasetData.find(byYear(year))
 
-    println filmByYear
+    log.debug "$filmByYear"
+
     return filmByYear
   }
 
