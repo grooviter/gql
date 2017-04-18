@@ -2,11 +2,24 @@
 :revnumber: {project-version}
 :numbered:
 :imagesDir: images/
-:baseDir: ../../
+:baseDir: ../../../
 :stem:
 
-:coreMain: {baseDir}/../../../gql/src/main/java
-:testMain: {baseDir}/../../../gql/src/main/groovy
+:coreMain: {baseDir}/../../src/main/java
+:testMain: {baseDir}/../../src/test/groovy
 
+[quote]
 GQL is a library created to make it easier to expose and consume
 GraphQL services.
+
+include::sections/intro.adoc[]
+
+include::sections/install.adoc[]
+
+include::sections/types.adoc[]
+
+include::sections/schema.adoc[]
+
+include::sections/queries.adoc[]
+
+

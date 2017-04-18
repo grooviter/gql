@@ -1,0 +1,17 @@
+== Types
+
+=== Full types
+
+Types are used to define the domain.
+
+[source, groovy]
+----
+include::{testMain}/gql/DSLSpec.groovy[tags=typeWithMoreThanOneField]
+----
+
+=== Shorter types
+
+[source, groovy]
+----
+include::{testMain}/gql/DSLSpec.groovy[tags=shortest]
+----

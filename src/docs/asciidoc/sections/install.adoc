@@ -1,0 +1,19 @@
+== Gradle
+
+You can add the following dependency to your Gradle project
+
+[source, gradle]
+----
+compile com.github.grooviter:gql:0.1.0'
+----
+
+The library is available at Bintray so all you have to do is
+to include the `jcenter()` declaration in your dependency repositories
+in your Gradle script.
+
+[source, groovy]
+----
+repositories {
+   jcenter()
+}
+----

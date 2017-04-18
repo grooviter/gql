@@ -1,0 +1,21 @@
+== Queries
+
+GQL allows you to execute both string queries or queries built via DSL
+builder. The former is useful if you already have the queries and you
+are sure they work as expected. The latter is a safer way of building
+queries because it gives you some sanity checks based on the types
+used.
+
+=== Execute queries
+
+[source, groovy]
+----
+include::{testMain}/gql/DSLSpec.groovy[tags=staticQuery]
+----
+
+=== Query string
+
+[source, groovy]
+----
+include::{testMain}/gql/DSLSpec.groovy[tags=queryString]
+----

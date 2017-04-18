@@ -1,0 +1,9 @@
+== Schemas
+
+The schema is made from the types previously declared. A given schema
+instance can be shared because it doesn't change overtime.
+
+[source, groovy]
+----
+include::{testMain}/gql/DSLSpec.groovy[tags=simpleSchema]
+----

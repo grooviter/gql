@@ -1,0 +1,28 @@
+== Intro
+
+=== License
+
+[sidebar]
+.Apache
+****
+The *GQL* project is open sourced under the http://www.apache.org/licenses/LICENSE-2.0.html[Apache 2 License].
+****
+
+=== Getting started
+
+[source, groovy]
+----
+@Grab('com.github.grooviter:gql:0.1.0')
+include::{testMain}/gql/DSLSpec.groovy[tags=grabExample, indent=0]
+----
+
+<1> Creates the `Film` type
+<2> Creates the GraphQL schema
+<3> Creates a query string
+<4> Executes the string against the schema
+
+=== Ideas
+
+- It should be `IDE friendly`
+- It should be built having `static compilation` in mind
+- It should `not need more than one import`
