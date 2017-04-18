@@ -32,7 +32,7 @@ compileGroovy {
 
 codenarc {
     configFile = new File(projectDir, folder_codenarc)
-    ignoreFailures = true
+    ignoreFailures = false
     reportFormat = codenarc_format
 }
 
