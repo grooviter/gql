@@ -166,7 +166,7 @@ class QueryBuilder {
      * @since 0.1.0
      */
     ReturnsBlockBuilder alias(String alias) {
-      this.aliasFragment = alias
+      this.aliasFragment = "$alias:"
       return this
     }
 
@@ -175,7 +175,7 @@ class QueryBuilder {
      * @since 0.1.0
      */
     String build() {
-      return "$aliasFragment: $name $variables { \n $fieldFragment } \n"
+      return "$aliasFragment $name $variables { \n $fieldFragment } \n"
     }
   }
 }

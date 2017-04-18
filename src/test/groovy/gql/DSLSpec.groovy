@@ -1,6 +1,7 @@
 package gql
 
 import graphql.ExecutionResult
+import groovy.test.GroovyAssert
 import spock.lang.Specification
 
 import graphql.GraphQLError
@@ -66,14 +67,18 @@ class DSLSpec extends Specification {
 
   void 'build a simple type with one field (shortest)'() {
     when: 'building the type'
+    // tag::shortest[]
     GraphQLObjectType type = DSL.type('Droid') {
       field 'name', GraphQLString
+      field 'type', GraphQLString
+      field 'age', GraphQLInt
     }
+    // end::shortest[]
 
     then: 'the type should have the expected features'
     type.name == 'Droid'
     type.description == 'description of Droid'
-    type.fieldDefinitions.size() == 1
+    type.fieldDefinitions.size() == 3
     type.fieldDefinitions.first().name == 'name'
     type.fieldDefinitions.first().description == 'description of field name'
   }
@@ -440,5 +445,104 @@ class DSLSpec extends Specification {
     String title
     String bond
     Integer year
+  }
+
+  void 'build a valid GraphQL query string'() {
+    setup: 'building the type'
+    GraphQLObjectType filmType = DSL.type('film') {
+      field('title') {
+        description 'title of the film'
+        type GraphQLString
+      }
+      field('year') {
+        description 'title of the film'
+        type GraphQLString
+      }
+      field('bond') {
+        description 'Actor playing James Bond'
+        type GraphQLString
+      }
+    }
+
+    and: 'building the schema'
+    GraphQLSchema schema = DSL.schema {
+      query('QueryRoot') {
+        field('byYear') {
+          type filmType
+          fetcher Queries.&findByYear
+          argument('year') {
+            type GraphQLString
+          }
+        }
+      }
+    }
+
+    and: 'executing a queryString against that schema'
+    // tag::queryString[]
+    String queryString = DSL.buildQuery {
+      query('byYear', [year: '1962']) {
+        returns(Film) {
+          title
+          year
+        }
+        alias 'first'
+      }
+
+      query('byYear', [year: '2015']) {
+        returns {
+          title
+          year
+          bond
+        }
+        alias 'last'
+      }
+    }
+    // end::queryString[]
+    when:
+    def result = DSL.execute(schema, queryString)
+
+    then: 'there should not be any error'
+    !result.errors
+
+    and: 'we should get the expected values'
+    result.data.first.title == 'DR. NO'
+    result.data.first.year == '1962'
+    result.data.last.title == 'SPECTRE'
+    result.data.last.year == '2015'
+    result.data.last.bond == 'Daniel Craig'
+  }
+
+  @SuppressWarnings('TrailingWhitespace')
+  void 'check getting started script'() {
+    expect:
+    GroovyAssert.assertScript '''
+      // tag::grabExample[]
+      import gql.DSL
+
+      def filmType = DSL.type('Film') {
+        field 'title', GraphQLString
+        field 'year', GraphQLInt
+      }
+
+      def schema = DSL.schema {
+        query('queryRoot') {
+          field('lastFilm') {
+            type filmType
+            staticValue(title: 'SPECTRE', year: 2015)
+          }
+        }
+      }
+
+      def result = DSL.execute(schema) {
+          query('lastFilm') {
+            returns {
+              title
+            }
+          }
+      }
+
+      assert result.data.lastFilm.title == 'SPECTRE'
+     // end::grabExample[]
+    '''
   }
 }
