@@ -55,7 +55,7 @@ final class DSL {
    * <br/>
    * <pre><code class="groovy">
    * GraphQLSchema schema = DSL.schema {
-   *   queryString('QueryRoot') {
+   *   query('QueryRoot') {
    *     field('hello') {
    *         type GraphQLString
    *         staticValue 'world'
@@ -88,7 +88,7 @@ final class DSL {
    * }
    *
    * GraphQLSchema schema = DSL.schema {
-   *   queryString('QueryRoot') {
+   *   query('QueryRoot') {
    *     field('byYear') {
    *       type filmType
    *       fetcher Queries.&findLastFilm
@@ -100,7 +100,7 @@ final class DSL {
    * }
    *
    * String queryString = '''
-   *   queryString FinBondFilmByYear($year: String){
+   *   query FinBondFilmByYear($year: String){
    *     byYear(year: $year) {
    *        title
    *        year
@@ -114,7 +114,7 @@ final class DSL {
    * </code></pre>
    *
    * @param schema the schema defining the queryString
-   * @param query the queryString string
+   * @param query the query string
    * @param
    * @return an instance of {@link ExecutionResult}
    * @since 0.1.0
@@ -133,13 +133,17 @@ final class DSL {
    * Builds GraphQL queries top wrapper
    * <br/>
    * <pre><code class="groovy"
-   * DSL.executeQuery(schema) {
-   *   queryString('byYear', Film, year: 1962) {
-   *     title
-   *     year
+   * DSL.execute(schema) {
+   *   query('byYear', [year: 1962]) {
+   *     returns(Film) { // typed properties
+   *       title
+   *       year
+   *     }
    *   }
-   *   queryString('lastFilm') {
-   *     ['title']
+   *   query('lastFilm') {
+   *     returns { // untyped properties
+   *       title
+   *     }
    *   }
    * }
    * </code></pre>
@@ -150,10 +154,21 @@ final class DSL {
    * @since 0.1.0
    */
   static ExecutionResult execute(GraphQLSchema schema, @DelegatesTo(QueryBuilder) Closure queries) {
-    Closure<QueryBuilder> clos = queries.clone() as Closure<QueryBuilder>
+    return execute(schema, buildQuery(queries))
+  }
+
+  /**
+   * Builds a valid GraphQL query string
+   *
+   * @param builder DSL building the query based on {@link QueryBuilder}
+   * @return a {@link String} containing a valid GraphQL query
+   * @since 0.1.0
+   */
+  static String buildQuery(@DelegatesTo(QueryBuilder) Closure builder) {
+    Closure<QueryBuilder> clos = builder.clone() as Closure<QueryBuilder>
     QueryBuilder builderSource = new QueryBuilder()
     QueryBuilder builderResult = builderSource.with(clos) ?: builderSource
 
-    return execute(schema, builderResult.build())
+    return builderResult.build()
   }
 }
