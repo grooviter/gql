@@ -1,28 +1,33 @@
 == Intro
 
-=== License
+**GQL** is a set of Groovy DSLs and AST transformations built on top of
+https://github.com/graphql-java/graphql-java[GraphQL-java] that make it easier to build GraphQL schemas and
+execute **GraphQL** queries without losing type safety.
 
-[sidebar]
-.Apache
-****
-The *GQL* project is open sourced under the http://www.apache.org/licenses/LICENSE-2.0.html[Apache 2 License].
-****
+**GraphQL** is a query language. It's based in a type system and defines a specific query language
+and how a specific query engine should work in order to process and execute GraphQL queries.
 
-=== Getting started
+IMPORTANT: For a full detailed explanation about GraphQL I would recommend you to take
+a look at the official tutorial at http://graphql.org/learn/
 
-[source, groovy]
-----
-@Grab('com.github.grooviter:gql:0.1.0')
-include::{testMain}/gql/DSLSpec.groovy[tags=grabExample, indent=0]
-----
+Keeping long story short When dealing with **GraphQL** you normally will be following the these steps:
 
-<1> Creates the `Film` type
-<2> Creates the GraphQL schema
-<3> Creates a query string
-<4> Executes the string against the schema
+- **Define the schema** (first types, scalars...and then adding those types to schema roots)
+- **Expose the schema** (via the chosen GraphQL implementation engine)
+- **Execute queries** against the implementation engine
 
-=== Ideas
+[ditaa]
+....
 
-- It should be `IDE friendly`
-- It should be built having `static compilation` in mind
-- It should `not need more than one import`
+ +---------+ enables +-----------+ enables +---------+ enables +---------+
+ |  define +-------->| add types +-------->| expose  +-------->| execute |
+ |  types  |         | to schema |         | schema  |         | queries |
+ +---------+         +-----------+         +---------+         +---------+
+
+....
+
+Some of the ideas behind **GQL**:
+
+- It should be **IDE friendly**
+- It should be built having **static compilation** in mind
+- It should **not need more than one import**

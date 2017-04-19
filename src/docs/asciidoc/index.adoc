@@ -12,14 +12,24 @@
 GQL is a library created to make it easier to expose and consume
 GraphQL services.
 
+[sidebar]
+.Apache
+****
+The *GQL* project is open sourced under the http://www.apache.org/licenses/LICENSE-2.0.html[Apache 2 License].
+****
+
 include::sections/intro.adoc[]
 
-include::sections/install.adoc[]
+include::sections/getting.adoc[]
 
 include::sections/types.adoc[]
 
 include::sections/schema.adoc[]
 
 include::sections/queries.adoc[]
+
+include::sections/asts.adoc[]
+
+include::sections/references.adoc[]
 
 

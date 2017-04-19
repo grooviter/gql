@@ -1,0 +1,44 @@
+== Getting started
+
+=== Hello GQL
+
+This is how a full GraphQL life cycle app looks like using **GQL**:
+
+[source, groovy]
+----
+@Grab('com.github.grooviter:gql:0.1.0')
+include::{testMain}/gql/DSLSpec.groovy[tags=grabExample, indent=0]
+----
+
+<1> Creates a type `Film`
+<2> Creates the GraphQL schema using the previously defined types
+<3> Executes a query against the schema
+
+NOTE: You can execute the example as a Groovy script in the command line or using
+the http://www.groovy-lang.org/groovyconsole.html[Groovy console] both available in
+any Groovy distribution.
+
+NOTE: Although we have built and executed the query in one step, is possible
+to build a query string and execute it in different steps. For instance
+it would be useful when creating queries to execute in a different GraphQL
+engine implementation.
+
+=== Gradle
+
+You can add the following dependency to your Gradle project
+
+[source, gradle]
+----
+compile com.github.grooviter:gql:0.1.0'
+----
+
+The library is available at Bintray so all you have to do is
+to include the `jcenter()` declaration in your dependency repositories
+in your Gradle script.
+
+[source, groovy]
+----
+repositories {
+   jcenter()
+}
+----

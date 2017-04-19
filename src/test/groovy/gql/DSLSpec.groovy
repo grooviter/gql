@@ -49,13 +49,17 @@ class DSLSpec extends Specification {
 
   void 'build a simple type with one field'() {
     when: 'building the type'
-    GraphQLObjectType type = DSL.type('Droid') {
-      description'simple droid'
-      field('name') {
+    // tag::fullType[]
+    def type = DSL.type('Droid') { // <1>
+      description'simple droid' // <2>
+
+      field('name') { // <3>
         description'name of the droid'
         type GraphQLString
       }
+
     }
+    // end::fullType[]
 
     then: 'the type should have the expected features'
     type.name == 'Droid'
@@ -85,7 +89,6 @@ class DSLSpec extends Specification {
 
   void 'build a simple type with more than one field'() {
     when: 'building the type'
-    // tag::typeWithMoreThanOneField[]
     GraphQLObjectType type = DSL.type('Droid') {
       description'simple droid'
       field('name') {
@@ -101,7 +104,6 @@ class DSLSpec extends Specification {
         type GraphQLInt
       }
     }
-    // end::typeWithMoreThanOneField[]
 
     then: 'the type should have the name and desc'
     type.name == 'Droid'
@@ -153,11 +155,13 @@ class DSLSpec extends Specification {
     GraphQLSchema schema = DSL.schema { // <1>
       query('helloQuery') { // <2>
         description'simple droid'// <3>
+
         field('hello') { // <4>
           description'name of the droid'
           type GraphQLString
           staticValue 'world'
         }
+
       }
     }
     // end::simpleSchema[]
@@ -171,7 +175,7 @@ class DSLSpec extends Specification {
     dataMap.hello == 'world'
   }
 
-  void 'execute query with fetcher'() {
+  void 'execute query with fetcher (function)'() {
     when: 'building the type'
     GraphQLObjectType filmType = DSL.type('film') {
       field('title') {
@@ -181,6 +185,7 @@ class DSLSpec extends Specification {
     }
 
     and: 'building the schema'
+    // tag::schemaWithFetcherAsFunctionReference[]
     GraphQLSchema schema = DSL.schema {
       query('QueryRoot') {
         description'queries over James Bond'
@@ -191,6 +196,48 @@ class DSLSpec extends Specification {
         }
       }
     }
+    // end::schemaWithFetcherAsFunctionReference[]
+
+    and: 'executing a queryString against that schema'
+    Map<String,Map> dataMap = DSL
+      .execute(schema, queryString)
+      .data
+
+    then: 'we should get the expected name'
+    dataMap.lastFilm.title == 'SPECTRE'
+
+    where: 'executed queryString is'
+    queryString = '''
+      {
+        lastFilm {
+          title
+        }
+      }
+    '''
+  }
+
+  void 'execute query with fetcher (closure)'() {
+    when: 'building the type'
+    GraphQLObjectType filmType = DSL.type('film') {
+      field('title') {
+        description 'title of the film'
+        type GraphQLString
+      }
+    }
+
+    and: 'building the schema'
+    // tag::schemaWithFetcherAsClosure[]
+    GraphQLSchema schema = DSL.schema {
+      query('QueryRoot') {
+        description'queries over James Bond'
+        field('lastFilm') {
+          description'last film'
+          type filmType
+          fetcher { env -> [title: 'SPECTRE'] }
+        }
+      }
+    }
+    // end::schemaWithFetcherAsClosure[]
 
     and: 'executing a queryString against that schema'
     Map<String,Map> dataMap = DSL
@@ -353,6 +400,7 @@ class DSLSpec extends Specification {
     }
 
     and: 'building the schema'
+    // tag::findByYearSchema[]
     GraphQLSchema schema = DSL.schema {
       query('QueryRoot') {
         field('byYear') {
@@ -364,6 +412,7 @@ class DSLSpec extends Specification {
         }
       }
     }
+    // end::findByYearSchema[]
 
     and: 'executing a queryString against that schema'
     // tag::staticQuery[]
@@ -519,12 +568,12 @@ class DSLSpec extends Specification {
       // tag::grabExample[]
       import gql.DSL
 
-      def filmType = DSL.type('Film') {
+      def filmType = DSL.type('Film') { // <1>
         field 'title', GraphQLString
         field 'year', GraphQLInt
       }
 
-      def schema = DSL.schema {
+      def schema = DSL.schema { // <2>
         query('queryRoot') {
           field('lastFilm') {
             type filmType
@@ -533,7 +582,7 @@ class DSLSpec extends Specification {
         }
       }
 
-      def result = DSL.execute(schema) {
+      def result = DSL.execute(schema) { // <3>
           query('lastFilm') {
             returns {
               title

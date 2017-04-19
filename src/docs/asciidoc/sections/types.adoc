@@ -1,17 +1,37 @@
 == Types
 
+Types define the structure of the data you want to expose. There two main sets of types, scalars and custom types. The
+former are specified by the GraphQL specification and are basic types such as strings, integers...etc whereas the latter
+refer to the types the developer will be defining (a Book, a Car...etc). We'll make use of the scalars to build our
+own types.
+
 === Full types
 
-Types are used to define the domain.
+In order to define a full type using **GQL** the only thing you have to do is to import `gql.DSL` and use the method
+`type`:
 
 [source, groovy]
 ----
-include::{testMain}/gql/DSLSpec.groovy[tags=typeWithMoreThanOneField]
+include::{testMain}/gql/DSLSpec.groovy[tags=fullType, indent=0]
 ----
 
-=== Shorter types
+<1> Defines a new type called `Film`
+<2> Adds a type description (useful to client users when exposing the schema)
+<2> Adds a field of type string (GraphQLString)
+
+NOTE: The resulting `type` variable is an instance of `graphql.schema.GraphQLObjectType`.
+We haven't added the specific type to highlight the fact that no other import is needed. All basic scalar types such
+as `GraphQLString` are defined within the DSL and both the compiler and the IDE should be able to recognize them.
+
+You can add as many `field('fieldName') { }` blocks to your type as you want.
+
+=== Shorter field definition
+
+There is a shorter way of defining a given type. It's specially useful when you're prototyping or when you don't care
+about adding descriptions to your types. You can use the method `field(String, Scalar)` method within the `type` DSL.
+The following example adds three different fields to the `Droid` type:
 
 [source, groovy]
 ----
-include::{testMain}/gql/DSLSpec.groovy[tags=shortest]
+include::{testMain}/gql/DSLSpec.groovy[tags=shortest, indent=0]
 ----

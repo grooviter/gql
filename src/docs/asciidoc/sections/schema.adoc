@@ -1,9 +1,105 @@
 == Schemas
 
-The schema is made from the types previously declared. A given schema
-instance can be shared because it doesn't change overtime.
+Once we've defined the structure of the data we want to expose, we need to define
+how that data is going to be retrieved. The schema defines:
+
+- **Which types are exposed**
+- **How to interact with that data**
+
+Data is exposed as **queries** or **mutations** depending on whether the action is just a query or a request asking for
+creating/modifying data. Queries are declared as fields under the **query** node and mutations are also declared as
+fields under the **mutation** node:
+
+=== Static values
+
+Sometimes you may want to expose constant values, values that are unlikely to change.
 
 [source, groovy]
 ----
-include::{testMain}/gql/DSLSpec.groovy[tags=simpleSchema]
+include::{testMain}/gql/DSLSpec.groovy[tags=simpleSchema, indent=0]
 ----
+
+<1> Declares a schema
+<2> Declares the query root node `helloQuery`
+<3> Adds a description to the `helloQuery` node
+<3> Declares a single query called `hello` which exposes a value `world` of type GraphQLString
+
+NOTE: In this example we are exposing just a single scalar value, but most of the time we will be
+exposing data through calls to underlying datastore engines. We'll see how to do it in a bit.
+
+=== Fetchers
+
+Most of the time we are fetching our data from a database, a micro-service, a csv file...etc and we normally use
+an API to query these datastores invoking some functions.
+
+Now the same way we were able to expose static values using
+the `staticValue` method in the DSL, we will be able to get data from a dynamic source via `fetcher`.
+
+The argument of `fetcher` is an instance of type `graphql.schema.DataFetcher`:
+
+[source, java]
+----
+package graphql.schema;
+
+public interface DataFetcher<T> {
+    T get(DataFetchingEnvironment environment);
+}
+----
+
+Because `DataFetcher` is a
+https://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html[functional interface] it is
+possible to use the following options as arguments of the `fetcher` method:
+
+- A closure
+- A method closure
+- An instance of an implementation of `DataFetcher`
+
+==== As a closure
+
+The closure receives a `graphql.schema.DataFetchingEnvironment` instance as parameter and will return the requested
+data. The requested data should be of the same type of the declared type, or a map that complies with the defined type.
+
+[source, groovy]
+----
+include::{testMain}/gql/DSLSpec.groovy[tags=schemaWithFetcherAsClosure, indent=0]
+----
+
+==== As a method closure
+
+A method closure is like a Java's method reference. It represents a function that can be passed as parameter to another
+function.
+
+The function should obey the signature of the `DataFetcher#get` method (receiving a DataFetchingEnvironment
+as only parameter and returning an object of the correct type).
+
+[source, groovy]
+----
+include::{testMain}/gql/DSLSpec.groovy[tags=schemaWithFetcherAsFunctionReference, indent=0]
+----
+
+==== Environment
+
+Is very important to be aware of this object because it holds information about the requested query, such as the
+arguments, the query types, extra information added to the fetcher context (it could be used to store
+user information for example)...etc.
+
+In the following schema declaration, we are using a fetcher that eventually will need to get a year to be able
+to get the proper film:
+
+[source, groovy]
+----
+include::{testMain}/gql/DSLSpec.groovy[tags=findByYearSchema, indent=0]
+----
+
+If we look to the method's implementation, we'll see how the `DataFetchingEnvironment` has a `getArguments()` method
+returning a Map with the arguments values stored by their names:
+
+[source, groovy]
+----
+include::{testMain}/gql/test/util/Queries.groovy[tags=findByYear, indent=0]
+----
+
+IMPORTANT: The `DataFetchingEnvironment` object has a few more options that are worth knowing. I would recommend
+you to take a look at the source code
+https://github.com/graphql-java/graphql-java/blob/master/src/main/java/graphql/schema/DataFetchingEnvironment.java[here]
+
