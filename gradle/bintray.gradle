@@ -1,0 +1,51 @@
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+  classifier = 'sources'
+  from sourceSets.main.allSource
+}
+
+artifacts {
+  archives sourcesJar
+}
+
+ publishing {
+  publications {
+    'mavenCustom'(MavenPublication) {
+      groupId    "$releaseGroup"
+      artifactId 'gql'
+      version    "$releaseVersion"
+
+      from components.java
+      artifact sourcesJar
+    }
+  }
+}
+
+bintray {
+  user         = "$bintrayUser"
+  key          = "$bintrayKey"
+
+  publish      = true
+  publications = ['mavenCustom']
+
+  pkg {
+    repo            = 'maven'
+    name            = 'gql'
+    userOrg         = 'grooviter'
+    desc            =  "$releaseDescription"
+    websiteUrl      = 'http://grooviter.github.io/gql/'
+    issueTrackerUrl = 'https://github.com/grooviter/gql/issues'
+    licenses        = ['Apache-2.0']
+    vcsUrl          = 'https://github.com/grooviter/gql.git'
+    labels          = ['groovy', 'graphql', 'dsl', 'asts']
+
+    version {
+      name      = "$releaseVersion"
+      desc      = 'GQL Release'
+      released  = new Date()
+      vcsTag    = "$releaseVersion"
+    }
+  }
+}

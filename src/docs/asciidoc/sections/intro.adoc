@@ -1,7 +1,7 @@
 == Intro
 
 **GQL** is a set of Groovy DSLs and AST transformations built on top of
-https://github.com/graphql-java/graphql-java[GraphQL-java] that make it easier to build GraphQL schemas and
+https://github.com/graphql-java/graphql-java[GraphQL-java] to make it easier building GraphQL schemas and
 execute **GraphQL** queries without losing type safety.
 
 **GraphQL** is a query language. It's based in a type system and defines a specific query language

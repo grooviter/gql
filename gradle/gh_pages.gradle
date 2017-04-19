@@ -1,0 +1,20 @@
+apply plugin: "org.ajoberstar.git-publish"
+
+task setAuthentication() {
+  doLast {
+    System.setProperty('org.ajoberstar.grgit.auth.username', githubToken)
+  }
+}
+
+gitPublish {
+  repoUri = 'https://github.com/grooviter/gql.git'
+  branch = 'gh-pages'
+
+  contents {
+    from file('build/asciidoc/html5')
+  }
+
+  commitMessage = "Released version ${releaseVersion}"
+}
+
+gitPublishPush.dependsOn setAuthentication
