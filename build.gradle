@@ -1,3 +1,9 @@
+buildscript {
+  dependencies {
+    classpath 'org.asciidoctor:asciidoctorj-diagram:1.3.1'
+  }
+}
+
 plugins {
   id 'jacoco'
   id 'groovy'
@@ -41,6 +47,8 @@ groovydoc {
 }
 
 asciidoctor {
+  requires 'asciidoctor-diagram'
+
 	attributes 'endpoint-url': 'http://github.com/grooviter/gql',
              'source-highlighter': 'coderay',
              'imagesdir': './images',
