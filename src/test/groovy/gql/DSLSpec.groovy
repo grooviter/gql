@@ -1,13 +1,25 @@
 package gql
 
+// tag::importExecutionResult[]
 import graphql.ExecutionResult
+// end::importExecutionResult[]
+
 import groovy.test.GroovyAssert
 import spock.lang.Specification
 
 import graphql.GraphQLError
+
+// tag::importGraphQLSchema[]
 import graphql.schema.GraphQLSchema
+// end::importGraphQLSchema[]
+
+// tag::importGraphQLObjectType[]
 import graphql.schema.GraphQLObjectType
+// end::importGraphQLObjectType[]
+
+// tag::importValidationError[]
 import graphql.validation.ValidationError
+// end::importValidationError[]
 
 import gql.test.util.Queries
 

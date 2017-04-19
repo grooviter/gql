@@ -16,6 +16,9 @@ Sometimes you may want to expose constant values, values that are unlikely to ch
 
 [source, groovy]
 ----
+import gql.DSL
+include::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=0]
+
 include::{testMain}/gql/DSLSpec.groovy[tags=simpleSchema, indent=0]
 ----
 
@@ -61,6 +64,9 @@ data. The requested data should be of the same type of the declared type, or a m
 
 [source, groovy]
 ----
+import gql.DSL
+include::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=0]
+
 include::{testMain}/gql/DSLSpec.groovy[tags=schemaWithFetcherAsClosure, indent=0]
 ----
 
@@ -74,6 +80,9 @@ as only parameter and returning an object of the correct type).
 
 [source, groovy]
 ----
+import gql.DSL
+include::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=0]
+
 include::{testMain}/gql/DSLSpec.groovy[tags=schemaWithFetcherAsFunctionReference, indent=0]
 ----
 
@@ -88,6 +97,9 @@ to get the proper film:
 
 [source, groovy]
 ----
+import gql.DSL
+include::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=0]
+
 include::{testMain}/gql/DSLSpec.groovy[tags=findByYearSchema, indent=0]
 ----
 
@@ -96,6 +108,8 @@ returning a Map with the arguments values stored by their names:
 
 [source, groovy]
 ----
+include::{testMain}/gql/test/util/Queries.groovy[tags=importDataFetchingEnvironment, indent=0]
+
 include::{testMain}/gql/test/util/Queries.groovy[tags=findByYear, indent=0]
 ----
 

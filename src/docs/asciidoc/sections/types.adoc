@@ -7,11 +7,13 @@ own types.
 
 === Full types
 
-In order to define a full type using **GQL** the only thing you have to do is to import `gql.DSL` and use the method
+In order to define a full type using **GQL** the only thing you have to do is to import **gql.DSL** and use the method
 `type`:
 
 [source, groovy]
 ----
+import gql.DSL
+
 include::{testMain}/gql/DSLSpec.groovy[tags=fullType, indent=0]
 ----
 
@@ -33,5 +35,8 @@ The following example adds three different fields to the `Droid` type:
 
 [source, groovy]
 ----
+import gql.DSL
+include::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLObjectType, indent=0]
+
 include::{testMain}/gql/DSLSpec.groovy[tags=shortest, indent=0]
 ----

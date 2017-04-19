@@ -13,6 +13,9 @@ to be able to declare and execute queries in one shot right ?
 
 [source, groovy]
 ----
+import gql.DSL
+include::{testMain}/gql/DSLSpec.groovy[tags=importExecutionResult, indent=0]
+
 include::{testMain}/gql/DSLSpec.groovy[tags=staticQuery, indent=0]
 ----
 
@@ -24,5 +27,7 @@ string against the other engine.
 
 [source, groovy]
 ----
+import gql.DSL
+
 include::{testMain}/gql/DSLSpec.groovy[tags=queryString, indent=0]
 ----

@@ -1,7 +1,9 @@
 package gql.test.util
 
 import groovy.json.JsonSlurper
+// tag::importDataFetchingEnvironment[]
 import graphql.schema.DataFetchingEnvironment
+// end::importDataFetchingEnvironment[]
 import groovy.util.logging.Slf4j
 
 @Slf4j
