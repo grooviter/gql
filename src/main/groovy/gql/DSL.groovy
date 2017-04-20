@@ -14,7 +14,7 @@ import graphql.schema.GraphQLObjectType
  * Functions in this class ease the creation of different GraphQL
  * schema elements
  *
- * @examples <a target="_blank" href="/docs/index.html#_dsl">Using GQL DSL</a>
+ * @examples <a target="_blank" href="/gql/docs/index.html#_dsl">Using GQL DSL</a>
  * @since 0.1.0
  */
 final class DSL {
@@ -27,7 +27,7 @@ final class DSL {
    * import basic scalar types, the DSL already knows basic scalar
    * types.
    *
-   * @examples <a target="_blank" href="/docs/index.html#_types">Creating GraphQL types</a>
+   * @examples <a target="_blank" href="/gql/docs/index.html#_types">Creating GraphQL types</a>
    * @param name name of the object to build
    * @param dsl dsl delegating its calls to an instance of type {@link
    * ObjectTypeBuilder}
@@ -46,7 +46,7 @@ final class DSL {
    * Builds a new {@link GraphQLSchema} using a closure which
    * delegates to {@link SchemaBuilder}
    *
-   * @examples <a target="_blank" href="/docs/index.html#_schemas">Creating GraphQL schemas</a>
+   * @examples <a target="_blank" href="/gql/docs/index.html#_schemas">Creating GraphQL schemas</a>
    * @param dsl closure with the schema elements. It should follow
    * rules of {@link SchemaBuilder}
    * @return an instance of {@link SchemaBuilder}
@@ -64,7 +64,7 @@ final class DSL {
    * Executes the queryString against the underlying schema without any
    * specific context.
    *
-   * @examples <a target="_blank" href="/docs/index.html#_queries">Executing GraphQL queries</a>
+   * @examples <a target="_blank" href="/gql/docs/index.html#_queries">Executing GraphQL queries</a>
    * @param schema the schema defining the queryString
    * @param query the query string
    * @param
@@ -84,7 +84,7 @@ final class DSL {
   /**
    * Builds GraphQL queries top wrapper
    *
-   * @examples <a target="_blank" href="/docs/index.html#_queries">Executing GraphQL queries</a>
+   * @examples <a target="_blank" href="/gql/docs/index.html#_queries">Executing GraphQL queries</a>
    * @param variables variables used in nested queries
    * @param queries closure wrapping different queries to be executed remotely
    * @return a map with all the response
@@ -97,7 +97,7 @@ final class DSL {
   /**
    * Builds a valid GraphQL query string
    *
-   * @examples <a target="_blank" href="/docs/index.html#_query_string">Building GraphQL queries</a>
+   * @examples <a target="_blank" href="/gql/docs/index.html#_query_string">Building GraphQL queries</a>
    * @param builder DSL building the query based on {@link QueryBuilder}
    * @return a {@link String} containing a valid GraphQL query
    * @since 0.1.0
