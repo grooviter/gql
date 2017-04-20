@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.3">
-<title>AST Transforms</title>
+<title>GQL</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -511,27 +511,688 @@ table.CodeRay td.code>pre{padding:0}
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
+<h1>GQL</h1>
+<div class="details">
+<span id="revnumber">version 0.1.0</span>
+</div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_ast_transforms">AST Transforms</a></li>
+<li><a href="#_intro">1. Intro</a></li>
+<li><a href="#_getting_started">2. Getting started</a>
+<ul class="sectlevel2">
+<li><a href="#_hello_gql">2.1. Hello GQL</a></li>
+<li><a href="#_gradle">2.2. Gradle</a></li>
+</ul>
+</li>
+<li><a href="#_dsl">3. DSL</a>
+<ul class="sectlevel2">
+<li><a href="#_types">3.1. Types</a>
+<ul class="sectlevel3">
+<li><a href="#_full_types">3.1.1. Full types</a></li>
+<li><a href="#_shorter_field_definition">3.1.2. Shorter field definition</a></li>
+</ul>
+</li>
+<li><a href="#_schemas">3.2. Schemas</a>
+<ul class="sectlevel3">
+<li><a href="#_static_values">3.2.1. Static values</a></li>
+<li><a href="#_fetchers">3.2.2. Fetchers</a></li>
+</ul>
+</li>
+<li><a href="#_queries">3.3. Queries</a>
+<ul class="sectlevel3">
+<li><a href="#_execute_queries">3.3.1. Execute queries</a></li>
+<li><a href="#_query_string">3.3.2. Query string</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_asts">4. ASTs</a></li>
+<li><a href="#_development">5. Development</a>
+<ul class="sectlevel2">
+<li><a href="#_source_code">5.1. Source code</a></li>
+<li><a href="#_groovydoc">5.2. Groovydoc</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
 <div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="quoteblock">
+<blockquote>
+GQL is a library created to make it easier to expose and consume
+GraphQL services.
+</blockquote>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Apache</div>
+<div class="paragraph">
+<p>The <strong>GQL</strong> project is open sourced under the <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache 2 License</a>.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="sect1">
-<h2 id="_ast_transforms">AST Transforms</h2>
+<h2 id="_intro">1. Intro</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>GQL</strong> is a set of Groovy DSLs and AST transformations built on top of
+<a href="https://github.com/graphql-java/graphql-java">GraphQL-java</a> to make it easier building GraphQL schemas and
+execute <strong>GraphQL</strong> queries without losing type safety.</p>
+</div>
+<div class="paragraph">
+<p><strong>GraphQL</strong> is a query language. It&#8217;s based in a type system and defines a specific query language
+and how a specific query engine should work in order to process and execute GraphQL queries.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+For a full detailed explanation about GraphQL I would recommend you to take
+a look at the official tutorial at <a href="http://graphql.org/learn/" class="bare">http://graphql.org/learn/</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Keeping long story short When dealing with <strong>GraphQL</strong> you normally will be following the these steps:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Define the schema</strong> (first types, scalars&#8230;&#8203;and then adding those types to schema roots)</p>
+</li>
+<li>
+<p><strong>Expose the schema</strong> (via the chosen GraphQL implementation engine)</p>
+</li>
+<li>
+<p><strong>Execute queries</strong> against the implementation engine</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/diag-d33e7655e9006340df72dc8dc141695b.png" alt="diag d33e7655e9006340df72dc8dc141695b" width="780" height="126">
+</div>
+</div>
+<div class="paragraph">
+<p>Some of the ideas behind <strong>GQL</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>It should be <strong>IDE friendly</strong></p>
+</li>
+<li>
+<p>It should be built having <strong>static compilation</strong> in mind</p>
+</li>
+<li>
+<p>It should <strong>not need more than one import</strong></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_getting_started">2. Getting started</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_hello_gql">2.1. Hello GQL</h3>
+<div class="paragraph">
+<p>This is how a full GraphQL life cycle app looks like using <strong>GQL</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql:0.1.0</span><span class="delimiter">'</span></span>)
+<span class="keyword">import</span> <span class="include">gql.DSL</span>
+
+<span class="keyword">def</span> filmType = DSL.type(<span class="string"><span class="delimiter">'</span><span class="content">Film</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="1"></i><b>(1)</b>
+  field <span class="string"><span class="delimiter">'</span><span class="content">title</span><span class="delimiter">'</span></span>, GraphQLString
+  field <span class="string"><span class="delimiter">'</span><span class="content">year</span><span class="delimiter">'</span></span>, GraphQLInt
+}
+
+<span class="keyword">def</span> schema = DSL.schema { <i class="conum" data-value="2"></i><b>(2)</b>
+  query(<span class="string"><span class="delimiter">'</span><span class="content">queryRoot</span><span class="delimiter">'</span></span>) {
+    field(<span class="string"><span class="delimiter">'</span><span class="content">lastFilm</span><span class="delimiter">'</span></span>) {
+      type filmType
+      staticValue(<span class="key">title</span>: <span class="string"><span class="delimiter">'</span><span class="content">SPECTRE</span><span class="delimiter">'</span></span>, <span class="key">year</span>: <span class="integer">2015</span>)
+    }
+  }
+}
+
+<span class="keyword">def</span> result = DSL.execute(schema) { <i class="conum" data-value="3"></i><b>(3)</b>
+    query(<span class="string"><span class="delimiter">'</span><span class="content">lastFilm</span><span class="delimiter">'</span></span>) {
+      returns {
+        title
+      }
+    }
+}
+
+<span class="keyword">assert</span> result.data.lastFilm.title == <span class="string"><span class="delimiter">'</span><span class="content">SPECTRE</span><span class="delimiter">'</span></span></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Creates a type <code>Film</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Creates the GraphQL schema using the previously defined types</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Executes a query against the schema</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You can execute the example as a Groovy script in the command line or using
+the <a href="http://www.groovy-lang.org/groovyconsole.html">Groovy console</a> both available in
+any Groovy distribution.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Although we have built and executed the query in one step, is possible
+to build a query string and execute it in different steps. For instance
+it would be useful when creating queries to execute in a different GraphQL
+engine implementation.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_gradle">2.2. Gradle</h3>
+<div class="paragraph">
+<p>You can add the following dependency to your Gradle project</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="gradle">compile com.github.grooviter:gql:0.1.0'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The library is available at Bintray so all you have to do is
+to include the <code>jcenter()</code> declaration in your dependency repositories
+in your Gradle script.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">repositories {
+   jcenter()
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_dsl">3. DSL</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_types">3.1. Types</h3>
+<div class="paragraph">
+<p>Types define the structure of the data you want to expose. There two main sets of types, scalars and custom types. The
+former are specified by the GraphQL specification and are basic types such as strings, integers&#8230;&#8203;etc whereas the latter
+refer to the types the developer will be defining (a Book, a Car&#8230;&#8203;etc). We&#8217;ll make use of the scalars to build our
+own types.</p>
+</div>
+<div class="sect3">
+<h4 id="_full_types">3.1.1. Full types</h4>
+<div class="paragraph">
+<p>In order to define a full type using <strong>GQL</strong> the only thing you have to do is to import <strong>gql.DSL</strong> and use the method
+<code>type</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+
+<span class="keyword">def</span> type = DSL.type(<span class="string"><span class="delimiter">'</span><span class="content">Droid</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="1"></i><b>(1)</b>
+  description<span class="string"><span class="delimiter">'</span><span class="content">simple droid</span><span class="delimiter">'</span></span> <i class="conum" data-value="2"></i><b>(2)</b>
+
+  field(<span class="string"><span class="delimiter">'</span><span class="content">name</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="3"></i><b>(3)</b>
+    description<span class="string"><span class="delimiter">'</span><span class="content">name of the droid</span><span class="delimiter">'</span></span>
+    type GraphQLString
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Defines a new type called <code>Film</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Adds a type description (useful to client users when exposing the schema)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Adds a field of type string (GraphQLString)</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The resulting <code>type</code> variable is an instance of <code>graphql.schema.GraphQLObjectType</code>.
+We haven&#8217;t added the specific type to highlight the fact that no other import is needed. All basic scalar types such
+as <code>GraphQLString</code> are defined within the DSL and both the compiler and the IDE should be able to recognize them.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can add as many <code>field('fieldName') { }</code> blocks to your type as you want.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_shorter_field_definition">3.1.2. Shorter field definition</h4>
+<div class="paragraph">
+<p>There is a shorter way of defining a given type. It&#8217;s specially useful when you&#8217;re prototyping or when you don&#8217;t care
+about adding descriptions to your types. You can use the method <code>field(String, Scalar)</code> method within the <code>type</code> DSL.
+The following example adds three different fields to the <code>Droid</code> type:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+<span class="keyword">import</span> <span class="include">graphql.schema.GraphQLObjectType</span>
+
+GraphQLObjectType type = DSL.type(<span class="string"><span class="delimiter">'</span><span class="content">Droid</span><span class="delimiter">'</span></span>) {
+  field <span class="string"><span class="delimiter">'</span><span class="content">name</span><span class="delimiter">'</span></span>, GraphQLString
+  field <span class="string"><span class="delimiter">'</span><span class="content">type</span><span class="delimiter">'</span></span>, GraphQLString
+  field <span class="string"><span class="delimiter">'</span><span class="content">age</span><span class="delimiter">'</span></span>, GraphQLInt
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_schemas">3.2. Schemas</h3>
+<div class="paragraph">
+<p>Once we&#8217;ve defined the structure of the data we want to expose, we need to define
+how that data is going to be retrieved. The schema defines:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Which types are exposed</strong></p>
+</li>
+<li>
+<p><strong>How to interact with that data</strong></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Data is exposed as <strong>queries</strong> or <strong>mutations</strong> depending on whether the action is just a query or a request asking for
+creating/modifying data. Queries are declared as fields under the <strong>query</strong> node and mutations are also declared as
+fields under the <strong>mutation</strong> node:</p>
+</div>
+<div class="sect3">
+<h4 id="_static_values">3.2.1. Static values</h4>
+<div class="paragraph">
+<p>Sometimes you may want to expose constant values, values that are unlikely to change.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+<span class="keyword">import</span> <span class="include">graphql.schema.GraphQLSchema</span>
+
+GraphQLSchema schema = DSL.schema { <i class="conum" data-value="1"></i><b>(1)</b>
+  query(<span class="string"><span class="delimiter">'</span><span class="content">helloQuery</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="2"></i><b>(2)</b>
+    description<span class="string"><span class="delimiter">'</span><span class="content">simple droid</span><span class="delimiter">'</span></span><i class="conum" data-value="3"></i><b>(3)</b>
+
+    field(<span class="string"><span class="delimiter">'</span><span class="content">hello</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="4"></i><b>(4)</b>
+      description<span class="string"><span class="delimiter">'</span><span class="content">name of the droid</span><span class="delimiter">'</span></span>
+      type GraphQLString
+      staticValue <span class="string"><span class="delimiter">'</span><span class="content">world</span><span class="delimiter">'</span></span>
+    }
+
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Declares a schema</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Declares the query root node <code>helloQuery</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Adds a description to the <code>helloQuery</code> node</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Declares a single query called <code>hello</code> which exposes a value <code>world</code> of type GraphQLString</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+In this example we are exposing just a single scalar value, but most of the time we will be
+exposing data through calls to underlying datastore engines. We&#8217;ll see how to do it in a bit.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_fetchers">3.2.2. Fetchers</h4>
+<div class="paragraph">
+<p>Most of the time we are fetching our data from a database, a micro-service, a csv file&#8230;&#8203;etc and we normally use
+an API to query these datastores invoking some functions.</p>
+</div>
+<div class="paragraph">
+<p>Now the same way we were able to expose static values using
+the <code>staticValue</code> method in the DSL, we will be able to get data from a dynamic source via <code>fetcher</code>.</p>
+</div>
+<div class="paragraph">
+<p>The argument of <code>fetcher</code> is an instance of type <code>graphql.schema.DataFetcher</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">graphql.schema</span>;
+
+<span class="directive">public</span> <span class="type">interface</span> <span class="class">DataFetcher</span>&lt;T&gt; {
+    T get(DataFetchingEnvironment environment);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Because <code>DataFetcher</code> is a
+<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html">functional interface</a> it is
+possible to use the following options as arguments of the <code>fetcher</code> method:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A closure</p>
+</li>
+<li>
+<p>A method closure</p>
+</li>
+<li>
+<p>An instance of an implementation of <code>DataFetcher</code></p>
+</li>
+</ul>
+</div>
+<div class="sect4">
+<h5 id="_as_a_closure">As a closure</h5>
+<div class="paragraph">
+<p>The closure receives a <code>graphql.schema.DataFetchingEnvironment</code> instance as parameter and will return the requested
+data. The requested data should be of the same type of the declared type, or a map that complies with the defined type.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+<span class="keyword">import</span> <span class="include">graphql.schema.GraphQLSchema</span>
+
+GraphQLSchema schema = DSL.schema {
+  query(<span class="string"><span class="delimiter">'</span><span class="content">QueryRoot</span><span class="delimiter">'</span></span>) {
+    description<span class="string"><span class="delimiter">'</span><span class="content">queries over James Bond</span><span class="delimiter">'</span></span>
+    field(<span class="string"><span class="delimiter">'</span><span class="content">lastFilm</span><span class="delimiter">'</span></span>) {
+      description<span class="string"><span class="delimiter">'</span><span class="content">last film</span><span class="delimiter">'</span></span>
+      type filmType
+      fetcher { env -&gt; [<span class="key">title</span>: <span class="string"><span class="delimiter">'</span><span class="content">SPECTRE</span><span class="delimiter">'</span></span>] }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_as_a_method_closure">As a method closure</h5>
+<div class="paragraph">
+<p>A method closure is like a Java&#8217;s method reference. It represents a function that can be passed as parameter to another
+function.</p>
+</div>
+<div class="paragraph">
+<p>The function should obey the signature of the <code>DataFetcher#get</code> method (receiving a DataFetchingEnvironment
+as only parameter and returning an object of the correct type).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+<span class="keyword">import</span> <span class="include">graphql.schema.GraphQLSchema</span>
+
+GraphQLSchema schema = DSL.schema {
+  query(<span class="string"><span class="delimiter">'</span><span class="content">QueryRoot</span><span class="delimiter">'</span></span>) {
+    description<span class="string"><span class="delimiter">'</span><span class="content">queries over James Bond</span><span class="delimiter">'</span></span>
+    field(<span class="string"><span class="delimiter">'</span><span class="content">lastFilm</span><span class="delimiter">'</span></span>) {
+      description<span class="string"><span class="delimiter">'</span><span class="content">last film</span><span class="delimiter">'</span></span>
+      type filmType
+      fetcher Queries.&amp;findLastFilm
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_environment">Environment</h5>
+<div class="paragraph">
+<p>Is very important to be aware of this object because it holds information about the requested query, such as the
+arguments, the query types, extra information added to the fetcher context (it could be used to store
+user information for example)&#8230;&#8203;etc.</p>
+</div>
+<div class="paragraph">
+<p>In the following schema declaration, we are using a fetcher that eventually will need to get a year to be able
+to get the proper film:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+<span class="keyword">import</span> <span class="include">graphql.schema.GraphQLSchema</span>
+
+GraphQLSchema schema = DSL.schema {
+  query(<span class="string"><span class="delimiter">'</span><span class="content">QueryRoot</span><span class="delimiter">'</span></span>) {
+    field(<span class="string"><span class="delimiter">'</span><span class="content">byYear</span><span class="delimiter">'</span></span>) {
+      type filmType
+      fetcher Queries.&amp;findByYear
+      argument(<span class="string"><span class="delimiter">'</span><span class="content">year</span><span class="delimiter">'</span></span>) {
+        type GraphQLString
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If we look to the method&#8217;s implementation, we&#8217;ll see how the <code>DataFetchingEnvironment</code> has a <code>getArguments()</code> method
+returning a Map with the arguments values stored by their names:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">graphql.schema.DataFetchingEnvironment</span>
+
+<span class="directive">static</span> <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>,?&gt; findByYear(DataFetchingEnvironment env) {
+  <span class="predefined-type">String</span> year = <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">${</span>env.arguments.year<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>
+
+  <span class="predefined-type">List</span>&lt;<span class="predefined-type">Map</span>&gt; dataSet = loadBondFilms()
+  <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>,?&gt; filmByYear = dataSet.find(byYear(year))
+
+  <span class="keyword">return</span> filmByYear
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+The <code>DataFetchingEnvironment</code> object has a few more options that are worth knowing. I would recommend
+you to take a look at the source code
+<a href="https://github.com/graphql-java/graphql-java/blob/master/src/main/java/graphql/schema/DataFetchingEnvironment.java">here</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_queries">3.3. Queries</h3>
+<div class="paragraph">
+<p><strong>GQL</strong> allows you to execute both string queries or queries built via DSL
+builder. The former is useful if you already have the queries and you
+are sure they work as expected. The latter is a safer way of building
+queries because it gives you some sanity checks based on the types
+used.</p>
+</div>
+<div class="sect3">
+<h4 id="_execute_queries">3.3.1. Execute queries</h4>
+<div class="paragraph">
+<p>If you&#8217;re using the underlying <strong>GQL</strong> GraphQL engine to execute your queries, it would be nice
+to be able to declare and execute queries in one shot right ?</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+<span class="keyword">import</span> <span class="include">graphql.ExecutionResult</span>
+
+ExecutionResult result = DSL.execute(schema) {
+  query(<span class="string"><span class="delimiter">'</span><span class="content">byYear</span><span class="delimiter">'</span></span>, [<span class="key">year</span>: <span class="string"><span class="delimiter">'</span><span class="content">1962</span><span class="delimiter">'</span></span>]) {
+    returns(Film) {
+      title
+      year
+    }
+    alias <span class="string"><span class="delimiter">'</span><span class="content">first</span><span class="delimiter">'</span></span>
+  }
+
+  query(<span class="string"><span class="delimiter">'</span><span class="content">byYear</span><span class="delimiter">'</span></span>, [<span class="key">year</span>: <span class="string"><span class="delimiter">'</span><span class="content">2015</span><span class="delimiter">'</span></span>]) {
+    returns {
+      title
+      year
+      bond
+    }
+    alias <span class="string"><span class="delimiter">'</span><span class="content">last</span><span class="delimiter">'</span></span>
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_query_string">3.3.2. Query string</h4>
+<div class="paragraph">
+<p>Sometimes your exposed GraphQL schema may be backed up by another third party GraphQL engine implementation, but
+instead of writing or queries by hand we still may want to use the DSL to build the query and then use the resulting
+string against the other engine.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+
+<span class="predefined-type">String</span> queryString = DSL.buildQuery {
+  query(<span class="string"><span class="delimiter">'</span><span class="content">byYear</span><span class="delimiter">'</span></span>, [<span class="key">year</span>: <span class="string"><span class="delimiter">'</span><span class="content">1962</span><span class="delimiter">'</span></span>]) {
+    returns(Film) {
+      title
+      year
+    }
+    alias <span class="string"><span class="delimiter">'</span><span class="content">first</span><span class="delimiter">'</span></span>
+  }
+
+  query(<span class="string"><span class="delimiter">'</span><span class="content">byYear</span><span class="delimiter">'</span></span>, [<span class="key">year</span>: <span class="string"><span class="delimiter">'</span><span class="content">2015</span><span class="delimiter">'</span></span>]) {
+    returns {
+      title
+      year
+      bond
+    }
+    alias <span class="string"><span class="delimiter">'</span><span class="content">last</span><span class="delimiter">'</span></span>
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_asts">4. ASTs</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>TODO</p>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_development">5. Development</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_source_code">5.1. Source code</h3>
+<div class="paragraph">
+<p>Source code is available at <a href="https://github.com/grooviter/gql" class="bare">https://github.com/grooviter/gql</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_groovydoc">5.2. Groovydoc</h3>
+<div class="paragraph">
+<p>Groovy API is available at <a href="https://grooviter.github.io/gql/api/index.html" class="bare">https://grooviter.github.io/gql/api/index.html</a></p>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-19 17:21:07 +00:00
+Version 0.1.0<br>
+Last updated 2017-04-20 09:21:37 +00:00
 </div>
 </div>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [["\\(", "\\)"]],
+    displayMath: [["\\[", "\\]"]],
+    ignoreClass: "nostem|nolatexmath"
+  },
+  asciimath2jax: {
+    delimiters: [["\\$", "\\$"]],
+    ignoreClass: "nostem|noasciimath"
+  },
+  TeX: { equationNumbers: { autoNumber: "none" } }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.5.3/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
 </body>
 </html>

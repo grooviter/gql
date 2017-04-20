@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.3">
-<title>Getting started</title>
+<title>Schemas</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -513,44 +513,68 @@ table.CodeRay td.code>pre{padding:0}
 <div id="header">
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
-<ul class="sectlevel1">
-<li><a href="#_getting_started">Getting started</a>
 <ul class="sectlevel2">
-<li><a href="#_hello_gql">Hello GQL</a></li>
-<li><a href="#_gradle">Gradle</a></li>
+<li><a href="#_schemas">Schemas</a>
+<ul class="sectlevel3">
+<li><a href="#_static_values">Static values</a></li>
+<li><a href="#_fetchers">Fetchers</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 <div id="content">
-<div class="sect1">
-<h2 id="_getting_started">Getting started</h2>
-<div class="sectionbody">
 <div class="sect2">
-<h3 id="_hello_gql">Hello GQL</h3>
+<h3 id="_schemas">Schemas</h3>
 <div class="paragraph">
-<p>This is how a full GraphQL life cycle app looks like using <strong>GQL</strong>:</p>
+<p>Once we&#8217;ve defined the structure of the data we want to expose, we need to define
+how that data is going to be retrieved. The schema defines:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Which types are exposed</strong></p>
+</li>
+<li>
+<p><strong>How to interact with that data</strong></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Data is exposed as <strong>queries</strong> or <strong>mutations</strong> depending on whether the action is just a query or a request asking for
+creating/modifying data. Queries are declared as fields under the <strong>query</strong> node and mutations are also declared as
+fields under the <strong>mutation</strong> node:</p>
+</div>
+<div class="sect3">
+<h4 id="_static_values">Static values</h4>
+<div class="paragraph">
+<p>Sometimes you may want to expose constant values, values that are unlikely to change.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql:0.1.0</span><span class="delimiter">'</span></span>)
-Unresolved directive <span class="keyword">in</span> getting.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=grabExample, indent=<span class="integer">0</span>]</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+Unresolved directive <span class="keyword">in</span> schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=<span class="integer">0</span>]
+
+Unresolved directive <span class="keyword">in</span> schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=simpleSchema, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Creates a type <code>Film</code></td>
+<td>Declares a schema</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Creates the GraphQL schema using the previously defined types</td>
+<td>Declares the query root node <code>helloQuery</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Executes a query against the schema</td>
+<td>Adds a description to the <code>helloQuery</code> node</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Declares a single query called <code>hello</code> which exposes a value <code>world</code> of type GraphQLString</td>
 </tr>
 </table>
 </div>
@@ -561,50 +585,130 @@ Unresolved directive <span class="keyword">in</span> getting.adoc - <span class=
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-You can execute the example as a Groovy script in the command line or using
-the <a href="http://www.groovy-lang.org/groovyconsole.html">Groovy console</a> both available in
-any Groovy distribution.
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Although we have built and executed the query in one step, is possible
-to build a query string and execute it in different steps. For instance
-it would be useful when creating queries to execute in a different GraphQL
-engine implementation.
+In this example we are exposing just a single scalar value, but most of the time we will be
+exposing data through calls to underlying datastore engines. We&#8217;ll see how to do it in a bit.
 </td>
 </tr>
 </table>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_gradle">Gradle</h3>
+<div class="sect3">
+<h4 id="_fetchers">Fetchers</h4>
 <div class="paragraph">
-<p>You can add the following dependency to your Gradle project</p>
+<p>Most of the time we are fetching our data from a database, a micro-service, a csv file&#8230;&#8203;etc and we normally use
+an API to query these datastores invoking some functions.</p>
+</div>
+<div class="paragraph">
+<p>Now the same way we were able to expose static values using
+the <code>staticValue</code> method in the DSL, we will be able to get data from a dynamic source via <code>fetcher</code>.</p>
+</div>
+<div class="paragraph">
+<p>The argument of <code>fetcher</code> is an instance of type <code>graphql.schema.DataFetcher</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="gradle">compile com.github.grooviter:gql:0.1.0'</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The library is available at Bintray so all you have to do is
-to include the <code>jcenter()</code> declaration in your dependency repositories
-in your Gradle script.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">repositories {
-   jcenter()
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">graphql.schema</span>;
+
+<span class="directive">public</span> <span class="type">interface</span> <span class="class">DataFetcher</span>&lt;T&gt; {
+    T get(DataFetchingEnvironment environment);
 }</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Because <code>DataFetcher</code> is a
+<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html">functional interface</a> it is
+possible to use the following options as arguments of the <code>fetcher</code> method:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A closure</p>
+</li>
+<li>
+<p>A method closure</p>
+</li>
+<li>
+<p>An instance of an implementation of <code>DataFetcher</code></p>
+</li>
+</ul>
+</div>
+<div class="sect4">
+<h5 id="_as_a_closure">As a closure</h5>
+<div class="paragraph">
+<p>The closure receives a <code>graphql.schema.DataFetchingEnvironment</code> instance as parameter and will return the requested
+data. The requested data should be of the same type of the declared type, or a map that complies with the defined type.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+Unresolved directive <span class="keyword">in</span> schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=<span class="integer">0</span>]
+
+Unresolved directive <span class="keyword">in</span> schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=schemaWithFetcherAsClosure, indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_as_a_method_closure">As a method closure</h5>
+<div class="paragraph">
+<p>A method closure is like a Java&#8217;s method reference. It represents a function that can be passed as parameter to another
+function.</p>
+</div>
+<div class="paragraph">
+<p>The function should obey the signature of the <code>DataFetcher#get</code> method (receiving a DataFetchingEnvironment
+as only parameter and returning an object of the correct type).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+Unresolved directive <span class="keyword">in</span> schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=<span class="integer">0</span>]
+
+Unresolved directive <span class="keyword">in</span> schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=schemaWithFetcherAsFunctionReference, indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_environment">Environment</h5>
+<div class="paragraph">
+<p>Is very important to be aware of this object because it holds information about the requested query, such as the
+arguments, the query types, extra information added to the fetcher context (it could be used to store
+user information for example)&#8230;&#8203;etc.</p>
+</div>
+<div class="paragraph">
+<p>In the following schema declaration, we are using a fetcher that eventually will need to get a year to be able
+to get the proper film:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+Unresolved directive <span class="keyword">in</span> schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=<span class="integer">0</span>]
+
+Unresolved directive <span class="keyword">in</span> schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=findByYearSchema, indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If we look to the method&#8217;s implementation, we&#8217;ll see how the <code>DataFetchingEnvironment</code> has a <code>getArguments()</code> method
+returning a Map with the arguments values stored by their names:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> schema.adoc - <span class="key">include</span>::{testMain}/gql/test/util/Queries.groovy[tags=importDataFetchingEnvironment, indent=<span class="integer">0</span>]
+
+Unresolved directive <span class="keyword">in</span> schema.adoc - <span class="key">include</span>::{testMain}/gql/test/util/Queries.groovy[tags=findByYear, indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+The <code>DataFetchingEnvironment</code> object has a few more options that are worth knowing. I would recommend
+you to take a look at the source code
+<a href="https://github.com/graphql-java/graphql-java/blob/master/src/main/java/graphql/schema/DataFetchingEnvironment.java">here</a>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -612,7 +716,7 @@ in your Gradle script.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-19 17:15:24 +00:00
+Last updated 2017-04-20 09:22:24 +00:00
 </div>
 </div>
 </body>

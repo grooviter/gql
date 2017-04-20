@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.3">
-<title>Types</title>
+<title>Getting started</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -514,10 +514,10 @@ table.CodeRay td.code>pre{padding:0}
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_types">Types</a>
+<li><a href="#_getting_started">Getting started</a>
 <ul class="sectlevel2">
-<li><a href="#_full_types">Full types</a></li>
-<li><a href="#_shorter_field_definition">Shorter field definition</a></li>
+<li><a href="#_hello_gql">Hello GQL</a></li>
+<li><a href="#_gradle">Gradle</a></li>
 </ul>
 </li>
 </ul>
@@ -525,40 +525,32 @@ table.CodeRay td.code>pre{padding:0}
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_types">Types</h2>
+<h2 id="_getting_started">Getting started</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Types define the structure of the data you want to expose. There two main sets of types, scalars and custom types. The
-former are specified by the GraphQL specification and are basic types such as strings, integers&#8230;&#8203;etc whereas the latter
-refer to the types the developer will be defining (a Book, a Car&#8230;&#8203;etc). We&#8217;ll make use of the scalars to build our
-own types.</p>
-</div>
 <div class="sect2">
-<h3 id="_full_types">Full types</h3>
+<h3 id="_hello_gql">Hello GQL</h3>
 <div class="paragraph">
-<p>In order to define a full type using <strong>GQL</strong> the only thing you have to do is to import <strong>gql.DSL</strong> and use the method
-<code>type</code>:</p>
+<p>This is how a full GraphQL life cycle app looks like using <strong>GQL</strong>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
-
-Unresolved directive <span class="keyword">in</span> types.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=fullType, indent=<span class="integer">0</span>]</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql:0.1.0</span><span class="delimiter">'</span></span>)
+Unresolved directive <span class="keyword">in</span> getting.adoc - <span class="key">include</span>::{baseDir}/..<span class="regexp"><span class="delimiter">/</span><span class="content">src</span><span class="delimiter">/</span></span>test/groovy/gql/DSLSpec.groovy[tags=grabExample, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Defines a new type called <code>Film</code></td>
+<td>Creates a type <code>Film</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Adds a type description (useful to client users when exposing the schema)</td>
+<td>Creates the GraphQL schema using the previously defined types</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Adds a field of type string (GraphQLString)</td>
+<td>Executes a query against the schema</td>
 </tr>
 </table>
 </div>
@@ -569,30 +561,49 @@ Unresolved directive <span class="keyword">in</span> types.adoc - <span class="k
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The resulting <code>type</code> variable is an instance of <code>graphql.schema.GraphQLObjectType</code>.
-We haven&#8217;t added the specific type to highlight the fact that no other import is needed. All basic scalar types such
-as <code>GraphQLString</code> are defined within the DSL and both the compiler and the IDE should be able to recognize them.
+You can execute the example as a Groovy script in the command line or using
+the <a href="http://www.groovy-lang.org/groovyconsole.html">Groovy console</a> both available in
+any Groovy distribution.
 </td>
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>You can add as many <code>field('fieldName') { }</code> blocks to your type as you want.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Although we have built and executed the query in one step, is possible
+to build a query string and execute it in different steps. For instance
+it would be useful when creating queries to execute in a different GraphQL
+engine implementation.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_shorter_field_definition">Shorter field definition</h3>
+<h3 id="_gradle">Gradle</h3>
 <div class="paragraph">
-<p>There is a shorter way of defining a given type. It&#8217;s specially useful when you&#8217;re prototyping or when you don&#8217;t care
-about adding descriptions to your types. You can use the method <code>field(String, Scalar)</code> method within the <code>type</code> DSL.
-The following example adds three different fields to the <code>Droid</code> type:</p>
+<p>You can add the following dependency to your Gradle project</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
-Unresolved directive <span class="keyword">in</span> types.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLObjectType, indent=<span class="integer">0</span>]
-
-Unresolved directive <span class="keyword">in</span> types.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=shortest, indent=<span class="integer">0</span>]</code></pre>
+<pre class="CodeRay highlight"><code data-lang="gradle">compile com.github.grooviter:gql:0.1.0'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The library is available at Bintray so all you have to do is
+to include the <code>jcenter()</code> declaration in your dependency repositories
+in your Gradle script.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">repositories {
+   jcenter()
+}</code></pre>
 </div>
 </div>
 </div>
@@ -601,7 +612,7 @@ Unresolved directive <span class="keyword">in</span> types.adoc - <span class="k
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-19 17:31:46 +00:00
+Last updated 2017-04-20 12:56:20 +00:00
 </div>
 </div>
 </body>

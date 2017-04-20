@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.3">
-<title>Queries</title>
+<title>Development</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -514,10 +514,10 @@ table.CodeRay td.code>pre{padding:0}
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_queries">Queries</a>
+<li><a href="#_development">Development</a>
 <ul class="sectlevel2">
-<li><a href="#_execute_queries">Execute queries</a></li>
-<li><a href="#_query_string">Query string</a></li>
+<li><a href="#_source_code">Source code</a></li>
+<li><a href="#_groovydoc">Groovydoc</a></li>
 </ul>
 </li>
 </ul>
@@ -525,43 +525,18 @@ table.CodeRay td.code>pre{padding:0}
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_queries">Queries</h2>
+<h2 id="_development">Development</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p><strong>GQL</strong> allows you to execute both string queries or queries built via DSL
-builder. The former is useful if you already have the queries and you
-are sure they work as expected. The latter is a safer way of building
-queries because it gives you some sanity checks based on the types
-used.</p>
-</div>
 <div class="sect2">
-<h3 id="_execute_queries">Execute queries</h3>
+<h3 id="_source_code">Source code</h3>
 <div class="paragraph">
-<p>If you&#8217;re using the underlying <strong>GQL</strong> GraphQL engine to execute your queries, it would be nice
-to be able to declare and execute queries in one shot right ?</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
-Unresolved directive <span class="keyword">in</span> queries.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=importExecutionResult, indent=<span class="integer">0</span>]
-
-Unresolved directive <span class="keyword">in</span> queries.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=staticQuery, indent=<span class="integer">0</span>]</code></pre>
-</div>
+<p>Source code is available at <a href="https://github.com/grooviter/gql" class="bare">https://github.com/grooviter/gql</a></p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_query_string">Query string</h3>
+<h3 id="_groovydoc">Groovydoc</h3>
 <div class="paragraph">
-<p>Sometimes your exposed GraphQL schema may be backed up by another third party GraphQL engine implementation, but
-instead of writing or queries by hand we still may want to use the DSL to build the query and then use the resulting
-string against the other engine.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
-
-Unresolved directive <span class="keyword">in</span> queries.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=queryString, indent=<span class="integer">0</span>]</code></pre>
-</div>
+<p>Groovy API is available at <a href="https://grooviter.github.io/gql/api/index.html" class="bare">https://grooviter.github.io/gql/api/index.html</a></p>
 </div>
 </div>
 </div>
@@ -569,7 +544,7 @@ Unresolved directive <span class="keyword">in</span> queries.adoc - <span class=
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-19 17:37:06 +00:00
+Last updated 2017-04-20 12:51:43 +00:00
 </div>
 </div>
 </body>
