@@ -5,22 +5,8 @@ import graphql.schema.GraphQLObjectType
 
 /**
  * Builds a new {@link GraphQLSchema}
- * <br/>
- * <pre><code class="groovy">
- * GraphQLSchema schema = DSL.schema {
- *     queries {
- *         type('helloWorldQuery') {
- *             fields {
- *                 field('hello') {
- *                     type GraphQLString
- *                     staticValue 'world'
- *                 }
- *             }
- *         }
- *     }
- * }
- * </code></pre>
  *
+ * @examples <a target="_blank" href="/docs/index.html#_schemas">Creating GraphQL schemas</a>
  * @since 0.1.0
  */
 class SchemaBuilder {
@@ -28,18 +14,10 @@ class SchemaBuilder {
   GraphQLSchema.Builder builder = GraphQLSchema.newSchema()
 
   /**
-   * Declares queries for the current schema
-   * <br/>
-   * <pre><code>
-   * DSL.schema {
-   *     queries {
-   *         //...
-   *     }
-   * }
-   * </code></pre>
+   * Adds a query to the current schema
    *
-   * @param dsl
-   * @return
+   * @param dsl the dsl body
+   * @return the current schema builder with the added query
    * @since 0.1.0
    */
   SchemaBuilder query(String name, @DelegatesTo(ObjectTypeBuilder) Closure<ObjectTypeBuilder> dsl) {

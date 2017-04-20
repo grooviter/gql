@@ -92,29 +92,6 @@ class QueryBuilder {
     String aliasFragment = ""
     String fieldFragment = ""
 
-    /**
-     * @param clazz
-     * @param fields
-     * @return
-     * @since 0.1.0
-     */
-    /*
-    @CompileDynamic
-    public <T> ReturnsBlockBuilder returns(@DelegatesTo.Target Class<T> clazz,
-                                           @DelegatesTo(
-                                             strategy = DELEGATE_FIRST,
-                                             genericTypeIndex = 0) Closure fields){
-      fields
-        .getThisObject()
-        .getMetaClass()
-        .getProperty = { String name ->
-          fieldFragment += "\t$name\n"
-        }
-      fields()
-
-      return this
-    }*/
-
     @CompileDynamic
     public <T> ReturnsBlockBuilder returns(@DelegatesTo.Target Class<T> clazz,
                                            @DelegatesTo(
