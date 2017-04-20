@@ -11,7 +11,7 @@ gitPublish {
   branch = 'gh-pages'
 
   contents {
-    from file('build/asciidoc/html5')
+    from file('build/site')
   }
 
   commitMessage = "Released version ${releaseVersion}"

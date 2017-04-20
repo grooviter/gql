@@ -31,6 +31,22 @@ dependencies {
   testCompile 'junit:junit:4.12'
 }
 
+compileGroovy {
+  groovyOptions.configurationScript = new File(projectDir, folder_compiler)
+}
+
+task generateDocumentation() {
+  dependsOn groovydoc
+  dependsOn asciidoctor
+
+  doLast {
+    copy {
+      from "src/docs/site"
+      into "$buildDir/site"
+    }
+  }
+}
+
 sourceSets {
   groovydoc {
     resources {
@@ -40,16 +56,19 @@ sourceSets {
 }
 
 groovydoc {
-  classpath = sourceSets.groovydoc.output + classpath
-}
+  link 'https://docs.oracle.com/javase/8/docs/api/', 'java'
+  link 'http://docs.groovy-lang.org/latest/html/api/', 'groovy', 'org.codehaus.groovy'
+  link 'http://grooviter.github.io/asteroid/javadocs', 'asteroid'
+  link 'http://graphql-java.github.io/graphql-java', 'graphql'
 
-compileGroovy {
-  groovyOptions.configurationScript = new File(projectDir, folder_compiler)
+  destinationDir = file("$buildDir/site/api")
+  classpath = sourceSets.groovydoc.output + classpath
 }
 
 asciidoctor {
   requires 'asciidoctor-diagram'
 
+  outputDir file("$buildDir/site/docs")
 	attributes 'endpoint-url': 'http://github.com/grooviter/gql',
              'source-highlighter': 'coderay',
              'imagesdir': './images',

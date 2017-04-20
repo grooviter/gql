@@ -7,7 +7,7 @@ This is how a full GraphQL life cycle app looks like using **GQL**:
 [source, groovy]
 ----
 @Grab('com.github.grooviter:gql:0.1.0')
-include::{testMain}/gql/DSLSpec.groovy[tags=grabExample, indent=0]
+include::{baseDir}/../src/test/groovy/gql/DSLSpec.groovy[tags=grabExample, indent=0]
 ----
 
 <1> Creates a type `Film`

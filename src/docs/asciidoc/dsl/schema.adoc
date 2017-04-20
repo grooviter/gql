@@ -1,4 +1,4 @@
-== Schemas
+=== Schemas
 
 Once we've defined the structure of the data we want to expose, we need to define
 how that data is going to be retrieved. The schema defines:
@@ -10,7 +10,7 @@ Data is exposed as **queries** or **mutations** depending on whether the action 
 creating/modifying data. Queries are declared as fields under the **query** node and mutations are also declared as
 fields under the **mutation** node:
 
-=== Static values
+==== Static values
 
 Sometimes you may want to expose constant values, values that are unlikely to change.
 
@@ -30,7 +30,7 @@ include::{testMain}/gql/DSLSpec.groovy[tags=simpleSchema, indent=0]
 NOTE: In this example we are exposing just a single scalar value, but most of the time we will be
 exposing data through calls to underlying datastore engines. We'll see how to do it in a bit.
 
-=== Fetchers
+==== Fetchers
 
 Most of the time we are fetching our data from a database, a micro-service, a csv file...etc and we normally use
 an API to query these datastores invoking some functions.
@@ -57,7 +57,7 @@ possible to use the following options as arguments of the `fetcher` method:
 - A method closure
 - An instance of an implementation of `DataFetcher`
 
-==== As a closure
+===== As a closure
 
 The closure receives a `graphql.schema.DataFetchingEnvironment` instance as parameter and will return the requested
 data. The requested data should be of the same type of the declared type, or a map that complies with the defined type.
@@ -70,7 +70,7 @@ include::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=0]
 include::{testMain}/gql/DSLSpec.groovy[tags=schemaWithFetcherAsClosure, indent=0]
 ----
 
-==== As a method closure
+===== As a method closure
 
 A method closure is like a Java's method reference. It represents a function that can be passed as parameter to another
 function.
@@ -86,7 +86,7 @@ include::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=0]
 include::{testMain}/gql/DSLSpec.groovy[tags=schemaWithFetcherAsFunctionReference, indent=0]
 ----
 
-==== Environment
+===== Environment
 
 Is very important to be aware of this object because it holds information about the requested query, such as the
 arguments, the query types, extra information added to the fetcher context (it could be used to store

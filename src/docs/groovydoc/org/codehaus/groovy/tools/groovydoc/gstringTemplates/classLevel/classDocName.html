@@ -38,6 +38,10 @@
     boolean methodSummaryShown = visibleMethods
     boolean fieldSummaryShown = hasFields
     boolean hasEnumConstants = classDoc.enumConstants()
+    def doGithubLink = { t ->
+       def linkName = classDoc.fullPathName
+       return "https://github.com/grooviter/gql/blob/master/src/main/groovy/${linkName}.groovy"
+    }
     def dolink = { t, boolean b ->
         boolean isArray = false
         if (!t || t instanceof String) {
@@ -184,19 +188,24 @@ if (pkg != "DefaultPackage") {
 %>
     <div class="subTitle">Package: <strong>${pkg}</strong></div>
 <%}%>
-    <h2 title="${classDesc}" class="title">${classDesc}</h2>
+    <h2 title="${classDesc}" class="title">${classDesc}
+        <a target="_blank" href="${doGithubLink(classDoc)}">
+            <img title="Check source code" width="60" src="https://assets-cdn.github.com/images/modules/open_graph/github-mark.png">
+        </a>
+    </h2>
 </div>
 <div class="contentContainer">
-<ul class="inheritance">
+<ul class="inheritance" style="border-bottom: solid #EEE 1px; padding-bottom: 20px;">
+    <li><strong>Inheritance:</strong></li>
 <%
 def parents = classDoc.isInterface() ? classDoc.parentInterfaces : classDoc.parentClasses
+
 if (parents.size() >= 2) {
     parents.eachWithIndex { p, i ->
-        %><li><%
         if ( i == parents.size() - 1) {
-            out << p.qualifiedTypeName()
+            %><li style='padding-left:<% out << 10 * i %>px'><% out << p.qualifiedTypeName() %></li><%
         } else {
-            %><ul class="inheritance"><% linkfull(p) %></ul></li><%
+            %><li style='padding-left:<% out << 10 * i %>px'><% out << linkfull(p) %></li><%
         }
     }
 }

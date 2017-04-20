@@ -1,4 +1,4 @@
-== Queries
+=== Queries
 
 **GQL** allows you to execute both string queries or queries built via DSL
 builder. The former is useful if you already have the queries and you
@@ -6,7 +6,7 @@ are sure they work as expected. The latter is a safer way of building
 queries because it gives you some sanity checks based on the types
 used.
 
-=== Execute queries
+==== Execute queries
 
 If you're using the underlying **GQL** GraphQL engine to execute your queries, it would be nice
 to be able to declare and execute queries in one shot right ?
@@ -19,7 +19,7 @@ include::{testMain}/gql/DSLSpec.groovy[tags=importExecutionResult, indent=0]
 include::{testMain}/gql/DSLSpec.groovy[tags=staticQuery, indent=0]
 ----
 
-=== Query string
+==== Query string
 
 Sometimes your exposed GraphQL schema may be backed up by another third party GraphQL engine implementation, but
 instead of writing or queries by hand we still may want to use the DSL to build the query and then use the resulting

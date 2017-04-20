@@ -1,11 +1,11 @@
-== Types
+=== Types
 
 Types define the structure of the data you want to expose. There two main sets of types, scalars and custom types. The
 former are specified by the GraphQL specification and are basic types such as strings, integers...etc whereas the latter
 refer to the types the developer will be defining (a Book, a Car...etc). We'll make use of the scalars to build our
 own types.
 
-=== Full types
+==== Full types
 
 In order to define a full type using **GQL** the only thing you have to do is to import **gql.DSL** and use the method
 `type`:
@@ -27,7 +27,7 @@ as `GraphQLString` are defined within the DSL and both the compiler and the IDE 
 
 You can add as many `field('fieldName') { }` blocks to your type as you want.
 
-=== Shorter field definition
+==== Shorter field definition
 
 There is a shorter way of defining a given type. It's specially useful when you're prototyping or when you don't care
 about adding descriptions to your types. You can use the method `field(String, Scalar)` method within the `type` DSL.

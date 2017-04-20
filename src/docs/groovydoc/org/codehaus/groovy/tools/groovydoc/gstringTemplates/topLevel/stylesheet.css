@@ -2043,7 +2043,7 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 body, html {
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     margin: 0;
-    background: #ededed;
+    background: #fff;
     color: #343437;
     line-height: 2em;
     font-weight: 300;
@@ -2171,7 +2171,7 @@ table.overviewSummary caption, .contentContainer ul li table caption {
     float: left;
     padding: 0 10px;
     margin-top: 10px;
-    background: #db4800;
+    background: #529abb;
     color: white
 }
 
@@ -2205,7 +2205,7 @@ body.left h1, body.left h2 {
     margin: 0 10px;
     padding: 3px 10px;
     margin-top: 10px;
-    background: #db4800;
+    background: #529abb;
     color: white;
     line-height: 40px
 }
@@ -2247,7 +2247,7 @@ body.left ul li a:hover {
 
 .contentContainer ul.inheritance {
     margin-left: 0;
-    padding-left: 0
+    padding-left: 0;
 }
 
 .contentContainer ul.inheritance li {
@@ -2303,4 +2303,8 @@ span.strong {
 
 a span.strong {
     font-weight: normal
+}
+
+h2 img {
+    vertical-align: bottom;
 }

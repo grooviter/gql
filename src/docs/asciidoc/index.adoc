@@ -18,18 +18,14 @@ GraphQL services.
 The *GQL* project is open sourced under the http://www.apache.org/licenses/LICENSE-2.0.html[Apache 2 License].
 ****
 
-include::sections/intro.adoc[]
+include::intro.adoc[]
 
-include::sections/getting.adoc[]
+include::getting.adoc[]
 
-include::sections/types.adoc[]
+include::dsl.adoc[]
 
-include::sections/schema.adoc[]
+include::asts.adoc[]
 
-include::sections/queries.adoc[]
-
-include::sections/asts.adoc[]
-
-include::sections/references.adoc[]
+include::references.adoc[]
 
 

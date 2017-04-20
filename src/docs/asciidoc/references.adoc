@@ -1,0 +1,10 @@
+== Development
+
+=== Source code
+
+Source code is available at https://github.com/grooviter/gql
+
+=== Groovydoc
+
+Groovy API is available at https://grooviter.github.io/gql/api/index.html
+
