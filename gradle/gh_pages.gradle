@@ -17,4 +17,7 @@ gitPublish {
   commitMessage = "Released version ${releaseVersion}"
 }
 
-gitPublishPush.dependsOn setAuthentication
+gitPublishPush {
+  dependsOn 'setAuthentication'
+  dependsOn 'generateDocumentation'
+}
