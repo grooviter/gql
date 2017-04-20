@@ -6,7 +6,7 @@ import graphql.schema.GraphQLObjectType
 /**
  * Builds a new {@link GraphQLSchema}
  *
- * @examples <a target="_blank" href="/gql/docs/index.html#_schemas">Creating GraphQL schemas</a>
+ * @examples <a target="_blank" href="/gql/docs/html5/index.html#_schemas">Creating GraphQL schemas</a>
  * @since 0.1.0
  */
 class SchemaBuilder {
