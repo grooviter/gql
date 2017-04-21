@@ -1,4 +1,4 @@
-[![license](https://img.shields.io/github/license/grooviter/gql.svg)](https://www.apache.org/licenses/LICENSE-2.0) [![Travis](https://img.shields.io/travis/grooviter/gql.svg)](https://travis-ci.org/grooviter/gql) [![Bintray](https://img.shields.io/bintray/v/grooviter/maven/gql.svg)](https://bintray.com/grooviter/maven/gql)
+[![license](https://img.shields.io/github/license/grooviter/gql.svg)]() [![Bintray](https://api.bintray.com/packages/grooviter/maven/gql/images/download.svg)](https://bintray.com/grooviter/maven/gql)
 
 **GQL** is a set of [Groovy](http://www.groovy-lang.org) DSLs and AST
 transformations built on top
