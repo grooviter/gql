@@ -194,7 +194,7 @@ class ObjectTypeBuilder {
     /**
      * @since 0.1.0
      */
-    FieldBuilder fetcher(Closure<Object> fetcher) {
+    FieldBuilder fetcher(Closure<?> fetcher) {
       builder.dataFetcher(fetcher as DataFetcher)
       return this
     }
