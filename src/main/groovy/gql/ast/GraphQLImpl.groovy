@@ -13,6 +13,7 @@ import org.codehaus.groovy.ast.expr.MethodCallExpression
 
 import graphql.schema.GraphQLObjectType
 import gql.GraphQL
+import org.codehaus.groovy.control.CompilePhase
 
 /**
  * Creates a method <b>getGraphQLDefinition</b> in the annotated type
@@ -20,7 +21,7 @@ import gql.GraphQL
  *
  * @since 0.1.0
  */
-@Phase(Phase.LOCAL.SEMANTIC_ANALYSIS)
+@Phase(CompilePhase.SEMANTIC_ANALYSIS)
 class GraphQLImpl extends AbstractLocalTransformation<GraphQL, ClassNode> {
 
   static final String METHOD_GENERATED_NAME = 'getGraphQLDefinition'
