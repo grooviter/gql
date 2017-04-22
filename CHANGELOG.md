@@ -1,6 +1,18 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.1.1-alpha] - [2017-04-21]
+
+### Added
+
+- Updated version of graphql-java to 2.4.0
+
+### Fixed
+
+- Fetcher as closure: variable schema closure was dehydrated() and could resolve context variables
+- Fetcher as closure: Static compile checking complains when Closure return type was other than Object
+- Use CompilePhase from Groovy in GraphQLImpl to avoid Intellij complaints
+
 ## [0.1.0-alpha] - [2017-04-20]
 
 First alpha release
