@@ -21,7 +21,7 @@ class SchemaBuilder {
    * @since 0.1.0
    */
   SchemaBuilder query(String name, @DelegatesTo(ObjectTypeBuilder) Closure<ObjectTypeBuilder> dsl) {
-    Closure<ObjectTypeBuilder> clos = dsl.dehydrate().clone() as Closure<ObjectTypeBuilder>
+    Closure<ObjectTypeBuilder> clos = dsl.clone() as Closure<ObjectTypeBuilder>
     ObjectTypeBuilder builderSource = new ObjectTypeBuilder()
       .name(name)
       .description("description of type $name")
