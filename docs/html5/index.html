@@ -513,7 +513,7 @@ table.CodeRay td.code>pre{padding:0}
 <div id="header">
 <h1>GQL</h1>
 <div class="details">
-<span id="revnumber">version 0.1.0-alpha</span>
+<span id="revnumber">version 0.1.2-alpha</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -531,6 +531,7 @@ table.CodeRay td.code>pre{padding:0}
 <ul class="sectlevel3">
 <li><a href="#_full_types">3.1.1. Full types</a></li>
 <li><a href="#_shorter_field_definition">3.1.2. Shorter field definition</a></li>
+<li><a href="#_adding_external_fields">3.1.3. Adding external fields</a></li>
 </ul>
 </li>
 <li><a href="#_schemas">3.2. Schemas</a>
@@ -835,6 +836,86 @@ GraphQLObjectType type = DSL.type(<span class="string"><span class="delimiter">'
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_adding_external_fields">3.1.3. Adding external fields</h4>
+<div class="paragraph">
+<p>Sometimes you may want to keep type and field definitions apart, maybe to reuse those definitions, or maybe because it
+gives you more flexibility when structuring your app.</p>
+</div>
+<div class="paragraph">
+<p>In the following example a field called name. It will always return its value in uppercase.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+
+<span class="keyword">def</span> nameToUpperCaseField = DSL.field(<span class="string"><span class="delimiter">'</span><span class="content">name</span><span class="delimiter">'</span></span>) {
+  type GraphQLString
+  fetcher { DataFetchingEnvironment env -&gt;
+    <span class="keyword">return</span> <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">${</span>env.source.name<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>.toUpperCase()
+  }
+}</code></pre>
+</div>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Static compilation</div>
+<div class="paragraph">
+<p>If you would like to use static compilation here, I think is important to bear in mind <strong>getSource()</strong> signature:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">&lt;T&gt; T getSource()</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This signature means that the result of executing <strong>getSource()</strong> will be casted to the element type found on
+the left hand side.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+
+<span class="keyword">def</span> ageMinusOne = DSL.field(<span class="string"><span class="delimiter">'</span><span class="content">age</span><span class="delimiter">'</span></span>) {
+  type GraphQLInt
+  fetcher { DataFetchingEnvironment env -&gt;
+    <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, <span class="predefined-type">Integer</span>&gt; data = env.getSource() <i class="conum" data-value="1"></i><b>(1)</b>
+
+    <span class="keyword">return</span> data.age - <span class="integer">1</span> <i class="conum" data-value="2"></i><b>(2)</b>
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><strong>DataFetchingEnvironment#getSource()</strong> casts its result to the left side element
+type (Map&lt;String,Integer&gt; in this case)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Then the compiler is ok with substracting 1 from an integer</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Then we can use this definition in any type we want usign the <code>addField</code> method inside <code>type</code> DSL. In the example
+every person&#8217;s name will be returned in uppercase.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+
+<span class="keyword">def</span> people = DSL.type(<span class="string"><span class="delimiter">'</span><span class="content">People</span><span class="delimiter">'</span></span>) {
+  addField nameToUpperCaseField
+  addField ageMinusOne
+}</code></pre>
+</div>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_schemas">3.2. Schemas</h3>
@@ -1090,6 +1171,8 @@ to be able to declare and execute queries in one shot right ?</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
 <span class="keyword">import</span> <span class="include">graphql.ExecutionResult</span>
+<span class="keyword">import</span> <span class="include">graphql.schema.DataFetchingEnvironment</span>
+
 
 ExecutionResult result = DSL.execute(schema) {
   query(<span class="string"><span class="delimiter">'</span><span class="content">byYear</span><span class="delimiter">'</span></span>, [<span class="key">year</span>: <span class="string"><span class="delimiter">'</span><span class="content">1962</span><span class="delimiter">'</span></span>]) {
@@ -1175,8 +1258,8 @@ string against the other engine.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.1.0-alpha<br>
-Last updated 2017-04-20 09:21:37 +00:00
+Version 0.1.2-alpha<br>
+Last updated 2017-04-23 22:48:50 +00:00
 </div>
 </div>
 <script type="text/x-mathjax-config">
