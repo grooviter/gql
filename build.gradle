@@ -71,6 +71,7 @@ asciidoctor {
   outputDir file("$buildDir/site/docs")
 	attributes 'endpoint-url': 'http://github.com/grooviter/gql',
              'source-highlighter': 'coderay',
+             'releaseVersion': releaseVersion,
              'imagesdir': './images',
              'toc': 'left',
              'icons': 'font',

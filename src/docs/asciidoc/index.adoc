@@ -1,5 +1,5 @@
 = GQL
-:revnumber: {project-version}
+:revnumber: {releaseVersion}
 :numbered:
 :imagesDir: images/
 :baseDir: ../../../
