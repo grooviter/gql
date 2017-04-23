@@ -2,6 +2,8 @@ package gql
 
 // tag::importExecutionResult[]
 import graphql.ExecutionResult
+import graphql.schema.DataFetchingEnvironment
+
 // end::importExecutionResult[]
 
 import groovy.test.GroovyAssert
@@ -605,5 +607,54 @@ class DSLSpec extends Specification {
       assert result.data.lastFilm.title == 'SPECTRE'
      // end::grabExample[]
     '''
+  }
+
+  void 'adding a mutation root to schema'() {
+    setup: 'building the type'
+    GraphQLObjectType filmType = DSL.type('People') {
+      field 'name', GraphQLString
+    }
+    and: 'setting a memory list'
+    List<String> people = []
+
+    and: 'building the schema'
+    GraphQLSchema schema = DSL.schema {
+      query('QueryRoot') {
+        // no queries
+      }
+      mutation('MutationRoot') {
+        field('insert') {
+          type filmType
+          fetcher { DataFetchingEnvironment env ->
+            def name = env.arguments.name
+            people << name
+            return [name: name]
+          }
+          argument('name') {
+            type GraphQLString
+          }
+        }
+      }
+    }
+
+    and: 'executing a queryString against that schema'
+    def mutation = '''
+    mutation insertNewPerson {
+      insert(name: "Johnny") {
+        name
+      }
+    }
+    '''
+    when:
+    def result = DSL.execute(schema, mutation)
+
+    then: 'there should not be any error'
+    !result.errors
+
+    and: 'we should get the expected value'
+    result.data.insert.name == 'Johnny'
+
+    and: 'people should have one item'
+    people.size() == 1
   }
 }
