@@ -1,6 +1,14 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.1.2-alpha] - [2017-04-24]
+
+### Added
+
+- `mutation` root node in the schema defintion DSL
+- `DSL.field()` method to create standalone field definitions
+- Add release version to asciidoc documentation
+
 ## [0.1.1-alpha] - [2017-04-21]
 
 ### Added
