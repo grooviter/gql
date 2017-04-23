@@ -40,3 +40,57 @@ include::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLObjectType, indent=0]
 
 include::{testMain}/gql/DSLSpec.groovy[tags=shortest, indent=0]
 ----
+
+==== Adding external fields
+
+Sometimes you may want to keep type and field definitions apart, maybe to reuse those definitions, or maybe because it
+gives you more flexibility when structuring your app.
+
+In the following example a field called name. It will always return its value in uppercase.
+
+[source, groovy]
+----
+import gql.DSL
+
+include::{testMain}/gql/DSLSpec.groovy[tags=standaloneFieldDefinition, indent=0]
+----
+
+[sidebar]
+.Static compilation
+****
+If you would like to use static compilation here, I think is important to bear in mind **getSource()** signature:
+
+[source, groovy]
+----
+<T> T getSource()
+----
+
+This signature means that the result of executing **getSource()** will be casted to the element type found on
+the left hand side.
+
+[source, groovy]
+----
+import gql.DSL
+
+include::{testMain}/gql/DSLSpec.groovy[tags=fieldStaticCompilation, indent=0]
+----
+
+<1> **DataFetchingEnvironment#getSource()** casts its result to the left side element
+type (Map<String,Integer> in this case)
+<2> Then the compiler is ok with substracting 1 from an integer
+
+****
+
+Then we can use this definition in any type we want usign the `addField` method inside `type` DSL. In the example
+every person's name will be returned in uppercase.
+
+[source, groovy]
+----
+import gql.DSL
+
+include::{testMain}/gql/DSLSpec.groovy[tags=addField, indent=0]
+----
+
+
+
+

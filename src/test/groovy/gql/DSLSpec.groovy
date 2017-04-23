@@ -657,4 +657,50 @@ class DSLSpec extends Specification {
     and: 'people should have one item'
     people.size() == 1
   }
+
+  void 'build a field definition with standalone field DSL'() {
+    given: 'a standalone/reusable field definition'
+    // tag::standaloneFieldDefinition[]
+    def nameToUpperCaseField = DSL.field('name') {
+      type GraphQLString
+      fetcher { DataFetchingEnvironment env ->
+        return "${env.source.name}".toUpperCase()
+      }
+    }
+    // end::standaloneFieldDefinition[]
+    // tag::fieldStaticCompilation[]
+    def ageMinusOne = DSL.field('age') {
+      type GraphQLInt
+      fetcher { DataFetchingEnvironment env ->
+        Map<String, Integer> data = env.getSource() // <1>
+
+        return data.age - 1 // <2>
+      }
+    }
+    // end::fieldStaticCompilation[]
+
+    and: 'a type definition'
+    // tag::addField[]
+    def people = DSL.type('People') {
+      addField nameToUpperCaseField
+      addField ageMinusOne
+    }
+    // end::addField[]
+
+    and: 'a schema that returns a static person value'
+    GraphQLSchema schema = DSL.schema {
+      query('queryRoot') {
+        field('director') {
+          type people
+          staticValue([name: 'Peter', age: 22])
+        }
+      }
+    }
+
+    when: 'executing a simple query against the schema'
+    def result = DSL.execute(schema, '{ director { name } }')
+
+    then: 'the query should return the name in upper case'
+    result.data.director.name == 'PETER'
+  }
 }

@@ -1,35 +1,22 @@
 package gql.dsl
 
-import graphql.Scalars
 import graphql.schema.DataFetcher
 import graphql.schema.GraphQLArgument
-import graphql.schema.GraphQLOutputType
-import graphql.schema.GraphQLObjectType
-import graphql.schema.GraphQLInterfaceType
 import graphql.schema.GraphQLFieldDefinition
-import graphql.schema.GraphQLScalarType
+import graphql.schema.GraphQLInterfaceType
 import graphql.schema.GraphQLList
 import graphql.schema.GraphQLNonNull
+import graphql.schema.GraphQLObjectType
+import graphql.schema.GraphQLOutputType
+import graphql.schema.GraphQLScalarType
 
 /**
  * @since 0.1.0
  */
 @SuppressWarnings('PropertyName')
-class ObjectTypeBuilder {
+class ObjectTypeBuilder implements ScalarsAware {
 
   GraphQLObjectType.Builder type = GraphQLObjectType.newObject()
-
-  GraphQLScalarType GraphQLInt = Scalars.GraphQLInt
-  GraphQLScalarType GraphQLString = Scalars.GraphQLString
-  GraphQLScalarType GraphQLLong = Scalars.GraphQLLong
-  GraphQLScalarType GraphQLShort = Scalars.GraphQLShort
-  GraphQLScalarType GraphQLByte = Scalars.GraphQLByte
-  GraphQLScalarType GraphQLFloat = Scalars.GraphQLFloat
-  GraphQLScalarType GraphQLBigInteger = Scalars.GraphQLBigInteger
-  GraphQLScalarType GraphQLBigDecimal = Scalars.GraphQLBigDecimal
-  GraphQLScalarType GraphQLBoolean = Scalars.GraphQLBoolean
-  GraphQLScalarType GraphQLID = Scalars.GraphQLID
-  GraphQLScalarType GraphQLChar = Scalars.GraphQLChar
 
   /**
    * @param name
@@ -155,7 +142,7 @@ class ObjectTypeBuilder {
   /**
    * @since 0.1.0
    */
-  static class FieldBuilder {
+  static class FieldBuilder implements ScalarsAware {
 
     GraphQLFieldDefinition.Builder builder = GraphQLFieldDefinition.newFieldDefinition()
 

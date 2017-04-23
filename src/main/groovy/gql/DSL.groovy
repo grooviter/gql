@@ -7,6 +7,7 @@ import gql.dsl.ObjectTypeBuilder
 import graphql.GraphQL
 import graphql.ExecutionResult
 import graphql.schema.DataFetchingEnvironment
+import graphql.schema.GraphQLFieldDefinition
 import graphql.schema.GraphQLSchema
 import graphql.schema.GraphQLObjectType
 
@@ -108,5 +109,22 @@ final class DSL {
     QueryBuilder builderResult = builderSource.with(clos) ?: builderSource
 
     return builderResult.build()
+  }
+
+  /**
+   * Builds an instance of {@link GraphQLFieldDefinition}. You may want to create an standalone field
+   * definition to reuse that field, or maybe just to have more flexibility when creating your schema.
+   *
+   * @examples <a target="_blank" href="/gql/docs/html5/index.html#_adding_external_fields">Adding external fields</a>
+   * @param name the name of the field
+   * @return an instance of {@link GraphQLFieldDefinition}
+   * @since 0.1.1
+   */
+  static GraphQLFieldDefinition field(String name, @DelegatesTo(ObjectTypeBuilder.FieldBuilder) Closure dsl) {
+    def type = DSL.type('MockType') {
+      delegate.field(name, dsl)
+    }
+
+    return type.getFieldDefinition(name)
   }
 }
