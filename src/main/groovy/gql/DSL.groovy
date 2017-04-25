@@ -1,5 +1,6 @@
 package gql
 
+import gql.dsl.EnumTypeBuilder
 import gql.dsl.QueryBuilder
 import gql.dsl.SchemaBuilder
 import gql.dsl.ObjectTypeBuilder
@@ -7,6 +8,7 @@ import gql.dsl.ObjectTypeBuilder
 import graphql.GraphQL
 import graphql.ExecutionResult
 import graphql.schema.DataFetchingEnvironment
+import graphql.schema.GraphQLEnumType
 import graphql.schema.GraphQLFieldDefinition
 import graphql.schema.GraphQLSchema
 import graphql.schema.GraphQLObjectType
@@ -126,5 +128,21 @@ final class DSL {
     }
 
     return type.getFieldDefinition(name)
+  }
+
+  /**
+   * Builds an enumeration type. Enumeration types are a special kind of scalar that is restricted to a particular
+   * set of allowed values.
+   *
+   * @param name name of the enumeration type
+   * @param builder builder to create a {@link GraphQLEnumType}
+   * @since 0.1.3
+   */
+  static GraphQLEnumType 'enum'(String name, @DelegatesTo(EnumTypeBuilder) Closure builder) {
+    Closure<EnumTypeBuilder> clos = builder.clone() as Closure<EnumTypeBuilder>
+    EnumTypeBuilder builderSource = new EnumTypeBuilder().name(name)
+    EnumTypeBuilder builderResult = builderSource.with(clos) ?: builderSource
+
+    return builderResult.build()
   }
 }

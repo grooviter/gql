@@ -1,6 +1,12 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.1.3-alpha] - [2017-04-25]
+
+### Added
+
+- Add Enum type creation to DSL
+
 ## [0.1.2-alpha] - [2017-04-24]
 
 ### Added
