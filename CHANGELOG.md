@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Add Enum type creation to DSL
+- Scalar definition
 
 ## [0.1.2-alpha] - [2017-04-24]
 

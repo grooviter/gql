@@ -2,6 +2,7 @@ package gql
 
 import gql.dsl.EnumTypeBuilder
 import gql.dsl.QueryBuilder
+import gql.dsl.ScalarTypeBuilder
 import gql.dsl.SchemaBuilder
 import gql.dsl.ObjectTypeBuilder
 
@@ -10,6 +11,7 @@ import graphql.ExecutionResult
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLEnumType
 import graphql.schema.GraphQLFieldDefinition
+import graphql.schema.GraphQLScalarType
 import graphql.schema.GraphQLSchema
 import graphql.schema.GraphQLObjectType
 
@@ -123,7 +125,7 @@ final class DSL {
    * @since 0.1.1
    */
   static GraphQLFieldDefinition field(String name, @DelegatesTo(ObjectTypeBuilder.FieldBuilder) Closure dsl) {
-    def type = DSL.type('MockType') {
+    def type = type('MockType') {
       delegate.field(name, dsl)
     }
 
@@ -131,7 +133,7 @@ final class DSL {
   }
 
   /**
-   * Builds an enumeration type. Enumeration types are a special kind of scalar that is restricted to a particular
+   * Builds an enumeration type. Enumeration types are a special kind of type that is restricted to a particular
    * set of allowed values.
    *
    * @param name name of the enumeration type
@@ -142,6 +144,22 @@ final class DSL {
     Closure<EnumTypeBuilder> clos = builder.clone() as Closure<EnumTypeBuilder>
     EnumTypeBuilder builderSource = new EnumTypeBuilder().name(name)
     EnumTypeBuilder builderResult = builderSource.with(clos) ?: builderSource
+
+    return builderResult.build()
+  }
+
+  /**
+   * Builds a scalar type.
+   *
+   * @param name of the scalar type
+   * @param builder builder holding scalar constructs
+   * @return an instance of {@link GraphQLScalarType}
+   * @since 0.1.3
+   */
+  static GraphQLScalarType scalar(String name, @DelegatesTo(ScalarTypeBuilder) Closure builder) {
+    Closure<ScalarTypeBuilder> clos = builder.clone() as Closure<ScalarTypeBuilder>
+    ScalarTypeBuilder builderSource = new ScalarTypeBuilder().name(name)
+    ScalarTypeBuilder builderResult = builderSource.with(clos) ?: builderSource
 
     return builderResult.build()
   }

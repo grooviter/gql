@@ -1,0 +1,196 @@
+=== Scalars
+
+**GraphQL** scalars represent the basic data types, such integers, strings, floats.... Although GraphQL comes
+with set of default scalar types, sometimes it will be handy to be capable to declare our own. In order to be
+able to handle that custom scalar type, we need to define how that scalar type will be serialized, and deserialized.
+
+The following schema shows what is the path that a query execution follows from the query request until the scalar
+value has been serialized to send the response back to the client.
+
+[ditaa]
+....
+ +---------------+      +------------------+      +--------------+      +--------------+
+ |     Query     |      | Parsing literals |      | Parse inputs |      |    Query     |
+ |    Request    +----->|  (parseLiteral)  +----->| (parseValue) +----->|   Execution  +--------------+
+ |               |      |                  |      |              |      |              |              |
+ +---------------+      +------------------+      +--------------+      +--------------+              |
+                                                                                                      |
+                                                  +--------------+      +--------------+              |
+                                                  |  Serialize   |      |    Data      |              |
+                                                  |   Response   |<-----+   Response   |<-------------+
+                                                  | (serialize)  |      |              |
+                                                  +--------------+      +--------------+
+....
+
+Now, when you define a Scalar what you're doing is defining the deserialization functions:
+
+- `parseLiteral`: this function receives a query's argument used as literal (as oppose as using a query variable)
+- `parseValue`: this function receives a query's argument used as a variable
+
+You will also have to define the serialization method `serialize` which receives the result of executing a data
+fetcher or from a static value and converts back the value to something meaningul to the client.
+
+==== Declaration
+
+When declaring a type you can set every field in it, and most of the time they will be whether built-in
+scalars (`GraphQLString` or `GraphQLFloat`) or custom scalars like `GraphQLPrice`.
+
+[source, groovy]
+----
+include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=usingScalarInType, indent=0]
+----
+
+<1> **subject**: A string describing what is this order about
+<2> **units**: Number of items of this order
+<3> **price**: Unit price for each item
+
+The `GraphQLPrice` scalar has been defined as:
+
+[source, groovy]
+----
+include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=fullScalarDeclaration, indent=0]
+----
+
+<1> Setting scalar's name
+<2> Setting scalar's description (optional)
+<3> Setting `parseLiteral` function (optional)
+<4> Setting `parseValue` function (optional)
+<5> Setting `serialize` function (optional)
+
+Basically a scalar is a set of functions capable of deserializing a value, whether it's coming from a literal
+(parseLiteral) or a variable value (parseValue), and serializing a value as a response to the
+initial request (serialize).
+
+==== Deserialization
+
+===== Literals
+
+Now think of a situation where you want to set the price of a given product including the currency symbol, for instance
+ `1.23Y`. But of course it would be nice to have an automatic mechanism that keeps apart both number and symbol,
+ otherwise you could end up parsing that literal everywhere. So given the following query, which has a literal
+ containing a monetary concept:
+
+[source, groovy]
+.Query with a literal
+----
+include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=queryParseLiteral, indent=0]
+----
+
+We want to keep the information, but contained in a map so that we could handle the number and the symbol separately.
+For that we use the `parseLiteral` function.
+
+[source, groovy]
+.parseLiteral
+----
+include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=definingParseLiteral, indent=0]
+----
+
+The `parseLiteral` function will parse every literal of a `Price` scalar and it will separate the number from the
+symbol and if you use a data fetcher, it will receive a map instead of the initial literal.
+
+[sidebar]
+.parseLiteral parameter
+****
+Literal values are converted into a valid GraphQL abstract syntax tree node.
+
+[source, graphql]
+----
+{
+ myQuery(name: "john") {
+   name
+   address {
+     street
+   }
+ }
+----
+
+That means that a value like "john" in the previous query will be converted to a `graphql.language.StringValue`.
+Whereas in this example:
+
+[source, graphql]
+----
+{
+ addRange(min: 10, max: 20) {
+   id
+ }
+----
+
+`10` and `20` will be converted to a `graphql.language.IntValue`. So bottom line you need to be aware of the types
+of values that can be passed to your `parseLiteral` function, and create guard expressions to make sure you are
+receiving the type you expect, because the signature of the `parseLiteral` function receives an `Object` as parameter.
+
+To know more about the different node values you can receive in that method you should take a look at the implementation
+of `graphql-java` the package related to
+https://github.com/graphql-java/graphql-java/tree/master/src/main/java/graphql/language[GraphQL nodes]
+
+****
+
+
+[source, groovy]
+.fetcher
+----
+include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=parseLiteralFetcher, indent=0]
+----
+
+===== Variables
+
+Literals are a easy and quick way of passing values to a query, but, if you wanted to reuse query strings you would
+want to use variables. And what happen if the value you want to convert is in a variable value ? Check this
+query:
+
+[source, groovy]
+.Query with variables
+----
+include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=queryWithVariables, indent=0]
+----
+
+Now if look at the execution of the query:
+
+[source, groovy]
+.Query execution
+----
+include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=queryWithVariableExecution, indent=0]
+----
+
+Now how can I convert that string value coming from a variable to a map that I could receive in my data fetcher:
+
+[source, groovy]
+.parseValue
+----
+include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=queryWithVariablesScalar, indent=0]
+----
+
+IMPORTANT: `parseLiteral` parameters are simple Java parameters, not GraphQL node values as they were for the
+ `parseLiteral` function
+
+Finally I can get the parsed value in the data fetcher:
+
+[source, groovy]
+.fetcher
+----
+include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=queryWithVariablesFetcher, indent=0]
+----
+
+==== Serialization
+
+We've been reviewing how to parse data coming from a query to something we can deal with. Serialization would be
+the opposite action, convert a given value produced by us into something meaninful to the client.
+
+Following the same examples, we now the client is dealing with figures like: `1.23Y` or `1.25PTA`. But the problem
+is that we're producing tuples like: [unit:1.23, key: 'Y']. That cannot be rendered by the client, we need to convert
+a given tuple to a meaninful literal with the `serialize` function.
+
+[source, groovy]
+----
+include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=serializingScalar, indent=0]
+----
+
+<1> Declaring the `Price` scalar type
+<2> Adding a description
+<3> Adding `serialize` function
+<4> Value return as response
+
+The function passed as an argument to the `serialize` method will take whatever value is coming from the data fetcher
+ or static value of the field and it will return the way you'd like to serialize that value to the client.
+
+

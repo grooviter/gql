@@ -5,3 +5,5 @@ include::dsl/types.adoc[]
 include::dsl/schema.adoc[]
 
 include::dsl/queries.adoc[]
+
+include::dsl/scalars.adoc[]
