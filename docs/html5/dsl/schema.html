@@ -545,6 +545,38 @@ how that data is going to be retrieved. The schema defines:</p>
 creating/modifying data. Queries are declared as fields under the <strong>query</strong> node and mutations are also declared as
 fields under the <strong>mutation</strong> node:</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+Unresolved directive <span class="keyword">in</span> schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=<span class="integer">0</span>]
+
+Unresolved directive <span class="keyword">in</span> schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=queriesAndMutations, indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Queries</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Mutations</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Altough mutation node is optional, the query node is mandatory (could be empty but should be present)
+</td>
+</tr>
+</table>
+</div>
 <div class="sect3">
 <h4 id="_static_values">Static values</h4>
 <div class="paragraph">
@@ -716,7 +748,7 @@ you to take a look at the source code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-23 22:45:19 +00:00
+Last updated 2017-04-26 18:01:48 +00:00
 </div>
 </div>
 </body>
