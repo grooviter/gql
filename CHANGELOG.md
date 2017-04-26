@@ -1,12 +1,14 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
-## [0.1.3-alpha] - [2017-04-25]
+## [0.1.3-alpha] - [2017-04-27]
 
 ### Added
 
 - Add Enum type creation to DSL
 - Scalar definition
+- Add more documentation to existent sections
+- Some minor fixes
 
 ## [0.1.2-alpha] - [2017-04-24]
 
