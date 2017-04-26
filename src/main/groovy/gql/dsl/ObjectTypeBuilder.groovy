@@ -189,12 +189,13 @@ class ObjectTypeBuilder implements ScalarsAware {
     /**
      * @since 0.1.0
      */
-    FieldBuilder argument(String name, @DelegatesTo(GraphQLArgument) Closure dsl) {
+    FieldBuilder argument(String name, @DelegatesTo(value = GraphQLArgument.Builder, strategy = Closure.DELEGATE_FIRST) Closure dsl) {
       Closure<GraphQLArgument.Builder> clos = dsl.clone() as Closure<GraphQLArgument.Builder>
       GraphQLArgument.Builder builderSource = GraphQLArgument
         .newArgument()
         .name(name)
         .description(name)
+
       GraphQLArgument.Builder builderResult = builderSource.with(clos) ?: builderSource
 
       builder.argument(builderResult.build())
