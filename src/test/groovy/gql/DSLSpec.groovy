@@ -618,11 +618,12 @@ class DSLSpec extends Specification {
     List<String> people = []
 
     and: 'building the schema'
+    // tag::queriesAndMutations[]
     GraphQLSchema schema = DSL.schema {
-      query('QueryRoot') {
+      query('QueryRoot') { // <1>
         // no queries
       }
-      mutation('MutationRoot') {
+      mutation('MutationRoot') { // <2>
         field('insert') {
           type filmType
           fetcher { DataFetchingEnvironment env ->
@@ -636,6 +637,7 @@ class DSLSpec extends Specification {
         }
       }
     }
+    // end::queriesAndMutations[]
 
     and: 'executing a queryString against that schema'
     def mutation = '''

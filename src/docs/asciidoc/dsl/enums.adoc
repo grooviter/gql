@@ -1,0 +1,22 @@
+=== Enums
+
+Also called Enums, enumeration types are a special kind of scalar that is restricted to a particular set of allowed
+values. You can define a enum type with `DSL.enum`:
+
+[source, groovy]
+----
+import gql.DSL
+import graphql.schema.GraphQLEnumType
+
+include::{testMain}/gql/dsl/EnumTypeSpec.groovy[tags=declaringEnum, indent=0]
+----
+
+Then you can use that type as any other type for your type's fields
+
+[source, groovy]
+----
+import gql.DSL
+import graphql.schema.GraphQLObjectType
+
+include::{testMain}/gql/dsl/EnumTypeSpec.groovy[tags=enumTypeInclusion, indent=0]
+----

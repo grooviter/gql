@@ -29,7 +29,8 @@ class EnumTypeSpec extends Specification {
 
   void 'build a type using an enum type'() {
     given:
-    GraphQLEnumType countries = DSL.enum('Countries') {
+    // tag::declaringEnum[]
+    GraphQLEnumType CountryEnumType = DSL.enum('Countries') {
       description 'european countries'
 
       value 'SPAIN', 'es'
@@ -37,11 +38,14 @@ class EnumTypeSpec extends Specification {
       value 'GERMANY', 'de'
       value 'UK', 'uk'
     }
+    // end::declaringEnum[]
 
     when: 'building the type'
+    // tag::enumTypeInclusion[]
     GraphQLObjectType journey = DSL.type('Journey') {
-      field 'country', countries
+      field 'country', CountryEnumType
     }
+    // end::enumTypeInclusion[]
 
     then: 'we should be able to see the enum type'
     journey.getFieldDefinition('country')

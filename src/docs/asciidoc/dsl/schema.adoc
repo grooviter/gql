@@ -10,6 +10,18 @@ Data is exposed as **queries** or **mutations** depending on whether the action 
 creating/modifying data. Queries are declared as fields under the **query** node and mutations are also declared as
 fields under the **mutation** node:
 
+[source, groovy]
+----
+import gql.DSL
+include::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=0]
+
+include::{testMain}/gql/DSLSpec.groovy[tags=queriesAndMutations, indent=0]
+----
+<1> Queries
+<2> Mutations
+
+IMPORTANT: Altough mutation node is optional, the query node is mandatory (could be empty but should be present)
+
 ==== Static values
 
 Sometimes you may want to expose constant values, values that are unlikely to change.

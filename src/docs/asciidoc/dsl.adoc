@@ -2,8 +2,12 @@
 
 include::dsl/types.adoc[]
 
+include::dsl/scalars.adoc[]
+
+include::dsl/enums.adoc[]
+
 include::dsl/schema.adoc[]
 
 include::dsl/queries.adoc[]
 
-include::dsl/scalars.adoc[]
+
