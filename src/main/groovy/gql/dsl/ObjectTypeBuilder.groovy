@@ -114,13 +114,6 @@ class ObjectTypeBuilder implements ScalarsAware {
   }
 
   /**
-   * @since 0.1.0
-   */
-  static ObjectTypeBuilder newObject() {
-    return new ObjectTypeBuilder()
-  }
-
-  /**
    *
    * @param type
    * @return

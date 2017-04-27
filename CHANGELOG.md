@@ -7,6 +7,10 @@ All notable changes to this project will be documented in this file.
 
 - Input types
 
+### Other
+
+- Removing unused code
+
 ## [0.1.3-alpha] - [2017-04-27]
 
 ### Added
