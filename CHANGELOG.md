@@ -1,6 +1,12 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.1.4-alpha] - [2017-04-27]
+
+### Added
+
+- Input types
+
 ## [0.1.3-alpha] - [2017-04-27]
 
 ### Added

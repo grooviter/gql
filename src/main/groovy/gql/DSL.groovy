@@ -1,6 +1,7 @@
 package gql
 
 import gql.dsl.EnumTypeBuilder
+import gql.dsl.InputTypeBuilder
 import gql.dsl.QueryBuilder
 import gql.dsl.ScalarTypeBuilder
 import gql.dsl.SchemaBuilder
@@ -11,6 +12,7 @@ import graphql.ExecutionResult
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLEnumType
 import graphql.schema.GraphQLFieldDefinition
+import graphql.schema.GraphQLInputObjectType
 import graphql.schema.GraphQLScalarType
 import graphql.schema.GraphQLSchema
 import graphql.schema.GraphQLObjectType
@@ -160,6 +162,22 @@ final class DSL {
     Closure<ScalarTypeBuilder> clos = builder.clone() as Closure<ScalarTypeBuilder>
     ScalarTypeBuilder builderSource = new ScalarTypeBuilder().name(name)
     ScalarTypeBuilder builderResult = builderSource.with(clos) ?: builderSource
+
+    return builderResult.build()
+  }
+
+  /**
+   * Builds an input type
+   *
+   * @param name name of the input type
+   * @param builder builder to create a {@link GraphQLInputObjectType}
+   * @return an instance of {@link GraphQLInputObjectType}
+   * @since 0.1.4
+   */
+  static GraphQLInputObjectType input(String name, @DelegatesTo(InputTypeBuilder) Closure dsl) {
+    Closure<InputTypeBuilder> clos = dsl.clone() as Closure<InputTypeBuilder>
+    InputTypeBuilder builderSource = new InputTypeBuilder().name(name)
+    InputTypeBuilder builderResult = builderSource.with(clos) ?: builderSource
 
     return builderResult.build()
   }

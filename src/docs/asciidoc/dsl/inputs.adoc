@@ -1,0 +1,29 @@
+=== Inputs
+
+Apart from using scalar values, like enums or string when passing arguments to a given query
+you can also easily pass complex objects. This is particularly valuable in the case of mutations, where
+you might want to pass in a whole object to be created. In GraphQL that means using input types.
+
+Lets say we have a query to filter our mail inbox by `from` and `to`:
+
+[source, groovy]
+.query
+----
+include::{testMain}/gql/dsl/InputTypeSpec.groovy[tags=inputTypeQuery, indent=0]
+----
+
+We can model the `MailFilter` input type as:
+
+[source, groovy]
+.declaration
+----
+include::{testMain}/gql/dsl/InputTypeSpec.groovy[tags=inputTypeDeclaration, indent=0]
+----
+
+And finally when executing the query we can pass a map with the mail filter values.
+
+[source, groovy]
+.execution
+----
+include::{testMain}/gql/dsl/InputTypeSpec.groovy[tags=inputTypeQueryExecution, indent=0]
+----
