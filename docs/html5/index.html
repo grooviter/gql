@@ -513,7 +513,7 @@ table.CodeRay td.code>pre{padding:0}
 <div id="header">
 <h1>GQL</h1>
 <div class="details">
-<span id="revnumber">version 0.1.3-alpha</span>
+<span id="revnumber">version 0.1.4-alpha</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -548,10 +548,11 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_fetchers">3.4.2. Fetchers</a></li>
 </ul>
 </li>
-<li><a href="#_queries">3.5. Queries</a>
+<li><a href="#_inputs">3.5. Inputs</a></li>
+<li><a href="#_queries">3.6. Queries</a>
 <ul class="sectlevel3">
-<li><a href="#_execute_queries">3.5.1. Execute queries</a></li>
-<li><a href="#_query_string">3.5.2. Query string</a></li>
+<li><a href="#_execution">3.6.1. Execution</a></li>
+<li><a href="#_query_builders">3.6.2. Query builders</a></li>
 </ul>
 </li>
 </ul>
@@ -1598,16 +1599,155 @@ you to take a look at the source code
 </div>
 </div>
 <div class="sect2">
-<h3 id="_queries">3.5. Queries</h3>
+<h3 id="_inputs">3.5. Inputs</h3>
 <div class="paragraph">
-<p><strong>GQL</strong> allows you to execute both string queries or queries built via DSL
+<p>Apart from using scalar values, like enums or string when passing arguments to a given query
+you can also easily pass complex objects. This is particularly valuable in the case of mutations, where
+you might want to pass in a whole object to be created. In GraphQL that means using input types.</p>
+</div>
+<div class="paragraph">
+<p>Lets say we have a query to filter our mail inbox by <code>from</code> and <code>to</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">query</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> query = <span class="string"><span class="delimiter">'''</span><span class="content">
+query QueryMail($filter: MailFilter) {
+    result: searchByFilter(filter: $filter) {
+       subject
+    }
+}
+</span><span class="delimiter">'''</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We can model the <code>MailFilter</code> input type as:</p>
+</div>
+<div class="listingblock">
+<div class="title">declaration</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">GraphQLInputObjectType MailFilterType = DSL.input(<span class="string"><span class="delimiter">'</span><span class="content">MailFilter</span><span class="delimiter">'</span></span>) {
+  field <span class="string"><span class="delimiter">'</span><span class="content">from</span><span class="delimiter">'</span></span>, GraphQLString
+  field <span class="string"><span class="delimiter">'</span><span class="content">to</span><span class="delimiter">'</span></span>, GraphQLString
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And finally when executing the query we can pass a map with the mail filter values.</p>
+</div>
+<div class="listingblock">
+<div class="title">execution</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">ExecutionResult result =
+  DSL.execute(schema, query, [<span class="key">filter</span>: [<span class="key">from</span>: <span class="string"><span class="delimiter">'</span><span class="content">me@somedomain.com</span><span class="delimiter">'</span></span>, <span class="key">to</span>: <span class="string"><span class="delimiter">'</span><span class="content">you@somedomain.com</span><span class="delimiter">'</span></span>]])</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_queries">3.6. Queries</h3>
+<div class="sect3">
+<h4 id="_execution">3.6.1. Execution</h4>
+<div class="sect4">
+<h5 id="_withouth_arguments">Withouth arguments</h5>
+<div class="paragraph">
+<p>In order to execute a given query string you can use <code>DSL.execute(schema, string)</code>. Given a query:</p>
+</div>
+<div class="listingblock">
+<div class="title">query</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> queryString = <span class="string"><span class="delimiter">'''</span><span class="content">
+  {
+    lastFilm {
+      title
+    }
+  }
+</span><span class="delimiter">'''</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can execute it against a given schema as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+
+ExecutionResult result = DSL.execute(schema, queryString) <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, ?&gt; dataMap = result.data <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="predefined-type">List</span>&lt;?&gt; errors = result.errors <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The result of executing a query is a <code>graphql.ExecutionResult</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The result could contain some data</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Or could contain GraphQL errors</td>
+</tr>
+</table>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">ExecutionResult#getData()</div>
+<div class="paragraph">
+<p>ExecutionResult <code>getData()</code> method has the following signature</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">&lt;T&gt; T getData()</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Which means that, in a variable declaration, the right operand will be automatically casted to the type of the
+left operand. This is useful if you want to use static compilation, but also dangerous if you&#8217;re not sure of the type
+data is going to return.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_with_arguments">With arguments</h5>
+<div class="paragraph">
+<p>In order to execute a given query with arguments you can use <code>DSL.execute(schema, string, variables)</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">query</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> queryString = <span class="string"><span class="delimiter">'''</span><span class="content">
+  query FindBondByYear($year: String) {
+    byYear(year: $year) {
+      year
+      title
+    }
+  }
+</span><span class="delimiter">'''</span></span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">execution</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> result = DSL.execute(schema, queryString, [<span class="key">year</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">1962</span><span class="delimiter">&quot;</span></span>])</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_query_builders">3.6.2. Query builders</h4>
+<div class="paragraph">
+<p><strong>GQL</strong> allows you to execute queries directly or to build them to use them later via DSL
 builder. The former is useful if you already have the queries and you
 are sure they work as expected. The latter is a safer way of building
 queries because it gives you some sanity checks based on the types
 used.</p>
 </div>
-<div class="sect3">
-<h4 id="_execute_queries">3.5.1. Execute queries</h4>
+<div class="sect4">
+<h5 id="_execute_queries">Execute queries</h5>
 <div class="paragraph">
 <p>If you&#8217;re using the underlying <strong>GQL</strong> GraphQL engine to execute your queries, it would be nice
 to be able to declare and execute queries in one shot right ?</p>
@@ -1640,8 +1780,8 @@ ExecutionResult result = DSL.execute(schema) {
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_query_string">3.5.2. Query string</h4>
+<div class="sect4">
+<h5 id="_query_string">Query string</h5>
 <div class="paragraph">
 <p>Sometimes your exposed GraphQL schema may be backed up by another third party GraphQL engine implementation, but
 instead of writing or queries by hand we still may want to use the DSL to build the query and then use the resulting
@@ -1669,6 +1809,7 @@ string against the other engine.</p>
     alias <span class="string"><span class="delimiter">'</span><span class="content">last</span><span class="delimiter">'</span></span>
   }
 }</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -1703,7 +1844,7 @@ string against the other engine.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.1.3-alpha<br>
+Version 0.1.4-alpha<br>
 Last updated 2017-04-23 22:48:50 +00:00
 </div>
 </div>
