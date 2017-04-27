@@ -190,7 +190,7 @@ class DSLSpec extends Specification {
   }
 
   void 'execute query with fetcher (function)'() {
-    when: 'building the type'
+    given: 'a type'
     GraphQLObjectType filmType = DSL.type('film') {
       field('title') {
         description 'title of the film'
@@ -212,22 +212,26 @@ class DSLSpec extends Specification {
     }
     // end::schemaWithFetcherAsFunctionReference[]
 
-    and: 'executing a queryString against that schema'
-    Map<String,Map> dataMap = DSL
-      .execute(schema, queryString)
-      .data
-
-    then: 'we should get the expected name'
-    dataMap.lastFilm.title == 'SPECTRE'
-
-    where: 'executed queryString is'
-    queryString = '''
+    and: 'the query'
+    // tag::executeQueryStringNoArgumentsQuery[]
+    def queryString = '''
       {
         lastFilm {
           title
         }
-      }
+      }          
     '''
+    // end::executeQueryStringNoArgumentsQuery[]
+
+    when: 'executing a queryString against that schema'
+    // tag::executeQueryStringNoArguments[]
+    ExecutionResult result = DSL.execute(schema, queryString) // <1>
+    Map<String, ?> dataMap = result.data // <2>
+    List<?> errors = result.errors // <3>
+    // end::executeQueryStringNoArguments[]
+
+    then: 'we should get the expected name'
+    dataMap.lastFilm.title == 'SPECTRE'
   }
 
   void 'execute query with fetcher (closure)'() {
@@ -309,7 +313,7 @@ class DSLSpec extends Specification {
   }
 
   void 'execute parametrized query'() {
-    when: 'building the type'
+    given: 'a type'
     GraphQLObjectType filmType = DSL.type('film') {
       field('title') {
         description 'title of the film'
@@ -321,7 +325,7 @@ class DSLSpec extends Specification {
       }
     }
 
-    and: 'building the schema'
+    and: 'a schema'
     GraphQLSchema schema = DSL.schema {
       query('QueryRoot') {
         field('byYear') {
@@ -334,15 +338,9 @@ class DSLSpec extends Specification {
       }
     }
 
-    and: 'executing a queryString against that schema'
-    def result = DSL.execute(schema, queryString, [year: "1962"])
-
-    then: 'we should get the expected name'
-    !result.errors
-    result.data.byYear.title == 'DR. NO'
-
-    where: 'executed queryString is'
-    queryString = '''
+    and: 'a query'
+    // tag::queryWithArguments[]
+    def queryString = '''
       query FindBondByYear($year: String) {
         byYear(year: $year) {
           year
@@ -350,6 +348,16 @@ class DSLSpec extends Specification {
         }
       }
     '''
+    // end::queryWithArguments[]
+
+    when: 'executing a queryString against that schema'
+    // tag::queryWithArgumentsExecution[]
+    def result = DSL.execute(schema, queryString, [year: "1962"])
+    // end::queryWithArgumentsExecution[]
+
+    then: 'we should get the expected name'
+    !result.errors
+    result.data.byYear.title == 'DR. NO'
   }
 
   void 'execute parametrized query embedding args'() {
