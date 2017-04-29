@@ -4,17 +4,14 @@ import graphql.schema.DataFetcher
 import graphql.schema.GraphQLArgument
 import graphql.schema.GraphQLFieldDefinition
 import graphql.schema.GraphQLInterfaceType
-import graphql.schema.GraphQLList
-import graphql.schema.GraphQLNonNull
 import graphql.schema.GraphQLObjectType
 import graphql.schema.GraphQLOutputType
-import graphql.schema.GraphQLScalarType
 
 /**
  * @since 0.1.0
  */
 @SuppressWarnings('PropertyName')
-class ObjectTypeBuilder implements ScalarsAware {
+class ObjectTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
 
   GraphQLObjectType.Builder type = GraphQLObjectType.newObject()
 
@@ -114,25 +111,6 @@ class ObjectTypeBuilder implements ScalarsAware {
   }
 
   /**
-   *
-   * @param type
-   * @return
-   * @since 0.1.0
-   */
-  static <T extends GraphQLOutputType> T nonNull(T type) {
-    return new GraphQLNonNull(type)
-  }
-
-  /**
-   * @param type
-   * @return
-   * @since 0.1.0
-   */
-  static <T extends GraphQLOutputType> T list(T type) {
-    return new GraphQLList(type)
-  }
-
-  /**
    * @since 0.1.0
    */
   static class FieldBuilder implements ScalarsAware {
@@ -152,14 +130,6 @@ class ObjectTypeBuilder implements ScalarsAware {
      */
     FieldBuilder description(String description) {
       builder.description(description)
-      return this
-    }
-
-    /**
-     * @since 0.1.0
-     */
-    FieldBuilder type(GraphQLScalarType type) {
-      builder.type(type)
       return this
     }
 

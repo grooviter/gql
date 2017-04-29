@@ -1,19 +1,15 @@
 package gql.dsl
 
-import graphql.schema.DataFetcher
 import graphql.schema.GraphQLInputObjectField
 import graphql.schema.GraphQLInputObjectType
 import graphql.schema.GraphQLInputType
-import graphql.schema.GraphQLList
-import graphql.schema.GraphQLNonNull
-import graphql.schema.GraphQLScalarType
 
 /**
  * Builds a new {@link graphql.schema.GraphQLInputObjectType}
  *
  * @since 0.1.4
  */
-class InputTypeBuilder implements ScalarsAware {
+class InputTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
 
   GraphQLInputObjectType.Builder type = GraphQLInputObjectType.newInputObject()
 
@@ -82,46 +78,10 @@ class InputTypeBuilder implements ScalarsAware {
   }
 
   /**
-   *
-   * @param name
-   * @param fieldType
-   * @return
-   * @since 0.1.4
-   */
-  InputTypeBuilder field(String name, GraphQLScalarType fieldType) {
-    FieldBuilder builderSource = new FieldBuilder()
-      .name(name)
-      .description("description of field $name")
-      .type(fieldType)
-
-    this.type = type.field(builderSource.build())
-    return this
-  }
-
-  /**
    * @since 0.1.4
    */
   GraphQLInputObjectType build() {
     return this.type.build()
-  }
-
-  /**
-   *
-   * @param type
-   * @return
-   * @since 0.1.4
-   */
-  static <T extends GraphQLInputType> T nonNull(T type) {
-    return new GraphQLNonNull(type)
-  }
-
-  /**
-   * @param type
-   * @return
-   * @since 0.1.4
-   */
-  static <T extends GraphQLInputType> T list(T type) {
-    return new GraphQLList(type)
   }
 
   /**
@@ -144,14 +104,6 @@ class InputTypeBuilder implements ScalarsAware {
      */
     FieldBuilder description(String description) {
       builder.description(description)
-      return this
-    }
-
-    /**
-     * @since 0.1.4
-     */
-    FieldBuilder type(GraphQLScalarType type) {
-      builder.type(type)
       return this
     }
 
