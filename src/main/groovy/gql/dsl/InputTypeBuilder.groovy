@@ -14,8 +14,10 @@ class InputTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
   GraphQLInputObjectType.Builder type = GraphQLInputObjectType.newInputObject()
 
   /**
-   * @param name
-   * @return
+   * Sets the input type name
+   *
+   * @param name the type name
+   * @return the current builder instance
    * @since 0.1.4
    */
   InputTypeBuilder name(String name) {
@@ -24,9 +26,10 @@ class InputTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
   }
 
   /**
+   * Sets the input description
    *
-   * @param description
-   * @return
+   * @param description the type description
+   * @return the current builder instance
    * @since 0.1.4
    */
   InputTypeBuilder description(String description) {
@@ -35,6 +38,11 @@ class InputTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
   }
 
   /**
+   * Adds a new {@link GraphQLInputObjectField} to the resulting
+   * input type
+   *
+   * @param fieldDefinition an instance of {@link GraphQLInputObjectField}
+   * @return the current builder instance
    * @since 0.1.4
    */
   InputTypeBuilder addField(GraphQLInputObjectField fieldDefinition) {
@@ -43,10 +51,12 @@ class InputTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
   }
 
   /**
+   * Adds a new {@link GraphQLInputObjectField} to the resulting
+   * input type
    *
-   * @param name
-   * @param dsl
-   * @return
+   * @param name the new field name
+   * @param dsl the nested builder responsible for building an instance of {@link GraphQLInputObjectField}.
+   * @return the current builder instance
    * @since 0.1.4
    */
   InputTypeBuilder field(String name, @DelegatesTo(FieldBuilder) Closure dsl) {
@@ -61,10 +71,12 @@ class InputTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
   }
 
   /**
+   * Adds a new {@link GraphQLInputObjectField} to the resulting
+   * input type
    *
-   * @param name
-   * @param fieldType
-   * @return
+   * @param name the field name
+   * @param fieldType the new field type. It should be type of {@link GraphQLInputType}
+   * @return the current builder instance
    * @since 0.1.4
    */
   InputTypeBuilder field(String name, GraphQLInputType fieldType) {
@@ -78,6 +90,9 @@ class InputTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
   }
 
   /**
+   * Returns a {@link GraphQLInputObjectType} built by this builder
+   *
+   * @return an instance of {@link GraphQLInputObjectType}
    * @since 0.1.4
    */
   GraphQLInputObjectType build() {
@@ -85,6 +100,8 @@ class InputTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
   }
 
   /**
+   * Builds an instance of {@link GraphQLInputObjectField}
+   *
    * @since 0.1.4
    */
   static class FieldBuilder implements ScalarsAware {
@@ -92,6 +109,10 @@ class InputTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
     GraphQLInputObjectField.Builder builder = GraphQLInputObjectField.newInputObjectField()
 
     /**
+     * Sets the field name
+     *
+     * @param name field name
+     * @return an instance of current builder
      * @since 0.1.4
      */
     FieldBuilder name(String name) {
@@ -100,6 +121,10 @@ class InputTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
     }
 
     /**
+     * Sets the field description
+     *
+     * @param description field description
+     * @return an instance of current builder
      * @since 0.1.4
      */
     FieldBuilder description(String description) {
@@ -108,6 +133,10 @@ class InputTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
     }
 
     /**
+     * Sets the field type
+     *
+     * @param an instance of current builder
+     * @return an instance of current builder
      * @since 0.1.4
      */
     FieldBuilder type(GraphQLInputType type) {
@@ -116,6 +145,10 @@ class InputTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
     }
 
     /**
+     * Returns an instance of {@link GraphQLInputObjectField} built
+     * by the current builder
+     *
+     * @return an instance of {@link GraphQLInputObjectField}
      * @since 0.1.4
      */
     GraphQLInputObjectField build() {
