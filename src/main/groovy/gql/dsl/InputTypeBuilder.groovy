@@ -5,7 +5,7 @@ import graphql.schema.GraphQLInputObjectType
 import graphql.schema.GraphQLInputType
 
 /**
- * Builds a new {@link graphql.schema.GraphQLInputObjectType}
+ * Builds a new {@link GraphQLInputObjectType}
  *
  * @since 0.1.4
  */
