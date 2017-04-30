@@ -405,20 +405,11 @@ class DSLSpec extends Specification {
   }
 
   void 'execute static typed query'() {
-    when: 'building the type'
+    given: 'building the type'
     GraphQLObjectType filmType = DSL.type('film') {
-      field('title') {
-        description 'title of the film'
-        type GraphQLString
-      }
-      field('year') {
-        description 'title of the film'
-        type GraphQLString
-      }
-      field('bond') {
-        description 'Actor playing James Bond'
-        type GraphQLString
-      }
+      field 'title', GraphQLString
+      field 'year', GraphQLString
+      field 'bond', GraphQLString
     }
 
     and: 'building the schema'
@@ -436,37 +427,44 @@ class DSLSpec extends Specification {
     }
     // end::findByYearSchema[]
 
-    and: 'executing a queryString against that schema'
-    // tag::staticQuery[]
+    when: 'executing a queryString against that schema'
+    // tag::staticQueryChecked[]
     ExecutionResult result = DSL.execute(schema) {
-      query('byYear', [year: '1962']) {
-        returns(Film) {
+      query('byYear', [year: '1962']) { // <1>
+        returns(Film) { // <2>
           title
           year
         }
-        alias 'first'
-      }
 
-      query('byYear', [year: '2015']) {
-        returns {
+        alias 'first' // <3>
+      }
+    }
+    // end::staticQueryChecked[]
+
+    then: 'we should get the expected values'
+    result.data.first.title == 'DR. NO'
+    result.data.first.year == '1962'
+
+
+    when:
+    // tag::staticQueryUnchecked[]
+    ExecutionResult result2 = DSL.execute(schema) {
+      query('byYear', [year: '2015']) { // <1>
+        returns { // <2>
           title
           year
           bond
         }
-        alias 'last'
+
+        alias 'last' // <3>
       }
     }
-    // end::staticQuery[]
+    // end::staticQueryUnchecked[]
 
-    then: 'there should not be any error'
-    !result.errors
-
-    and: 'we should get the expected values'
-    result.data.first.title == 'DR. NO'
-    result.data.first.year == '1962'
-    result.data.last.title == 'SPECTRE'
-    result.data.last.year == '2015'
-    result.data.last.bond == 'Daniel Craig'
+    then:
+    result2.data.last.title == 'SPECTRE'
+    result2.data.last.year == '2015'
+    result2.data.last.bond == 'Daniel Craig'
   }
 
   void 'fails to retrieve wrong type fields'() {
@@ -590,7 +588,7 @@ class DSLSpec extends Specification {
       // tag::grabExample[]
       import gql.DSL
 
-      def filmType = DSL.type('Film') { // <1>
+      def GraphQLFilm = DSL.type('Film') { // <1>
         field 'title', GraphQLString
         field 'year', GraphQLInt
       }
@@ -598,20 +596,24 @@ class DSLSpec extends Specification {
       def schema = DSL.schema { // <2>
         queries {
           field('lastFilm') {
-            type filmType
+            type GraphQLFilm
             staticValue(title: 'SPECTRE', year: 2015)
           }
         }
       }
-
-      def result = DSL.execute(schema) { // <3>
-          query('lastFilm') {
-            returns {
-              title
-            }
+      
+      def query = """
+        {
+          lastFilm {
+            year
+            title
           }
-      }
+        }
+      """
 
+      def result = DSL.execute(schema, query) // <3>
+
+      assert result.data.lastFilm.year == 2015
       assert result.data.lastFilm.title == 'SPECTRE'
      // end::grabExample[]
     '''

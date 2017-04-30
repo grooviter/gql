@@ -73,9 +73,24 @@ to be able to declare and execute queries in one shot right ?
 ----
 import gql.DSL
 include::{testMain}/gql/DSLSpec.groovy[tags=importExecutionResult, indent=0]
-
-include::{testMain}/gql/DSLSpec.groovy[tags=staticQuery, indent=0]
+include::{testMain}/gql/DSLSpec.groovy[tags=staticQueryChecked, indent=0]
 ----
+
+<1> Defines a `query` with name `byYear` mapping query parameters
+<2> Checks that the fields used in the close are present in type `Film`. Uses static check to make sure fields are
+present in type `Film`
+<3> Defines a given alias to the query result
+
+[source, groovy]
+----
+import gql.DSL
+include::{testMain}/gql/DSLSpec.groovy[tags=importExecutionResult, indent=0]
+include::{testMain}/gql/DSLSpec.groovy[tags=staticQueryUnchecked, indent=0]
+----
+
+<1> Defines a `query` with name `lastFilm` mapping variables
+<2> Declares a set of fields but are not checked
+<3> Defines a given alias to the query result
 
 ===== Query string
 
