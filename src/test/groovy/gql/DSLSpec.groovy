@@ -167,7 +167,7 @@ class DSLSpec extends Specification {
     when: 'building the type'
     // tag::simpleSchema[]
     GraphQLSchema schema = DSL.schema { // <1>
-      query('helloQuery') { // <2>
+      queries('helloQuery') { // <2>
         description'simple droid'// <3>
 
         field('hello') { // <4>
@@ -201,7 +201,7 @@ class DSLSpec extends Specification {
     and: 'building the schema'
     // tag::schemaWithFetcherAsFunctionReference[]
     GraphQLSchema schema = DSL.schema {
-      query('QueryRoot') {
+      queries('QueryRoot') {
         description'queries over James Bond'
         field('lastFilm') {
           description'last film'
@@ -246,7 +246,7 @@ class DSLSpec extends Specification {
     and: 'building the schema'
     // tag::schemaWithFetcherAsClosure[]
     GraphQLSchema schema = DSL.schema {
-      query('QueryRoot') {
+      queries('QueryRoot') {
         description'queries over James Bond'
         field('lastFilm') {
           description'last film'
@@ -286,7 +286,7 @@ class DSLSpec extends Specification {
 
     and: 'building the schema'
     GraphQLSchema schema = DSL.schema {
-      query('QueryRoot') {
+      queries('QueryRoot') {
         description'queries over James Bond'
         field('lastFilm') {
           description'last film'
@@ -327,7 +327,7 @@ class DSLSpec extends Specification {
 
     and: 'a schema'
     GraphQLSchema schema = DSL.schema {
-      query('QueryRoot') {
+      queries {
         field('byYear') {
           type filmType
           fetcher Queries.&findByYear
@@ -375,7 +375,7 @@ class DSLSpec extends Specification {
 
     and: 'building the schema'
     GraphQLSchema schema = DSL.schema {
-      query('QueryRoot') {
+      queries {
         field('byYear') {
           type filmType
           fetcher Queries.&findByYear
@@ -424,7 +424,7 @@ class DSLSpec extends Specification {
     and: 'building the schema'
     // tag::findByYearSchema[]
     GraphQLSchema schema = DSL.schema {
-      query('QueryRoot') {
+      queries {
         field('byYear') {
           type filmType
           fetcher Queries.&findByYear
@@ -488,7 +488,7 @@ class DSLSpec extends Specification {
 
     and: 'building the schema'
     GraphQLSchema schema = DSL.schema {
-      query('QueryRoot') {
+      queries {
         field('byYear') {
           type filmType
           fetcher Queries.&findByYear
@@ -537,7 +537,7 @@ class DSLSpec extends Specification {
 
     and: 'building the schema'
     GraphQLSchema schema = DSL.schema {
-      query('QueryRoot') {
+      queries {
         field('byYear') {
           type filmType
           fetcher Queries.&findByYear
@@ -596,7 +596,7 @@ class DSLSpec extends Specification {
       }
 
       def schema = DSL.schema { // <2>
-        query('queryRoot') {
+        queries {
           field('lastFilm') {
             type filmType
             staticValue(title: 'SPECTRE', year: 2015)
@@ -628,10 +628,10 @@ class DSLSpec extends Specification {
     and: 'building the schema'
     // tag::queriesAndMutations[]
     GraphQLSchema schema = DSL.schema {
-      query('QueryRoot') { // <1>
+      queries { // <1>
         // no queries
       }
-      mutation('MutationRoot') { // <2>
+      mutations { // <2>
         field('insert') {
           type filmType
           fetcher { DataFetchingEnvironment env ->
@@ -699,7 +699,7 @@ class DSLSpec extends Specification {
 
     and: 'a schema that returns a static person value'
     GraphQLSchema schema = DSL.schema {
-      query('queryRoot') {
+      queries {
         field('director') {
           type people
           staticValue([name: 'Peter', age: 22])

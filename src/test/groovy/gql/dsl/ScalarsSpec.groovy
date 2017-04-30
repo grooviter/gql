@@ -31,7 +31,7 @@ class ScalarsSpec extends Specification {
 
     and: 'a schema'
     def schema = DSL.schema {
-      query('queryRoot') {
+      queries {
         field('orders') {
           type list(orderType)
           fetcher { env -> orderList }
@@ -90,7 +90,7 @@ class ScalarsSpec extends Specification {
     and: 'a schema'
     // tag::parseLiteralFetcher[]
     def schema = DSL.schema {
-      query('queryRoot') {
+      queries {
         field('changeOrderPrice') {
           type orderType
           fetcher { env ->
@@ -150,7 +150,7 @@ class ScalarsSpec extends Specification {
     and: 'a schema'
     // tag::queryWithVariablesFetcher[]
     def schema = DSL.schema {
-      query('queryRoot') {
+      queries {
         field('changeOrderPrice') {
           type orderType
           fetcher { env ->
@@ -214,7 +214,7 @@ class ScalarsSpec extends Specification {
 
     and: 'a schema'
     def schema = DSL.schema {
-      query('queryRoot') {
+      queries {
         field('orders') {
           type list(orderType)
           fetcher { env -> orderList }

@@ -30,7 +30,7 @@ class InputTypeSpec extends Specification {
 
     and: 'defining the schema to query'
     GraphQLSchema schema = DSL.schema {
-      query('Queries') {
+      queries {
         field('searchByFilter') {
           type list(MailResult)
 
@@ -83,7 +83,7 @@ class InputTypeSpec extends Specification {
 
     and: 'defining the schema to query'
     GraphQLSchema schema = DSL.schema {
-      query('Queries') {
+      queries {
         field('searchByFilter') {
           type list(MailResult)
 

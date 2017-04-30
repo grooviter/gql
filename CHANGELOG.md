@@ -1,6 +1,16 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.1.5-alpha] - [2017-04-01]
+
+### Changed
+
+- Schema nodes: `query` and `mutation` become `queries` and `mutations` and have default names to reduce verbosity
+
+### Fixed
+
+- NonNull and List mofifiers refactored to be shared between input and output types (#12)
+
 ## [0.1.4-alpha] - [2017-04-27]
 
 ### Added

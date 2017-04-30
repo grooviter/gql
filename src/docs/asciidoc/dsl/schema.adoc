@@ -22,6 +22,9 @@ include::{testMain}/gql/DSLSpec.groovy[tags=queriesAndMutations, indent=0]
 
 IMPORTANT: Altough mutation node is optional, the query node is mandatory (could be empty but should be present)
 
+NOTE: Both `queries` and `mutations` have a default name: `Queries` and `Mutations` respectively. But you
+can pass a custom name if you want, for instance `queries('CustomQueryRoot') { }` or `mutations('MutationRoot') { }`
+
 ==== Static values
 
 Sometimes you may want to expose constant values, values that are unlikely to change.
@@ -129,3 +132,6 @@ IMPORTANT: The `DataFetchingEnvironment` object has a few more options that are 
 you to take a look at the source code
 https://github.com/graphql-java/graphql-java/blob/master/src/main/java/graphql/schema/DataFetchingEnvironment.java[here]
 
+==== Good practices
+
+TODO

@@ -16,13 +16,25 @@ class SchemaBuilder {
   GraphQLSchema.Builder builder = GraphQLSchema.newSchema()
 
   /**
-   * Adds a query root to the current schema
+   * Adds a query root to the current schema with the name `Queries`
    *
    * @param dsl the dsl body
    * @return the current schema builder with the added query root
-   * @since 0.1.0
+   * @since 0.1.5
    */
-  SchemaBuilder query(String name, @DelegatesTo(ObjectTypeBuilder) Closure<ObjectTypeBuilder> dsl) {
+  SchemaBuilder queries(@DelegatesTo(ObjectTypeBuilder) Closure<ObjectTypeBuilder> dsl) {
+    return queries('Queries', dsl)
+  }
+
+  /**
+   * Adds a query root to the current schema
+   *
+   * @param name the name of the query root
+   * @param dsl the dsl body
+   * @return the current schema builder with the added query root
+   * @since 0.1.5
+   */
+  SchemaBuilder queries(String name, @DelegatesTo(ObjectTypeBuilder) Closure<ObjectTypeBuilder> dsl) {
     log.debug("Adding query [$name]")
 
     Closure<ObjectTypeBuilder> clos = dsl.clone() as Closure<ObjectTypeBuilder>
@@ -37,13 +49,25 @@ class SchemaBuilder {
   }
 
   /**
-   * Adds a mutation root to the current schema
+   * Adds a mutation root to the current schema with name `Mutations`
    *
    * @param dsl the dsl body
    * @return the current schema builder with the added mutation root
-   * @since 0.1.1
+   * @since 0.1.5
    */
-  SchemaBuilder mutation(String name, @DelegatesTo(ObjectTypeBuilder) Closure<ObjectTypeBuilder> dsl) {
+  SchemaBuilder mutations(@DelegatesTo(ObjectTypeBuilder) Closure<ObjectTypeBuilder> dsl) {
+    return mutations('Mutations', dsl)
+  }
+
+  /**
+   * Adds a mutation root to the current schema
+   *
+   * @param name the name of the mutations root node
+   * @param dsl the dsl body
+   * @return the current schema builder with the added mutation root
+   * @since 0.1.5
+   */
+  SchemaBuilder mutations(String name, @DelegatesTo(ObjectTypeBuilder) Closure<ObjectTypeBuilder> dsl) {
     log.debug("Adding mutation [$name]")
 
     Closure<ObjectTypeBuilder> clos = dsl.clone() as Closure<ObjectTypeBuilder>
