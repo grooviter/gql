@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Schema nodes: `query` and `mutation` become `queries` and `mutations` and have default names to reduce verbosity
+- Hello world example: a GraphQL query string is easier to understand than query builders (#13)
 
 ### Added
 
@@ -13,7 +14,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- NonNull and List mofifiers refactored to be shared between input and output types (#12)
+- NonNull and List modifiers refactored to be shared between input and output types (#12)
 - NonNull and List modifiers not found in standalone field declaration (#14)
 
 ## [0.1.4-alpha] - [2017-04-27]
