@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - NonNull and List mofifiers refactored to be shared between input and output types (#12)
+- NonNull and List modifiers not found in standalone field declaration (#14)
 
 ## [0.1.4-alpha] - [2017-04-27]
 

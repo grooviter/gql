@@ -135,7 +135,7 @@ class ObjectTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
    *
    * @since 0.1.0
    */
-  static class FieldBuilder implements ScalarsAware {
+  static class FieldBuilder implements ScalarsAware, NonNullAware, ListAware {
 
     GraphQLFieldDefinition.Builder builder = GraphQLFieldDefinition.newFieldDefinition()
 
