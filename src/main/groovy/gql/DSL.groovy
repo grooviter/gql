@@ -27,7 +27,7 @@ import graphql.schema.GraphQLObjectType
 final class DSL {
 
   /**
-   * Builds the estructure of a {@link GraphQLObjectType} using a closure
+   * Builds the structure of a {@link GraphQLObjectType} using a closure
    * which delegates to {@link ObjectTypeBuilder}
    * <br/>
    * When specifying scalar types in a field it's not neccessary to
