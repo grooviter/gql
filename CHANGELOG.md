@@ -1,7 +1,7 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
-## [0.1.5-alpha] - [2017-04-01]
+## [0.1.5-alpha] - [2017-04-03]
 
 ### Changed
 
