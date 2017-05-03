@@ -110,6 +110,43 @@ function windowTitle()
     
 
 
+    <div class="summary">
+        <ul class="blockList">
+            <li class="blockList">
+                <table border="0" cellpadding="3" cellspacing="0" summary="Trait Summary">
+                    <caption><span>Trait Summary</span><span class="tabEnd">&nbsp;</span></caption>
+                    <tbody>
+                    <tr>
+                        <th class="colFirst" scope="col">Trait</th>
+                        <th class="colLast" scope="col">Description</th>
+                    </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="ListAware.html" title="class in gql/dsl">
+                                    ListAware
+                                </a></strong>
+                            </td>
+                            <td>Any builder implementing this trait will be capable of
+ converting any <a href='http://graphql-java.github.io/graphql-java/graphql/schema/GraphQLType.html' title='GraphQLType'>GraphQLType</a> to a <a href='http://graphql-java.github.io/graphql-java/graphql/schema/GraphQLList.html' title='GraphQLList'>GraphQLList</a></td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="NonNullAware.html" title="class in gql/dsl">
+                                    NonNullAware
+                                </a></strong>
+                            </td>
+                            <td>Any builder implementing this trait will be capable of
+ converting any <a href='http://graphql-java.github.io/graphql-java/graphql/schema/GraphQLType.html' title='GraphQLType'>GraphQLType</a> to a <a href='http://graphql-java.github.io/graphql-java/graphql/schema/GraphQLNonNull.html' title='GraphQLNonNull'>GraphQLNonNull</a>,
+ meaning that that type is mandatory</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </li>
+            </ul>
+        </div>
+    
+
 
     <div class="summary">
         <ul class="blockList">
@@ -160,7 +197,7 @@ function windowTitle()
                                     InputTypeBuilder.FieldBuilder
                                 </a></strong>
                             </td>
-                            <td>@since 0.1.4</td>
+                            <td>Builds an instance of <a href='http://graphql-java.github.io/graphql-java/graphql/schema/GraphQLInputObjectField.html' title='GraphQLInputObjectField'>GraphQLInputObjectField</a></td>
                         </tr>
 <tr class="altColor">
                             <td class="colOne">
@@ -168,7 +205,7 @@ function windowTitle()
                                     ObjectTypeBuilder
                                 </a></strong>
                             </td>
-                            <td>@since 0.1.0</td>
+                            <td>Builds a new <a href='http://graphql-java.github.io/graphql-java/graphql/schema/GraphQLObjectType.html' title='GraphQLObjectType'>GraphQLObjectType</a></td>
                         </tr>
 <tr class="altColor">
                             <td class="colOne">
@@ -176,7 +213,8 @@ function windowTitle()
                                     ObjectTypeBuilder.FieldBuilder
                                 </a></strong>
                             </td>
-                            <td>@since 0.1.0</td>
+                            <td>Builder that makes possible to create a field of type
+ <a href='http://graphql-java.github.io/graphql-java/graphql/schema/GraphQLFieldDefinition.html' title='GraphQLFieldDefinition'>GraphQLFieldDefinition</a></td>
                         </tr>
 <tr class="altColor">
                             <td class="colOne">
@@ -184,7 +222,7 @@ function windowTitle()
                                     ObjectTypeBuilder.InterfacesBuilder
                                 </a></strong>
                             </td>
-                            <td>@since 0.1.0</td>
+                            <td>Builder to aggregate a given type object's interfaces</td>
                         </tr>
 <tr class="altColor">
                             <td class="colOne">

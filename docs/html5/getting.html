@@ -534,7 +534,7 @@ table.CodeRay td.code>pre{padding:0}
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql:0.1.0</span><span class="delimiter">'</span></span>)
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql:0.1.5-alpha</span><span class="delimiter">'</span></span>)
 Unresolved directive <span class="keyword">in</span> getting.adoc - <span class="key">include</span>::{baseDir}/..<span class="regexp"><span class="delimiter">/</span><span class="content">src</span><span class="delimiter">/</span></span>test/groovy/gql/DSLSpec.groovy[tags=grabExample, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
@@ -542,15 +542,15 @@ Unresolved directive <span class="keyword">in</span> getting.adoc - <span class=
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Creates a type <code>Film</code></td>
+<td>Creates a type <code>GraphQLFilm</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Creates the GraphQL schema using the previously defined types</td>
+<td>Creates a <code>GraphQL schema</code> using the previously defined types</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Executes a query against the schema</td>
+<td>Executes a <code>GraphQL query string</code> against the schema</td>
 </tr>
 </table>
 </div>
@@ -575,10 +575,9 @@ any Groovy distribution.
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Although we have built and executed the query in one step, is possible
-to build a query string and execute it in different steps. For instance
-it would be useful when creating queries to execute in a different GraphQL
-engine implementation.
+We have executed the query as a query string, however there is
+a safer way of building queries using the <code>DSL.query()`</code> builder. It gives you some sanity checks based on the types
+used.
 </td>
 </tr>
 </table>
@@ -591,7 +590,7 @@ engine implementation.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="gradle">compile com.github.grooviter:gql:0.1.0-alpha'</code></pre>
+<pre class="CodeRay highlight"><code data-lang="gradle">compile com.github.grooviter:gql:0.1.5-alpha'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -612,7 +611,7 @@ in your Gradle script.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-20 13:37:47 +00:00
+Last updated 2017-04-30 21:29:14 +00:00
 </div>
 </div>
 </body>

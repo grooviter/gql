@@ -513,7 +513,7 @@ table.CodeRay td.code>pre{padding:0}
 <div id="header">
 <h1>GQL</h1>
 <div class="details">
-<span id="revnumber">version 0.1.4-alpha</span>
+<span id="revnumber">version 0.1.5-alpha</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -546,6 +546,7 @@ table.CodeRay td.code>pre{padding:0}
 <ul class="sectlevel3">
 <li><a href="#_static_values">3.4.1. Static values</a></li>
 <li><a href="#_fetchers">3.4.2. Fetchers</a></li>
+<li><a href="#_good_practices">3.4.3. Good practices</a></li>
 </ul>
 </li>
 <li><a href="#_inputs">3.5. Inputs</a></li>
@@ -660,31 +661,35 @@ a look at the official tutorial at <a href="http://graphql.org/learn/" class="ba
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql:0.1.0</span><span class="delimiter">'</span></span>)
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql:0.1.5-alpha</span><span class="delimiter">'</span></span>)
 <span class="keyword">import</span> <span class="include">gql.DSL</span>
 
-<span class="keyword">def</span> filmType = DSL.type(<span class="string"><span class="delimiter">'</span><span class="content">Film</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="keyword">def</span> GraphQLFilm = DSL.type(<span class="string"><span class="delimiter">'</span><span class="content">Film</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="1"></i><b>(1)</b>
   field <span class="string"><span class="delimiter">'</span><span class="content">title</span><span class="delimiter">'</span></span>, GraphQLString
   field <span class="string"><span class="delimiter">'</span><span class="content">year</span><span class="delimiter">'</span></span>, GraphQLInt
 }
 
 <span class="keyword">def</span> schema = DSL.schema { <i class="conum" data-value="2"></i><b>(2)</b>
-  query(<span class="string"><span class="delimiter">'</span><span class="content">queryRoot</span><span class="delimiter">'</span></span>) {
+  queries {
     field(<span class="string"><span class="delimiter">'</span><span class="content">lastFilm</span><span class="delimiter">'</span></span>) {
-      type filmType
+      type GraphQLFilm
       staticValue(<span class="key">title</span>: <span class="string"><span class="delimiter">'</span><span class="content">SPECTRE</span><span class="delimiter">'</span></span>, <span class="key">year</span>: <span class="integer">2015</span>)
     }
   }
 }
 
-<span class="keyword">def</span> result = DSL.execute(schema) { <i class="conum" data-value="3"></i><b>(3)</b>
-    query(<span class="string"><span class="delimiter">'</span><span class="content">lastFilm</span><span class="delimiter">'</span></span>) {
-      returns {
-        title
-      }
+<span class="keyword">def</span> query = <span class="string"><span class="delimiter">&quot;&quot;&quot;</span><span class="content">
+  {
+    lastFilm {
+      year
+      title
     }
-}
+  }
+</span><span class="delimiter">&quot;&quot;&quot;</span></span>
 
+<span class="keyword">def</span> result = DSL.execute(schema, query) <i class="conum" data-value="3"></i><b>(3)</b>
+
+<span class="keyword">assert</span> result.data.lastFilm.year == <span class="integer">2015</span>
 <span class="keyword">assert</span> result.data.lastFilm.title == <span class="string"><span class="delimiter">'</span><span class="content">SPECTRE</span><span class="delimiter">'</span></span></code></pre>
 </div>
 </div>
@@ -692,15 +697,15 @@ a look at the official tutorial at <a href="http://graphql.org/learn/" class="ba
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Creates a type <code>Film</code></td>
+<td>Creates a type <code>GraphQLFilm</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Creates the GraphQL schema using the previously defined types</td>
+<td>Creates a <code>GraphQL schema</code> using the previously defined types</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Executes a query against the schema</td>
+<td>Executes a <code>GraphQL query string</code> against the schema</td>
 </tr>
 </table>
 </div>
@@ -725,10 +730,9 @@ any Groovy distribution.
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Although we have built and executed the query in one step, is possible
-to build a query string and execute it in different steps. For instance
-it would be useful when creating queries to execute in a different GraphQL
-engine implementation.
+We have executed the query as a query string, however there is
+a safer way of building queries using the <code>DSL.query()`</code> builder. It gives you some sanity checks based on the types
+used.
 </td>
 </tr>
 </table>
@@ -741,7 +745,7 @@ engine implementation.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="gradle">compile com.github.grooviter:gql:0.1.0-alpha'</code></pre>
+<pre class="CodeRay highlight"><code data-lang="gradle">compile com.github.grooviter:gql:0.1.5-alpha'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1126,7 +1130,7 @@ of <code>graphql-java</code> the package related to
 <div class="title">fetcher</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> schema = DSL.schema {
-  query(<span class="string"><span class="delimiter">'</span><span class="content">queryRoot</span><span class="delimiter">'</span></span>) {
+  queries {
     field(<span class="string"><span class="delimiter">'</span><span class="content">changeOrderPrice</span><span class="delimiter">'</span></span>) {
       type orderType
       fetcher { env -&gt;
@@ -1212,7 +1216,7 @@ query:</p>
 <div class="title">fetcher</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> schema = DSL.schema {
-  query(<span class="string"><span class="delimiter">'</span><span class="content">queryRoot</span><span class="delimiter">'</span></span>) {
+  queries {
     field(<span class="string"><span class="delimiter">'</span><span class="content">changeOrderPrice</span><span class="delimiter">'</span></span>) {
       type orderType
       fetcher { env -&gt;
@@ -1341,10 +1345,10 @@ fields under the <strong>mutation</strong> node:</p>
 <span class="keyword">import</span> <span class="include">graphql.schema.GraphQLSchema</span>
 
 GraphQLSchema schema = DSL.schema {
-  query(<span class="string"><span class="delimiter">'</span><span class="content">QueryRoot</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="1"></i><b>(1)</b>
+  queries { <i class="conum" data-value="1"></i><b>(1)</b>
     <span class="comment">// no queries</span>
   }
-  mutation(<span class="string"><span class="delimiter">'</span><span class="content">MutationRoot</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="2"></i><b>(2)</b>
+  mutations { <i class="conum" data-value="2"></i><b>(2)</b>
     field(<span class="string"><span class="delimiter">'</span><span class="content">insert</span><span class="delimiter">'</span></span>) {
       type filmType
       fetcher { DataFetchingEnvironment env -&gt;
@@ -1384,6 +1388,19 @@ Altough mutation node is optional, the query node is mandatory (could be empty b
 </tr>
 </table>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Both <code>queries</code> and <code>mutations</code> have a default name: <code>Queries</code> and <code>Mutations</code> respectively. But you
+can pass a custom name if you want, for instance <code>queries('CustomQueryRoot') { }</code> or <code>mutations('MutationRoot') { }</code>
+</td>
+</tr>
+</table>
+</div>
 <div class="sect3">
 <h4 id="_static_values">3.4.1. Static values</h4>
 <div class="paragraph">
@@ -1395,7 +1412,7 @@ Altough mutation node is optional, the query node is mandatory (could be empty b
 <span class="keyword">import</span> <span class="include">graphql.schema.GraphQLSchema</span>
 
 GraphQLSchema schema = DSL.schema { <i class="conum" data-value="1"></i><b>(1)</b>
-  query(<span class="string"><span class="delimiter">'</span><span class="content">helloQuery</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="2"></i><b>(2)</b>
+  queries(<span class="string"><span class="delimiter">'</span><span class="content">helloQuery</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="2"></i><b>(2)</b>
     description<span class="string"><span class="delimiter">'</span><span class="content">simple droid</span><span class="delimiter">'</span></span><i class="conum" data-value="3"></i><b>(3)</b>
 
     field(<span class="string"><span class="delimiter">'</span><span class="content">hello</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="4"></i><b>(4)</b>
@@ -1494,7 +1511,7 @@ data. The requested data should be of the same type of the declared type, or a m
 <span class="keyword">import</span> <span class="include">graphql.schema.GraphQLSchema</span>
 
 GraphQLSchema schema = DSL.schema {
-  query(<span class="string"><span class="delimiter">'</span><span class="content">QueryRoot</span><span class="delimiter">'</span></span>) {
+  queries(<span class="string"><span class="delimiter">'</span><span class="content">QueryRoot</span><span class="delimiter">'</span></span>) {
     description<span class="string"><span class="delimiter">'</span><span class="content">queries over James Bond</span><span class="delimiter">'</span></span>
     field(<span class="string"><span class="delimiter">'</span><span class="content">lastFilm</span><span class="delimiter">'</span></span>) {
       description<span class="string"><span class="delimiter">'</span><span class="content">last film</span><span class="delimiter">'</span></span>
@@ -1522,7 +1539,7 @@ as only parameter and returning an object of the correct type).</p>
 <span class="keyword">import</span> <span class="include">graphql.schema.GraphQLSchema</span>
 
 GraphQLSchema schema = DSL.schema {
-  query(<span class="string"><span class="delimiter">'</span><span class="content">QueryRoot</span><span class="delimiter">'</span></span>) {
+  queries(<span class="string"><span class="delimiter">'</span><span class="content">QueryRoot</span><span class="delimiter">'</span></span>) {
     description<span class="string"><span class="delimiter">'</span><span class="content">queries over James Bond</span><span class="delimiter">'</span></span>
     field(<span class="string"><span class="delimiter">'</span><span class="content">lastFilm</span><span class="delimiter">'</span></span>) {
       description<span class="string"><span class="delimiter">'</span><span class="content">last film</span><span class="delimiter">'</span></span>
@@ -1551,7 +1568,7 @@ to get the proper film:</p>
 <span class="keyword">import</span> <span class="include">graphql.schema.GraphQLSchema</span>
 
 GraphQLSchema schema = DSL.schema {
-  query(<span class="string"><span class="delimiter">'</span><span class="content">QueryRoot</span><span class="delimiter">'</span></span>) {
+  queries {
     field(<span class="string"><span class="delimiter">'</span><span class="content">byYear</span><span class="delimiter">'</span></span>) {
       type filmType
       fetcher Queries.&amp;findByYear
@@ -1595,6 +1612,12 @@ you to take a look at the source code
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_good_practices">3.4.3. Good practices</h4>
+<div class="paragraph">
+<p>TODO</p>
 </div>
 </div>
 </div>
@@ -1758,26 +1781,69 @@ to be able to declare and execute queries in one shot right ?</p>
 <span class="keyword">import</span> <span class="include">graphql.ExecutionResult</span>
 <span class="keyword">import</span> <span class="include">graphql.schema.DataFetchingEnvironment</span>
 
-
 ExecutionResult result = DSL.execute(schema) {
-  query(<span class="string"><span class="delimiter">'</span><span class="content">byYear</span><span class="delimiter">'</span></span>, [<span class="key">year</span>: <span class="string"><span class="delimiter">'</span><span class="content">1962</span><span class="delimiter">'</span></span>]) {
-    returns(Film) {
+  query(<span class="string"><span class="delimiter">'</span><span class="content">byYear</span><span class="delimiter">'</span></span>, [<span class="key">year</span>: <span class="string"><span class="delimiter">'</span><span class="content">1962</span><span class="delimiter">'</span></span>]) { <i class="conum" data-value="1"></i><b>(1)</b>
+    returns(Film) { <i class="conum" data-value="2"></i><b>(2)</b>
       title
       year
     }
-    alias <span class="string"><span class="delimiter">'</span><span class="content">first</span><span class="delimiter">'</span></span>
-  }
 
-  query(<span class="string"><span class="delimiter">'</span><span class="content">byYear</span><span class="delimiter">'</span></span>, [<span class="key">year</span>: <span class="string"><span class="delimiter">'</span><span class="content">2015</span><span class="delimiter">'</span></span>]) {
-    returns {
+    alias <span class="string"><span class="delimiter">'</span><span class="content">first</span><span class="delimiter">'</span></span> <i class="conum" data-value="3"></i><b>(3)</b>
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Defines a <code>query</code> with name <code>byYear</code> mapping query parameters</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Checks that the fields used in the close are present in type <code>Film</code>. Uses static check to make sure fields are
+present in type <code>Film</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Defines a given alias to the query result</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+<span class="keyword">import</span> <span class="include">graphql.ExecutionResult</span>
+<span class="keyword">import</span> <span class="include">graphql.schema.DataFetchingEnvironment</span>
+
+ExecutionResult result2 = DSL.execute(schema) {
+  query(<span class="string"><span class="delimiter">'</span><span class="content">byYear</span><span class="delimiter">'</span></span>, [<span class="key">year</span>: <span class="string"><span class="delimiter">'</span><span class="content">2015</span><span class="delimiter">'</span></span>]) { <i class="conum" data-value="1"></i><b>(1)</b>
+    returns { <i class="conum" data-value="2"></i><b>(2)</b>
       title
       year
       bond
     }
-    alias <span class="string"><span class="delimiter">'</span><span class="content">last</span><span class="delimiter">'</span></span>
+
+    alias <span class="string"><span class="delimiter">'</span><span class="content">last</span><span class="delimiter">'</span></span> <i class="conum" data-value="3"></i><b>(3)</b>
   }
 }</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Defines a <code>query</code> with name <code>lastFilm</code> mapping variables</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Declares a set of fields but are not checked</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Defines a given alias to the query result</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect4">
@@ -1844,7 +1910,7 @@ string against the other engine.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.1.4-alpha<br>
+Version 0.1.5-alpha<br>
 Last updated 2017-04-23 22:48:50 +00:00
 </div>
 </div>

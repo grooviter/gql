@@ -622,9 +622,48 @@ to be able to declare and execute queries in one shot right ?</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
 Unresolved directive <span class="keyword">in</span> queries.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=importExecutionResult, indent=<span class="integer">0</span>]
-
-Unresolved directive <span class="keyword">in</span> queries.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=staticQuery, indent=<span class="integer">0</span>]</code></pre>
+Unresolved directive <span class="keyword">in</span> queries.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=staticQueryChecked, indent=<span class="integer">0</span>]</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Defines a <code>query</code> with name <code>byYear</code> mapping query parameters</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Checks that the fields used in the close are present in type <code>Film</code>. Uses static check to make sure fields are
+present in type <code>Film</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Defines a given alias to the query result</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+Unresolved directive <span class="keyword">in</span> queries.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=importExecutionResult, indent=<span class="integer">0</span>]
+Unresolved directive <span class="keyword">in</span> queries.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=staticQueryUnchecked, indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Defines a <code>query</code> with name <code>lastFilm</code> mapping variables</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Declares a set of fields but are not checked</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Defines a given alias to the query result</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect4">
@@ -647,7 +686,7 @@ Unresolved directive <span class="keyword">in</span> queries.adoc - <span class=
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-27 12:43:58 +00:00
+Last updated 2017-04-30 22:30:46 +00:00
 </div>
 </div>
 </body>

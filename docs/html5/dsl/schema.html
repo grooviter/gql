@@ -518,6 +518,7 @@ table.CodeRay td.code>pre{padding:0}
 <ul class="sectlevel3">
 <li><a href="#_static_values">Static values</a></li>
 <li><a href="#_fetchers">Fetchers</a></li>
+<li><a href="#_good_practices">Good practices</a></li>
 </ul>
 </li>
 </ul>
@@ -573,6 +574,19 @@ Unresolved directive <span class="keyword">in</span> schema.adoc - <span class="
 </td>
 <td class="content">
 Altough mutation node is optional, the query node is mandatory (could be empty but should be present)
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Both <code>queries</code> and <code>mutations</code> have a default name: <code>Queries</code> and <code>Mutations</code> respectively. But you
+can pass a custom name if you want, for instance <code>queries('CustomQueryRoot') { }</code> or <code>mutations('MutationRoot') { }</code>
 </td>
 </tr>
 </table>
@@ -744,11 +758,17 @@ you to take a look at the source code
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_good_practices">Good practices</h4>
+<div class="paragraph">
+<p>TODO</p>
+</div>
+</div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-26 18:01:48 +00:00
+Last updated 2017-04-30 07:42:02 +00:00
 </div>
 </div>
 </body>
