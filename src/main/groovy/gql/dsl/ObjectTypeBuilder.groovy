@@ -1,8 +1,10 @@
 package gql.dsl
 
+import graphql.language.Argument
 import graphql.schema.DataFetcher
 import graphql.schema.GraphQLArgument
 import graphql.schema.GraphQLFieldDefinition
+import graphql.schema.GraphQLInputType
 import graphql.schema.GraphQLInterfaceType
 import graphql.schema.GraphQLObjectType
 import graphql.schema.GraphQLOutputType
@@ -186,27 +188,43 @@ class ObjectTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
       builder.dataFetcher(fetcher as DataFetcher)
       return this
     }
+    
+  /**
+   * Adds a new argument to the field
+   *
+   * @param name the name of the argument
+   * @param inputType the type of the argument. It must be one of type {@link GraphQLInputType}
+   * @return current builder instance
+   * @since 0.1.6
+   */
+    FieldBuilder argument(String name, GraphQLInputType inputType) {
+      ArgumentBuilder builderSource = new ArgumentBuilder(inputType)
+        .name(name)
+        .description(name)
+
+      builder.argument(builderSource.build())
+      return this
+    }
 
     /**
      * Adds a new argument to the field
      *
      * @param name the name of the argument
+     * @param inputType the type of the argument. It must be one of type {@link GraphQLInputType}
      * @param dsl the nested builder to build a new {@link GraphQLArgument}
      * @return current builder instance
-     * @since 0.1.0
+     * @since 0.1.6
      */
-    FieldBuilder argument(String name, @DelegatesTo(value = GraphQLArgument.Builder, strategy = Closure.DELEGATE_FIRST) Closure dsl) {
-      Closure<GraphQLArgument.Builder> clos = dsl.clone() as Closure<GraphQLArgument.Builder>
-      GraphQLArgument.Builder builderSource = GraphQLArgument
-        .newArgument()
-        .name(name)
-        .description(name)
-
-      GraphQLArgument.Builder builderResult = builderSource.with(clos) ?: builderSource
+    FieldBuilder argument(String name, GraphQLInputType inputType, @DelegatesTo(value = ArgumentBuilder, strategy = Closure.DELEGATE_ONLY) Closure dsl) {
+      Closure<ArgumentBuilder> clos = dsl.clone() as Closure<ArgumentBuilder>
+      ArgumentBuilder builderSource = new ArgumentBuilder(inputType).name(name)
+      ArgumentBuilder builderResult = builderSource.with(clos) ?: builderSource
 
       builder.argument(builderResult.build())
       return this
     }
+
+
 
     /**
      * Adds field fetcher. Fetcher is responsible to retrieve this field data.

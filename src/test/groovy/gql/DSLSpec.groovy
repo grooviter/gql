@@ -331,9 +331,7 @@ class DSLSpec extends Specification {
         field('byYear') {
           type filmType
           fetcher Queries.&findByYear
-          argument('year') {
-            type GraphQLString
-          }
+          argument 'year', GraphQLString
         }
       }
     }
@@ -379,9 +377,7 @@ class DSLSpec extends Specification {
         field('byYear') {
           type filmType
           fetcher Queries.&findByYear
-          argument('year') {
-            type GraphQLString
-          }
+          argument 'year', GraphQLString
         }
       }
     }
@@ -419,9 +415,7 @@ class DSLSpec extends Specification {
         field('byYear') {
           type filmType
           fetcher Queries.&findByYear
-          argument('year') {
-            type GraphQLString
-          }
+          argument 'year', GraphQLString
         }
       }
     }
@@ -490,9 +484,7 @@ class DSLSpec extends Specification {
         field('byYear') {
           type filmType
           fetcher Queries.&findByYear
-          argument('year') {
-            type GraphQLString
-          }
+          argument 'year', GraphQLString
         }
       }
     }
@@ -539,9 +531,7 @@ class DSLSpec extends Specification {
         field('byYear') {
           type filmType
           fetcher Queries.&findByYear
-          argument('year') {
-            type GraphQLString
-          }
+          argument 'year', GraphQLString
         }
       }
     }
@@ -641,9 +631,7 @@ class DSLSpec extends Specification {
             people << name
             return [name: name]
           }
-          argument('name') {
-            type GraphQLString
-          }
+          argument 'name', GraphQLString
         }
       }
     }

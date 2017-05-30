@@ -34,9 +34,7 @@ class InputTypeSpec extends Specification {
         field('searchByFilter') {
           type list(MailResult)
 
-          argument('filter') {
-            type MailFilterType
-          }
+          argument 'filter', MailFilterType
 
           fetcher { DataFetchingEnvironment env ->
             assert env.arguments.filter.from == 'me@somedomain.com'
@@ -87,8 +85,8 @@ class InputTypeSpec extends Specification {
         field('searchByFilter') {
           type list(MailResult)
 
-          argument('filter') {
-            type MailFilterType
+          argument('filter', MailFilterType) {
+            description 'filters mails'
           }
 
           fetcher { DataFetchingEnvironment env ->

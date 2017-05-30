@@ -99,9 +99,7 @@ class ScalarsSpec extends Specification {
 
             [subject: 'paper', price: price]
           }
-          argument('defaultPrice') {
-            type GraphQLPrice
-          }
+          argument 'defaultPrice', GraphQLPrice
         }
       }
     }
@@ -158,9 +156,7 @@ class ScalarsSpec extends Specification {
 
             [subject: 'paper', price: price]
           }
-          argument('defaultPrice') {
-            type scalar
-          }
+          argument 'defaultPrice', scalar
         }
       }
     }

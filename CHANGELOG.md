@@ -7,6 +7,10 @@ All notable changes to this project will be documented in this file.
 
 - Updated `graphql-java` to version 3.0.0
 
+### Fixed
+
+- Removed ambiguity: The type() method has now being removed from the argument node.
+
 ## [0.1.5-alpha] - [2017-04-03]
 
 ### Changed
