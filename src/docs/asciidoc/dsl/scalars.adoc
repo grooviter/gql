@@ -24,8 +24,8 @@ value has been serialized to send the response back to the client.
 
 Now, when you define a Scalar what you're doing is defining the deserialization functions:
 
-- `parseLiteral`: this function receives a query's argument used as literal (as oppose as using a query variable)
-- `parseValue`: this function receives a query's argument used as a variable
+- `parseLiteral`: this function receives a query's gql.ext.argument used as literal (as oppose as using a query variable)
+- `parseValue`: this function receives a query's gql.ext.argument used as a variable
 
 You will also have to define the serialization method `serialize` which receives the result of executing a data
 fetcher or from a static value and converts back the value to something meaningul to the client.
@@ -190,7 +190,7 @@ include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=serializingScalar, indent=0]
 <3> Adding `serialize` function
 <4> Value return as response
 
-The function passed as an argument to the `serialize` method will take whatever value is coming from the data fetcher
+The function passed as an gql.ext.argument to the `serialize` method will take whatever value is coming from the data fetcher
  or static value of the field and it will return the way you'd like to serialize that value to the client.
 
 
