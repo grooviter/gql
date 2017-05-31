@@ -188,7 +188,7 @@ class ObjectTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
       builder.dataFetcher(fetcher as DataFetcher)
       return this
     }
-    
+
   /**
    * Adds a new argument to the field
    *
