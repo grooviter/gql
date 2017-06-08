@@ -1,0 +1,43 @@
+task generateDocumentation() {
+  dependsOn groovydoc
+  dependsOn asciidoctor
+
+  doLast {
+    copy {
+      from "src/docsconf/site"
+      into "$buildDir/site"
+    }
+  }
+}
+
+sourceSets {
+  groovydoc {
+    resources {
+      srcDir folder_groovydoc
+    }
+  }
+}
+
+groovydoc {
+  link 'https://docsconf.oracle.com/javase/8/docsconf/api/', 'java'
+  link 'http://docsconf.groovy-lang.org/latest/html/api/', 'groovy', 'org.codehaus.groovy'
+  link 'http://grooviter.github.io/asteroid/javadocs', 'asteroid'
+  link 'http://graphql-java.github.io/graphql-java', 'graphql'
+
+  destinationDir = file("$buildDir/site/api")
+  classpath = sourceSets.groovydoc.output + classpath
+}
+
+asciidoctor {
+  requires 'asciidoctor-diagram'
+
+  outputDir file("$buildDir/site/docsconf")
+  attributes 'endpoint-url': 'http://github.com/grooviter/gql',
+    'source-highlighter': 'coderay',
+    'releaseVersion': releaseVersion,
+    'imagesdir': './images',
+    'toc': 'left',
+    'icons': 'font',
+    'toclevels': 3
+}
+
