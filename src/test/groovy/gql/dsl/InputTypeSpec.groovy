@@ -29,14 +29,13 @@ class InputTypeSpec extends Specification {
     }
 
     and: 'defining the schema to query'
+    // tag::inputTypeArgument[]
     GraphQLSchema schema = DSL.schema {
       queries {
         field('searchByFilter') {
           type list(MailResult)
 
-          argument('filter') {
-            type MailFilterType
-          }
+          argument 'filter', MailFilterType // --> input type
 
           fetcher { DataFetchingEnvironment env ->
             assert env.arguments.filter.from == 'me@somedomain.com'
@@ -47,7 +46,7 @@ class InputTypeSpec extends Specification {
         }
       }
     }
-
+    // end::inputTypeArgument[]
     and: 'the query'
     // tag::inputTypeQuery[]
     def query = '''
@@ -87,8 +86,8 @@ class InputTypeSpec extends Specification {
         field('searchByFilter') {
           type list(MailResult)
 
-          argument('filter') {
-            type MailFilterType
+          argument('filter', MailFilterType) {
+            description 'filters mails'
           }
 
           fetcher { DataFetchingEnvironment env ->

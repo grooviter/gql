@@ -27,3 +27,36 @@ And finally when executing the query we can pass a map with the mail filter valu
 ----
 include::{testMain}/gql/dsl/InputTypeSpec.groovy[tags=inputTypeQueryExecution, indent=0]
 ----
+
+==== Arguments
+
+Input types can only be used as an argument of a `query` or a `mutation`. Therefore when
+declaring a given mutation, you can say that the argument of that `query` or `mutation`
+can be of input type `X`:
+
+[source, groovy]
+.arguments
+----
+include::{testMain}/gql/dsl/InputTypeSpec.groovy[tags=inputTypeArgument, indent=0]
+----
+
+[sidebar]
+.Why there is no `type` method inside `argument` ?
+****
+In previous versions there was the possibility of doing:
+
+[source, groovy]
+----
+field('name') {
+   type outputType // --> output
+   argument('argumentName') {
+     type inputType // --> input? output?
+     description 'description'
+   }
+}
+----
+
+But that led to ambiguity, specially because the user could think any type could be used
+as an argument. That's why it's been removed, and even the upper `type` method is not visible
+inside the `argument` scope
+****
