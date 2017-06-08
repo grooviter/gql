@@ -538,7 +538,11 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_good_practices">Good practices</a></li>
 </ul>
 </li>
-<li><a href="#_inputs">Inputs</a></li>
+<li><a href="#_inputs">Inputs</a>
+<ul class="sectlevel3">
+<li><a href="#_arguments">Arguments</a></li>
+</ul>
+</li>
 <li><a href="#_queries">Queries</a>
 <ul class="sectlevel3">
 <li><a href="#_execution">Execution</a></li>
@@ -713,10 +717,10 @@ value has been serialized to send the response back to the client.</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>parseLiteral</code>: this function receives a query&#8217;s argument used as literal (as oppose as using a query variable)</p>
+<p><code>parseLiteral</code>: this function receives a query&#8217;s gql.ext.argument used as literal (as oppose as using a query variable)</p>
 </li>
 <li>
-<p><code>parseValue</code>: this function receives a query&#8217;s argument used as a variable</p>
+<p><code>parseValue</code>: this function receives a query&#8217;s gql.ext.argument used as a variable</p>
 </li>
 </ul>
 </div>
@@ -959,7 +963,7 @@ a given tuple to a meaninful literal with the <code>serialize</code> function.</
 </table>
 </div>
 <div class="paragraph">
-<p>The function passed as an argument to the <code>serialize</code> method will take whatever value is coming from the data fetcher
+<p>The function passed as an gql.ext.argument to the <code>serialize</code> method will take whatever value is coming from the data fetcher
  or static value of the field and it will return the way you&#8217;d like to serialize that value to the client.</p>
 </div>
 </div>
@@ -1114,7 +1118,7 @@ an API to query these datastores invoking some functions.</p>
 the <code>staticValue</code> method in the DSL, we will be able to get data from a dynamic source via <code>fetcher</code>.</p>
 </div>
 <div class="paragraph">
-<p>The argument of <code>fetcher</code> is an instance of type <code>graphql.schema.DataFetcher</code>:</p>
+<p>The gql.ext.argument of <code>fetcher</code> is an instance of type <code>graphql.schema.DataFetcher</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1262,6 +1266,44 @@ you might want to pass in a whole object to be created. In GraphQL that means us
 <div class="title">execution</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/inputs.adoc - <span class="key">include</span>::{testMain}/gql/dsl/InputTypeSpec.groovy[tags=inputTypeQueryExecution, indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_arguments">Arguments</h4>
+<div class="paragraph">
+<p>Input types can only be used as an argument of a <code>query</code> or a <code>mutation</code>. Therefore when
+declaring a given mutation, you can say that the argument of that <code>query</code> or <code>mutation</code>
+can be of input type <code>X</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">arguments</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/inputs.adoc - <span class="key">include</span>::{testMain}/gql/dsl/InputTypeSpec.groovy[tags=inputTypeArgument, indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Why there is no <code>type</code> method inside <code>argument</code> ?</div>
+<div class="paragraph">
+<p>In previous versions there was the possibility of doing:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">field(<span class="string"><span class="delimiter">'</span><span class="content">name</span><span class="delimiter">'</span></span>) {
+   type outputType <span class="comment">// --&gt; output</span>
+   argument(<span class="string"><span class="delimiter">'</span><span class="content">argumentName</span><span class="delimiter">'</span></span>) {
+     type inputType <span class="comment">// --&gt; input? output?</span>
+     description <span class="string"><span class="delimiter">'</span><span class="content">description</span><span class="delimiter">'</span></span>
+   }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>But that led to ambiguity, specially because the user could think any type could be used
+as an argument. That&#8217;s why it&#8217;s been removed, and even the upper <code>type</code> method is not visible
+inside the <code>argument</code> scope</p>
+</div>
+</div>
 </div>
 </div>
 </div>

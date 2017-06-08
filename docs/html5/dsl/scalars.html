@@ -547,10 +547,10 @@ value has been serialized to send the response back to the client.</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>parseLiteral</code>: this function receives a query&#8217;s argument used as literal (as oppose as using a query variable)</p>
+<p><code>parseLiteral</code>: this function receives a query&#8217;s gql.ext.argument used as literal (as oppose as using a query variable)</p>
 </li>
 <li>
-<p><code>parseValue</code>: this function receives a query&#8217;s argument used as a variable</p>
+<p><code>parseValue</code>: this function receives a query&#8217;s gql.ext.argument used as a variable</p>
 </li>
 </ul>
 </div>
@@ -793,7 +793,7 @@ a given tuple to a meaninful literal with the <code>serialize</code> function.</
 </table>
 </div>
 <div class="paragraph">
-<p>The function passed as an argument to the <code>serialize</code> method will take whatever value is coming from the data fetcher
+<p>The function passed as an gql.ext.argument to the <code>serialize</code> method will take whatever value is coming from the data fetcher
  or static value of the field and it will return the way you&#8217;d like to serialize that value to the client.</p>
 </div>
 </div>
@@ -801,7 +801,7 @@ a given tuple to a meaninful literal with the <code>serialize</code> function.</
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-26 07:21:42 +00:00
+Last updated 2017-06-08 06:03:58 +00:00
 </div>
 </div>
 </body>
