@@ -1,6 +1,12 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.1.7-alpha] - [2017-06-09]
+
+## Added
+
+- New way of mapping types from a GraphQL schema file to any data fetcher
+
 ## [0.1.6-alpha] - [2017-06-08]
 
 ### Updated
