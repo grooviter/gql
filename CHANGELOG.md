@@ -5,7 +5,12 @@ All notable changes to this project will be documented in this file.
 
 ## Added
 
-- New way of mapping types from a GraphQL schema file to any data fetcher
+- Now is possible to modularising GraphQL schemas using GraphQL language
+
+## Updated
+
+- Update gradle wrapper to 3.5
+- Move documentation configuration to its own gradle file
 
 ## [0.1.6-alpha] - [2017-06-08]
 
