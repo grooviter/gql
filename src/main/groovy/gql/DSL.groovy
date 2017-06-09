@@ -6,7 +6,7 @@ import gql.dsl.QueryBuilder
 import gql.dsl.ScalarTypeBuilder
 import gql.dsl.SchemaBuilder
 import gql.dsl.ObjectTypeBuilder
-
+import gql.dsl.SchemaMergerBuilder
 import graphql.GraphQL
 import graphql.ExecutionResult
 import graphql.schema.DataFetchingEnvironment
@@ -178,6 +178,23 @@ final class DSL {
     Closure<InputTypeBuilder> clos = dsl.clone() as Closure<InputTypeBuilder>
     InputTypeBuilder builderSource = new InputTypeBuilder().name(name)
     InputTypeBuilder builderResult = builderSource.with(clos) ?: builderSource
+
+    return builderResult.build()
+  }
+
+  /**
+   * It merges a series of GraphQL schemas and their respective data fetchers
+   * into one only schema.
+   *
+   * @param dsl DSL to define which schemas are going to be merged into one
+   * @return a {@link GraphQLSchema} as the result of merging several IDL
+   * schema definitions
+   * @since 0.1.7
+   */
+  static GraphQLSchema mergeSchemas(@DelegatesTo(SchemaMergerBuilder) Closure dsl) {
+    Closure<SchemaMergerBuilder> clos = dsl.clone() as Closure<SchemaMergerBuilder>
+    SchemaMergerBuilder builderSource = new SchemaMergerBuilder()
+    SchemaMergerBuilder builderResult = builderSource.with(clos) ?: builderSource
 
     return builderResult.build()
   }

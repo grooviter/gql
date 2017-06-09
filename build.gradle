@@ -15,8 +15,9 @@ plugins {
   id 'org.asciidoctor.convert' version '1.5.3'
 }
 
-apply from: "${projectDir}/gradle/bintray.gradle"
-apply from: "${projectDir}/gradle/gh_pages.gradle"
+apply from: "gradle/bintray.gradle"
+apply from: "gradle/gh_pages.gradle"
+apply from: "gradle/docsconf.gradle"
 
 repositories {
   jcenter()
@@ -33,48 +34,5 @@ dependencies {
 
 compileGroovy {
   groovyOptions.configurationScript = new File(projectDir, folder_compiler)
-}
-
-task generateDocumentation() {
-  dependsOn groovydoc
-  dependsOn asciidoctor
-
-  doLast {
-    copy {
-      from "src/docs/site"
-      into "$buildDir/site"
-    }
-  }
-}
-
-sourceSets {
-  groovydoc {
-    resources {
-      srcDir folder_groovydoc
-    }
-  }
-}
-
-groovydoc {
-  link 'https://docs.oracle.com/javase/8/docs/api/', 'java'
-  link 'http://docs.groovy-lang.org/latest/html/api/', 'groovy', 'org.codehaus.groovy'
-  link 'http://grooviter.github.io/asteroid/javadocs', 'asteroid'
-  link 'http://graphql-java.github.io/graphql-java', 'graphql'
-
-  destinationDir = file("$buildDir/site/api")
-  classpath = sourceSets.groovydoc.output + classpath
-}
-
-asciidoctor {
-  requires 'asciidoctor-diagram'
-
-  outputDir file("$buildDir/site/docs")
-	attributes 'endpoint-url': 'http://github.com/grooviter/gql',
-             'source-highlighter': 'coderay',
-             'releaseVersion': releaseVersion,
-             'imagesdir': './images',
-             'toc': 'left',
-             'icons': 'font',
-             'toclevels': 3
 }
 

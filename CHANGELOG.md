@@ -1,6 +1,17 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.1.7-alpha] - [2017-06-09]
+
+## Added
+
+- Now is possible to modularising GraphQL schemas using GraphQL language
+
+## Updated
+
+- Update gradle wrapper to 3.5
+- Move documentation configuration to its own gradle file
+
 ## [0.1.6-alpha] - [2017-06-08]
 
 ### Updated

@@ -1,0 +1,8 @@
+type Queries {
+  randomBand: Band
+  randomFilm: Film
+}
+
+schema {
+  query: Queries
+}
