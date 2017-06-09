@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.3">
-<title>GQL</title>
+<title>DSL</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -511,267 +511,56 @@ table.CodeRay td.code>pre{padding:0}
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
-<h1>GQL</h1>
-<div class="details">
-<span id="revnumber">version 0.1.6-alpha</span>
-</div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_intro">1. Intro</a></li>
-<li><a href="#_getting_started">2. Getting started</a>
+<li><a href="#_dsl">DSL</a>
 <ul class="sectlevel2">
-<li><a href="#_hello_gql">2.1. Hello GQL</a></li>
-<li><a href="#_gradle">2.2. Gradle</a></li>
-</ul>
-</li>
-<li><a href="#_dsl">3. DSL</a>
-<ul class="sectlevel2">
-<li><a href="#_types">3.1. Types</a>
+<li><a href="#_types">Types</a>
 <ul class="sectlevel3">
-<li><a href="#_full_types">3.1.1. Full types</a></li>
-<li><a href="#_shorter_field_definition">3.1.2. Shorter field definition</a></li>
-<li><a href="#_adding_external_fields">3.1.3. Adding external fields</a></li>
+<li><a href="#_full_types">Full types</a></li>
+<li><a href="#_shorter_field_definition">Shorter field definition</a></li>
+<li><a href="#_adding_external_fields">Adding external fields</a></li>
 </ul>
 </li>
-<li><a href="#_scalars">3.2. Scalars</a>
+<li><a href="#_scalars">Scalars</a>
 <ul class="sectlevel3">
-<li><a href="#_declaration">3.2.1. Declaration</a></li>
-<li><a href="#_deserialization">3.2.2. Deserialization</a></li>
-<li><a href="#_serialization">3.2.3. Serialization</a></li>
+<li><a href="#_declaration">Declaration</a></li>
+<li><a href="#_deserialization">Deserialization</a></li>
+<li><a href="#_serialization">Serialization</a></li>
 </ul>
 </li>
-<li><a href="#_enums">3.3. Enums</a></li>
-<li><a href="#_schemas">3.4. Schemas</a>
+<li><a href="#_enums">Enums</a></li>
+<li><a href="#_schemas">Schemas</a>
 <ul class="sectlevel3">
-<li><a href="#_static_values">3.4.1. Static values</a></li>
-<li><a href="#_fetchers">3.4.2. Fetchers</a></li>
-<li><a href="#_good_practices">3.4.3. Good practices</a></li>
+<li><a href="#_static_values">Static values</a></li>
+<li><a href="#_fetchers">Fetchers</a></li>
+<li><a href="#_good_practices">Good practices</a></li>
 </ul>
 </li>
-<li><a href="#_inputs">3.5. Inputs</a>
+<li><a href="#_modularising">Modularising</a></li>
+<li><a href="#_inputs">Inputs</a>
 <ul class="sectlevel3">
-<li><a href="#_arguments">3.5.1. Arguments</a></li>
+<li><a href="#_arguments">Arguments</a></li>
 </ul>
 </li>
-<li><a href="#_queries">3.6. Queries</a>
+<li><a href="#_queries">Queries</a>
 <ul class="sectlevel3">
-<li><a href="#_execution">3.6.1. Execution</a></li>
-<li><a href="#_query_builders">3.6.2. Query builders</a></li>
+<li><a href="#_execution">Execution</a></li>
+<li><a href="#_query_builders">Query builders</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li><a href="#_asts">4. ASTs</a></li>
-<li><a href="#_development">5. Development</a>
-<ul class="sectlevel2">
-<li><a href="#_source_code">5.1. Source code</a></li>
-<li><a href="#_groovydoc">5.2. Groovydoc</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 <div id="content">
-<div id="preamble">
-<div class="sectionbody">
-<div class="quoteblock">
-<blockquote>
-GQL is a library created to make it easier to expose and consume
-GraphQL services.
-</blockquote>
-</div>
-<div class="sidebarblock">
-<div class="content">
-<div class="title">Apache</div>
-<div class="paragraph">
-<p>The <strong>GQL</strong> project is open sourced under the <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache 2 License</a>.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
 <div class="sect1">
-<h2 id="_intro">1. Intro</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><strong>GQL</strong> is a set of Groovy DSLs and AST transformations built on top of
-<a href="https://github.com/graphql-java/graphql-java">GraphQL-java</a> to make it easier building GraphQL schemas and
-execute <strong>GraphQL</strong> queries without losing type safety.</p>
-</div>
-<div class="paragraph">
-<p><strong>GraphQL</strong> is a query language. It&#8217;s based in a type system and defines a specific query language
-and how a specific query engine should work in order to process and execute GraphQL queries.</p>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-For a full detailed explanation about GraphQL I would recommend you to take
-a look at the official tutorial at <a href="http://graphql.org/learn/" class="bare">http://graphql.org/learn/</a>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Keeping long story short When dealing with <strong>GraphQL</strong> you normally will be following the these steps:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Define the schema</strong> (first types, scalars&#8230;&#8203;and then adding those types to schema roots)</p>
-</li>
-<li>
-<p><strong>Expose the schema</strong> (via the chosen GraphQL implementation engine)</p>
-</li>
-<li>
-<p><strong>Execute queries</strong> against the implementation engine</p>
-</li>
-</ul>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="./images/diag-d33e7655e9006340df72dc8dc141695b.png" alt="diag d33e7655e9006340df72dc8dc141695b" width="780" height="126">
-</div>
-</div>
-<div class="paragraph">
-<p>Some of the ideas behind <strong>GQL</strong>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>It should be <strong>IDE friendly</strong></p>
-</li>
-<li>
-<p>It should be built having <strong>static compilation</strong> in mind</p>
-</li>
-<li>
-<p>It should <strong>not need more than one import</strong></p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_getting_started">2. Getting started</h2>
+<h2 id="_dsl">DSL</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_hello_gql">2.1. Hello GQL</h3>
-<div class="paragraph">
-<p>This is how a full GraphQL life cycle app looks like using <strong>GQL</strong>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql:0.1.5-alpha</span><span class="delimiter">'</span></span>)
-<span class="keyword">import</span> <span class="include">gql.DSL</span>
-
-<span class="keyword">def</span> GraphQLFilm = DSL.type(<span class="string"><span class="delimiter">'</span><span class="content">Film</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="1"></i><b>(1)</b>
-  field <span class="string"><span class="delimiter">'</span><span class="content">title</span><span class="delimiter">'</span></span>, GraphQLString
-  field <span class="string"><span class="delimiter">'</span><span class="content">year</span><span class="delimiter">'</span></span>, GraphQLInt
-}
-
-<span class="keyword">def</span> schema = DSL.schema { <i class="conum" data-value="2"></i><b>(2)</b>
-  queries {
-    field(<span class="string"><span class="delimiter">'</span><span class="content">lastFilm</span><span class="delimiter">'</span></span>) {
-      type GraphQLFilm
-      staticValue(<span class="key">title</span>: <span class="string"><span class="delimiter">'</span><span class="content">SPECTRE</span><span class="delimiter">'</span></span>, <span class="key">year</span>: <span class="integer">2015</span>)
-    }
-  }
-}
-
-<span class="keyword">def</span> query = <span class="string"><span class="delimiter">&quot;&quot;&quot;</span><span class="content">
-  {
-    lastFilm {
-      year
-      title
-    }
-  }
-</span><span class="delimiter">&quot;&quot;&quot;</span></span>
-
-<span class="keyword">def</span> result = DSL.execute(schema, query) <i class="conum" data-value="3"></i><b>(3)</b>
-
-<span class="keyword">assert</span> result.data.lastFilm.year == <span class="integer">2015</span>
-<span class="keyword">assert</span> result.data.lastFilm.title == <span class="string"><span class="delimiter">'</span><span class="content">SPECTRE</span><span class="delimiter">'</span></span></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Creates a type <code>GraphQLFilm</code></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Creates a <code>GraphQL schema</code> using the previously defined types</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Executes a <code>GraphQL query string</code> against the schema</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-You can execute the example as a Groovy script in the command line or using
-the <a href="http://www.groovy-lang.org/groovyconsole.html">Groovy console</a> both available in
-any Groovy distribution.
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-We have executed the query as a query string, however there is
-a safer way of building queries using the <code>DSL.query()`</code> builder. It gives you some sanity checks based on the types
-used.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_gradle">2.2. Gradle</h3>
-<div class="paragraph">
-<p>You can add the following dependency to your Gradle project</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="gradle">compile com.github.grooviter:gql:0.1.6-alpha'</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The library is available at Bintray so all you have to do is
-to include the <code>jcenter()</code> declaration in your dependency repositories
-in your Gradle script.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">repositories {
-   jcenter()
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_dsl">3. DSL</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_types">3.1. Types</h3>
+<h3 id="_types">Types</h3>
 <div class="paragraph">
 <p>Types define the structure of the data you want to expose. There two main sets of types, scalars and custom types. The
 former are specified by the GraphQL specification and are basic types such as strings, integers&#8230;&#8203;etc whereas the latter
@@ -779,7 +568,7 @@ refer to the types the developer will be defining (a Book, a Car&#8230;&#8203;et
 own types.</p>
 </div>
 <div class="sect3">
-<h4 id="_full_types">3.1.1. Full types</h4>
+<h4 id="_full_types">Full types</h4>
 <div class="paragraph">
 <p>In order to define a full type using <strong>GQL</strong> the only thing you have to do is to import <strong>gql.DSL</strong> and use the method
 <code>type</code>:</p>
@@ -788,15 +577,7 @@ own types.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
 
-<span class="keyword">def</span> type = DSL.type(<span class="string"><span class="delimiter">'</span><span class="content">Droid</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="1"></i><b>(1)</b>
-  description<span class="string"><span class="delimiter">'</span><span class="content">simple droid</span><span class="delimiter">'</span></span> <i class="conum" data-value="2"></i><b>(2)</b>
-
-  field(<span class="string"><span class="delimiter">'</span><span class="content">name</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="3"></i><b>(3)</b>
-    description<span class="string"><span class="delimiter">'</span><span class="content">name of the droid</span><span class="delimiter">'</span></span>
-    type GraphQLString
-  }
-
-}</code></pre>
+Unresolved directive <span class="keyword">in</span> dsl/types.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=fullType, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -834,7 +615,7 @@ as <code>GraphQLString</code> are defined within the DSL and both the compiler a
 </div>
 </div>
 <div class="sect3">
-<h4 id="_shorter_field_definition">3.1.2. Shorter field definition</h4>
+<h4 id="_shorter_field_definition">Shorter field definition</h4>
 <div class="paragraph">
 <p>There is a shorter way of defining a given type. It&#8217;s specially useful when you&#8217;re prototyping or when you don&#8217;t care
 about adding descriptions to your types. You can use the method <code>field(String, Scalar)</code> method within the <code>type</code> DSL.
@@ -843,18 +624,14 @@ The following example adds three different fields to the <code>Droid</code> type
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
-<span class="keyword">import</span> <span class="include">graphql.schema.GraphQLObjectType</span>
+Unresolved directive <span class="keyword">in</span> dsl/types.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLObjectType, indent=<span class="integer">0</span>]
 
-GraphQLObjectType type = DSL.type(<span class="string"><span class="delimiter">'</span><span class="content">Droid</span><span class="delimiter">'</span></span>) {
-  field <span class="string"><span class="delimiter">'</span><span class="content">name</span><span class="delimiter">'</span></span>, GraphQLString
-  field <span class="string"><span class="delimiter">'</span><span class="content">type</span><span class="delimiter">'</span></span>, GraphQLString
-  field <span class="string"><span class="delimiter">'</span><span class="content">age</span><span class="delimiter">'</span></span>, GraphQLInt
-}</code></pre>
+Unresolved directive <span class="keyword">in</span> dsl/types.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=shortest, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_adding_external_fields">3.1.3. Adding external fields</h4>
+<h4 id="_adding_external_fields">Adding external fields</h4>
 <div class="paragraph">
 <p>Sometimes you may want to keep type and field definitions apart, maybe to reuse those definitions, or maybe because it
 gives you more flexibility when structuring your app.</p>
@@ -866,12 +643,7 @@ gives you more flexibility when structuring your app.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
 
-<span class="keyword">def</span> nameToUpperCaseField = DSL.field(<span class="string"><span class="delimiter">'</span><span class="content">name</span><span class="delimiter">'</span></span>) {
-  type GraphQLString
-  fetcher { DataFetchingEnvironment env -&gt;
-    <span class="keyword">return</span> <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">${</span>env.source.name<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>.toUpperCase()
-  }
-}</code></pre>
+Unresolved directive <span class="keyword">in</span> dsl/types.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=standaloneFieldDefinition, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="sidebarblock">
@@ -893,14 +665,7 @@ the left hand side.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
 
-<span class="keyword">def</span> ageMinusOne = DSL.field(<span class="string"><span class="delimiter">'</span><span class="content">age</span><span class="delimiter">'</span></span>) {
-  type GraphQLInt
-  fetcher { DataFetchingEnvironment env -&gt;
-    <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, <span class="predefined-type">Integer</span>&gt; data = env.getSource() <i class="conum" data-value="1"></i><b>(1)</b>
-
-    <span class="keyword">return</span> data.age - <span class="integer">1</span> <i class="conum" data-value="2"></i><b>(2)</b>
-  }
-}</code></pre>
+Unresolved directive <span class="keyword">in</span> dsl/types.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=fieldStaticCompilation, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -926,16 +691,13 @@ every person&#8217;s name will be returned in uppercase.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
 
-<span class="keyword">def</span> people = DSL.type(<span class="string"><span class="delimiter">'</span><span class="content">People</span><span class="delimiter">'</span></span>) {
-  addField nameToUpperCaseField
-  addField ageMinusOne
-}</code></pre>
+Unresolved directive <span class="keyword">in</span> dsl/types.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=addField, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_scalars">3.2. Scalars</h3>
+<h3 id="_scalars">Scalars</h3>
 <div class="paragraph">
 <p><strong>GraphQL</strong> scalars represent the basic data types, such integers, strings, floats&#8230;&#8203;. Although GraphQL comes
 with set of default scalar types, sometimes it will be handy to be capable to declare our own. In order to be
@@ -968,18 +730,14 @@ value has been serialized to send the response back to the client.</p>
 fetcher or from a static value and converts back the value to something meaningul to the client.</p>
 </div>
 <div class="sect3">
-<h4 id="_declaration">3.2.1. Declaration</h4>
+<h4 id="_declaration">Declaration</h4>
 <div class="paragraph">
 <p>When declaring a type you can set every field in it, and most of the time they will be whether built-in
 scalars (<code>GraphQLString</code> or <code>GraphQLFloat</code>) or custom scalars like <code>GraphQLPrice</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> orderType = DSL.type(<span class="string"><span class="delimiter">'</span><span class="content">Order</span><span class="delimiter">'</span></span>) {
-  field <span class="string"><span class="delimiter">'</span><span class="content">subject</span><span class="delimiter">'</span></span>, GraphQLString <i class="conum" data-value="1"></i><b>(1)</b>
-  field <span class="string"><span class="delimiter">'</span><span class="content">units</span><span class="delimiter">'</span></span>, GraphQLInt <i class="conum" data-value="2"></i><b>(2)</b>
-  field <span class="string"><span class="delimiter">'</span><span class="content">price</span><span class="delimiter">'</span></span>, GraphQLPrice <i class="conum" data-value="3"></i><b>(3)</b>
-}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/scalars.adoc - <span class="key">include</span>::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=usingScalarInType, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1003,16 +761,7 @@ scalars (<code>GraphQLString</code> or <code>GraphQLFloat</code>) or custom scal
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> GraphQLPrice = DSL.scalar(<span class="string"><span class="delimiter">'</span><span class="content">Price</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="1"></i><b>(1)</b>
-  description <span class="string"><span class="delimiter">'</span><span class="content">currency unit</span><span class="delimiter">'</span></span> <i class="conum" data-value="2"></i><b>(2)</b>
-
-  <span class="comment">// deserialization</span>
-  parseLiteral <span class="local-variable">this</span>.&amp;stringValueToMap <i class="conum" data-value="3"></i><b>(3)</b>
-  parseValue <span class="local-variable">this</span>.&amp;stringValueToMap <i class="conum" data-value="4"></i><b>(4)</b>
-
-  <span class="comment">// serialization</span>
-  serialize <span class="local-variable">this</span>.&amp;fromMapToString <i class="conum" data-value="5"></i><b>(5)</b>
-}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/scalars.adoc - <span class="key">include</span>::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=fullScalarDeclaration, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1046,7 +795,7 @@ initial request (serialize).</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_deserialization">3.2.2. Deserialization</h4>
+<h4 id="_deserialization">Deserialization</h4>
 <div class="sect4">
 <h5 id="_literals">Literals</h5>
 <div class="paragraph">
@@ -1058,13 +807,7 @@ initial request (serialize).</p>
 <div class="listingblock">
 <div class="title">Query with a literal</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> query = <span class="string"><span class="delimiter">'''</span><span class="content">
-  {
-    order:changeOrderPrice(defaultPrice: &quot;1.23Y&quot;) {
-      price
-    }
-  }
-</span><span class="delimiter">'''</span></span></code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/scalars.adoc - <span class="key">include</span>::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=queryParseLiteral, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1074,15 +817,7 @@ For that we use the <code>parseLiteral</code> function.</p>
 <div class="listingblock">
 <div class="title">parseLiteral</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> GraphQLPrice = DSL.scalar(<span class="string"><span class="delimiter">'</span><span class="content">Price</span><span class="delimiter">'</span></span>) {
-  parseLiteral { money -&gt; <span class="comment">// 1.23Y</span>
-    <span class="predefined-type">String</span> value = money.value <span class="comment">// from a StringValue</span>
-    <span class="keyword">return</span> [
-      <span class="key">unit</span>: <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">$</span>value</span><span class="delimiter">&quot;</span></span>[<span class="integer">0</span>..-<span class="integer">2</span>].toDouble(), <span class="comment">// 1.23</span>
-      <span class="key">key</span>: <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">$</span>value</span><span class="delimiter">&quot;</span></span>[-<span class="integer">1</span>..-<span class="integer">1</span>] <span class="comment">// 'Y'</span>
-    ]
-  }
-}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/scalars.adoc - <span class="key">include</span>::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=definingParseLiteral, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1133,20 +868,7 @@ of <code>graphql-java</code> the package related to
 <div class="listingblock">
 <div class="title">fetcher</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> schema = DSL.schema {
-  queries {
-    field(<span class="string"><span class="delimiter">'</span><span class="content">changeOrderPrice</span><span class="delimiter">'</span></span>) {
-      type orderType
-      fetcher { env -&gt;
-        <span class="comment">// already converted :)</span>
-        <span class="keyword">def</span> price = env.arguments.defaultPrice <span class="comment">// [unit: 1.23, key: 'Y']</span>
-
-        [<span class="key">subject</span>: <span class="string"><span class="delimiter">'</span><span class="content">paper</span><span class="delimiter">'</span></span>, <span class="key">price</span>: price]
-      }
-      argument <span class="string"><span class="delimiter">'</span><span class="content">defaultPrice</span><span class="delimiter">'</span></span>, GraphQLPrice
-    }
-  }
-}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/scalars.adoc - <span class="key">include</span>::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=parseLiteralFetcher, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 </div>
@@ -1160,13 +882,7 @@ query:</p>
 <div class="listingblock">
 <div class="title">Query with variables</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> query = <span class="string"><span class="delimiter">'''</span><span class="content">
-  query ChangeOrderPrice($price: Price){
-    order:changeOrderPrice(defaultPrice: $price) {
-      price
-    }
-  }
-</span><span class="delimiter">'''</span></span></code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/scalars.adoc - <span class="key">include</span>::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=queryWithVariables, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1175,11 +891,7 @@ query:</p>
 <div class="listingblock">
 <div class="title">Query execution</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> result = DSL.execute(
-  schema,
-  query,
-  [<span class="key">price</span>: <span class="string"><span class="delimiter">'</span><span class="content">1.25PTA</span><span class="delimiter">'</span></span>]
-)</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/scalars.adoc - <span class="key">include</span>::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=queryWithVariableExecution, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1188,14 +900,7 @@ query:</p>
 <div class="listingblock">
 <div class="title">parseValue</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> scalar = DSL.scalar(<span class="string"><span class="delimiter">'</span><span class="content">Price</span><span class="delimiter">'</span></span>) {
-  parseValue { <span class="predefined-type">String</span> value -&gt; <span class="comment">// '1.25PTA'</span>
-    <span class="keyword">return</span> [
-      <span class="key">unit</span>: value[<span class="integer">0</span>..-<span class="integer">4</span>].toDouble(), <span class="comment">// 1.25</span>
-      <span class="key">key</span>: value[-<span class="integer">1</span>..-<span class="integer">3</span>].reverse() <span class="comment">// 'PTA'</span>
-    ]
-  }
-}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/scalars.adoc - <span class="key">include</span>::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=queryWithVariablesScalar, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="admonitionblock important">
@@ -1217,25 +922,13 @@ query:</p>
 <div class="listingblock">
 <div class="title">fetcher</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> schema = DSL.schema {
-  queries {
-    field(<span class="string"><span class="delimiter">'</span><span class="content">changeOrderPrice</span><span class="delimiter">'</span></span>) {
-      type orderType
-      fetcher { env -&gt;
-        <span class="keyword">def</span> price = env.arguments.defaultPrice <span class="comment">// already converted :)</span>
-
-        [<span class="key">subject</span>: <span class="string"><span class="delimiter">'</span><span class="content">paper</span><span class="delimiter">'</span></span>, <span class="key">price</span>: price]
-      }
-      argument <span class="string"><span class="delimiter">'</span><span class="content">defaultPrice</span><span class="delimiter">'</span></span>, scalar
-    }
-  }
-}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/scalars.adoc - <span class="key">include</span>::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=queryWithVariablesFetcher, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_serialization">3.2.3. Serialization</h4>
+<h4 id="_serialization">Serialization</h4>
 <div class="paragraph">
 <p>We&#8217;ve been reviewing how to parse data coming from a query to something we can deal with. Serialization would be
 the opposite action, convert a given value produced by us into something meaninful to the client.</p>
@@ -1247,14 +940,7 @@ a given tuple to a meaninful literal with the <code>serialize</code> function.</
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> GraphQLPrice = DSL.scalar(<span class="string"><span class="delimiter">'</span><span class="content">Price</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="1"></i><b>(1)</b>
-  description <span class="string"><span class="delimiter">'</span><span class="content">currency unit</span><span class="delimiter">'</span></span> <i class="conum" data-value="2"></i><b>(2)</b>
-
-  <span class="comment">// serialization</span>
-  serialize { money -&gt; <span class="comment">// [unit: 1.23, key: '$'] </span><i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">${</span>money.unit<span class="inline-delimiter">}</span></span><span class="inline"><span class="inline-delimiter">${</span>money.key<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span> <span class="comment">// &quot;1.23$&quot; </span><i class="conum" data-value="4"></i><b>(4)</b>
-  }
-}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/scalars.adoc - <span class="key">include</span>::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=serializingScalar, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1284,7 +970,7 @@ a given tuple to a meaninful literal with the <code>serialize</code> function.</
 </div>
 </div>
 <div class="sect2">
-<h3 id="_enums">3.3. Enums</h3>
+<h3 id="_enums">Enums</h3>
 <div class="paragraph">
 <p>Also called Enums, enumeration types are a special kind of scalar that is restricted to a particular set of allowed
 values. You can define a enum type with <code>DSL.enum</code>:</p>
@@ -1294,14 +980,7 @@ values. You can define a enum type with <code>DSL.enum</code>:</p>
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
 <span class="keyword">import</span> <span class="include">graphql.schema.GraphQLEnumType</span>
 
-GraphQLEnumType CountryEnumType = DSL.enum(<span class="string"><span class="delimiter">'</span><span class="content">Countries</span><span class="delimiter">'</span></span>) {
-  description <span class="string"><span class="delimiter">'</span><span class="content">european countries</span><span class="delimiter">'</span></span>
-
-  value <span class="string"><span class="delimiter">'</span><span class="content">SPAIN</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">es</span><span class="delimiter">'</span></span>
-  value <span class="string"><span class="delimiter">'</span><span class="content">FRANCE</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">fr</span><span class="delimiter">'</span></span>
-  value <span class="string"><span class="delimiter">'</span><span class="content">GERMANY</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">de</span><span class="delimiter">'</span></span>
-  value <span class="string"><span class="delimiter">'</span><span class="content">UK</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">uk</span><span class="delimiter">'</span></span>
-}</code></pre>
+Unresolved directive <span class="keyword">in</span> dsl/enums.adoc - <span class="key">include</span>::{testMain}/gql/dsl/EnumTypeSpec.groovy[tags=declaringEnum, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1312,14 +991,12 @@ GraphQLEnumType CountryEnumType = DSL.enum(<span class="string"><span class="del
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
 <span class="keyword">import</span> <span class="include">graphql.schema.GraphQLObjectType</span>
 
-GraphQLObjectType journey = DSL.type(<span class="string"><span class="delimiter">'</span><span class="content">Journey</span><span class="delimiter">'</span></span>) {
-  field <span class="string"><span class="delimiter">'</span><span class="content">country</span><span class="delimiter">'</span></span>, CountryEnumType
-}</code></pre>
+Unresolved directive <span class="keyword">in</span> dsl/enums.adoc - <span class="key">include</span>::{testMain}/gql/dsl/EnumTypeSpec.groovy[tags=enumTypeInclusion, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_schemas">3.4. Schemas</h3>
+<h3 id="_schemas">Schemas</h3>
 <div class="paragraph">
 <p>Once we&#8217;ve defined the structure of the data we want to expose, we need to define
 how that data is going to be retrieved. The schema defines:</p>
@@ -1342,24 +1019,9 @@ fields under the <strong>mutation</strong> node:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
-<span class="keyword">import</span> <span class="include">graphql.schema.GraphQLSchema</span>
+Unresolved directive <span class="keyword">in</span> dsl/schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=<span class="integer">0</span>]
 
-GraphQLSchema schema = DSL.schema {
-  queries { <i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="comment">// no queries</span>
-  }
-  mutations { <i class="conum" data-value="2"></i><b>(2)</b>
-    field(<span class="string"><span class="delimiter">'</span><span class="content">insert</span><span class="delimiter">'</span></span>) {
-      type filmType
-      fetcher { DataFetchingEnvironment env -&gt;
-        <span class="keyword">def</span> name = env.arguments.name
-        people &lt;&lt; name
-        <span class="keyword">return</span> [<span class="key">name</span>: name]
-      }
-      argument <span class="string"><span class="delimiter">'</span><span class="content">name</span><span class="delimiter">'</span></span>, GraphQLString
-    }
-  }
-}</code></pre>
+Unresolved directive <span class="keyword">in</span> dsl/schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=queriesAndMutations, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1400,27 +1062,16 @@ can pass a custom name if you want, for instance <code>queries('CustomQueryRoot'
 </table>
 </div>
 <div class="sect3">
-<h4 id="_static_values">3.4.1. Static values</h4>
+<h4 id="_static_values">Static values</h4>
 <div class="paragraph">
 <p>Sometimes you may want to expose constant values, values that are unlikely to change.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
-<span class="keyword">import</span> <span class="include">graphql.schema.GraphQLSchema</span>
+Unresolved directive <span class="keyword">in</span> dsl/schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=<span class="integer">0</span>]
 
-GraphQLSchema schema = DSL.schema { <i class="conum" data-value="1"></i><b>(1)</b>
-  queries(<span class="string"><span class="delimiter">'</span><span class="content">helloQuery</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="2"></i><b>(2)</b>
-    description<span class="string"><span class="delimiter">'</span><span class="content">simple droid</span><span class="delimiter">'</span></span><i class="conum" data-value="3"></i><b>(3)</b>
-
-    field(<span class="string"><span class="delimiter">'</span><span class="content">hello</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="4"></i><b>(4)</b>
-      description<span class="string"><span class="delimiter">'</span><span class="content">name of the droid</span><span class="delimiter">'</span></span>
-      type GraphQLString
-      staticValue <span class="string"><span class="delimiter">'</span><span class="content">world</span><span class="delimiter">'</span></span>
-    }
-
-  }
-}</code></pre>
+Unresolved directive <span class="keyword">in</span> dsl/schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=simpleSchema, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1458,7 +1109,7 @@ exposing data through calls to underlying datastore engines. We&#8217;ll see how
 </div>
 </div>
 <div class="sect3">
-<h4 id="_fetchers">3.4.2. Fetchers</h4>
+<h4 id="_fetchers">Fetchers</h4>
 <div class="paragraph">
 <p>Most of the time we are fetching our data from a database, a micro-service, a csv file&#8230;&#8203;etc and we normally use
 an API to query these datastores invoking some functions.</p>
@@ -1506,18 +1157,9 @@ data. The requested data should be of the same type of the declared type, or a m
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
-<span class="keyword">import</span> <span class="include">graphql.schema.GraphQLSchema</span>
+Unresolved directive <span class="keyword">in</span> dsl/schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=<span class="integer">0</span>]
 
-GraphQLSchema schema = DSL.schema {
-  queries(<span class="string"><span class="delimiter">'</span><span class="content">QueryRoot</span><span class="delimiter">'</span></span>) {
-    description<span class="string"><span class="delimiter">'</span><span class="content">queries over James Bond</span><span class="delimiter">'</span></span>
-    field(<span class="string"><span class="delimiter">'</span><span class="content">lastFilm</span><span class="delimiter">'</span></span>) {
-      description<span class="string"><span class="delimiter">'</span><span class="content">last film</span><span class="delimiter">'</span></span>
-      type filmType
-      fetcher { env -&gt; [<span class="key">title</span>: <span class="string"><span class="delimiter">'</span><span class="content">SPECTRE</span><span class="delimiter">'</span></span>] }
-    }
-  }
-}</code></pre>
+Unresolved directive <span class="keyword">in</span> dsl/schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=schemaWithFetcherAsClosure, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 </div>
@@ -1534,18 +1176,9 @@ as only parameter and returning an object of the correct type).</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
-<span class="keyword">import</span> <span class="include">graphql.schema.GraphQLSchema</span>
+Unresolved directive <span class="keyword">in</span> dsl/schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=<span class="integer">0</span>]
 
-GraphQLSchema schema = DSL.schema {
-  queries(<span class="string"><span class="delimiter">'</span><span class="content">QueryRoot</span><span class="delimiter">'</span></span>) {
-    description<span class="string"><span class="delimiter">'</span><span class="content">queries over James Bond</span><span class="delimiter">'</span></span>
-    field(<span class="string"><span class="delimiter">'</span><span class="content">lastFilm</span><span class="delimiter">'</span></span>) {
-      description<span class="string"><span class="delimiter">'</span><span class="content">last film</span><span class="delimiter">'</span></span>
-      type filmType
-      fetcher Queries.&amp;findLastFilm
-    }
-  }
-}</code></pre>
+Unresolved directive <span class="keyword">in</span> dsl/schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=schemaWithFetcherAsFunctionReference, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 </div>
@@ -1563,17 +1196,9 @@ to get the proper film:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
-<span class="keyword">import</span> <span class="include">graphql.schema.GraphQLSchema</span>
+Unresolved directive <span class="keyword">in</span> dsl/schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=<span class="integer">0</span>]
 
-GraphQLSchema schema = DSL.schema {
-  queries {
-    field(<span class="string"><span class="delimiter">'</span><span class="content">byYear</span><span class="delimiter">'</span></span>) {
-      type filmType
-      fetcher Queries.&amp;findByYear
-      argument <span class="string"><span class="delimiter">'</span><span class="content">year</span><span class="delimiter">'</span></span>, GraphQLString
-    }
-  }
-}</code></pre>
+Unresolved directive <span class="keyword">in</span> dsl/schema.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=findByYearSchema, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1582,16 +1207,9 @@ returning a Map with the arguments values stored by their names:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">graphql.schema.DataFetchingEnvironment</span>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/schema.adoc - <span class="key">include</span>::{testMain}/gql/test/util/Queries.groovy[tags=importDataFetchingEnvironment, indent=<span class="integer">0</span>]
 
-<span class="directive">static</span> <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>,?&gt; findByYear(DataFetchingEnvironment env) {
-  <span class="predefined-type">String</span> year = <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">${</span>env.arguments.year<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>
-
-  <span class="predefined-type">List</span>&lt;<span class="predefined-type">Map</span>&gt; dataSet = loadBondFilms()
-  <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>,?&gt; filmByYear = dataSet.find(byYear(year))
-
-  <span class="keyword">return</span> filmByYear
-}</code></pre>
+Unresolved directive <span class="keyword">in</span> dsl/schema.adoc - <span class="key">include</span>::{testMain}/gql/test/util/Queries.groovy[tags=findByYear, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="admonitionblock important">
@@ -1611,14 +1229,107 @@ you to take a look at the source code
 </div>
 </div>
 <div class="sect3">
-<h4 id="_good_practices">3.4.3. Good practices</h4>
+<h4 id="_good_practices">Good practices</h4>
 <div class="paragraph">
 <p>TODO</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_inputs">3.5. Inputs</h3>
+<h3 id="_modularising">Modularising</h3>
+<div class="paragraph">
+<p>Modularising the way you create GraphQL schemas has at least a couple of benefits:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Enables you to write using plain GraphQL language</strong>: Writing code is cool, but you may be used to writing GraphQL schemas
+using the GraphQL language directly.</p>
+</li>
+<li>
+<p><strong>It allows you to separate parts of the schema by areas of interest</strong>: No more a huge single file declaring
+everything in one place</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Lets say we have three different schema files in our classpath, and we would like to merge them all in order to
+create a sigle schema:</p>
+</div>
+<div class="listingblock">
+<div class="title">films</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/modularising.adoc - <span class="key">include</span>::{testResources}/gql/dsl/films.graphqls[indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">bands</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/modularising.adoc - <span class="key">include</span>::{testResources}/gql/dsl/bands.graphqls[indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">qandm.graphqls</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/modularising.adoc - <span class="key">include</span>::{testResources}/gql/dsl/qandm.graphqls[indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this first example we will be using <code>java.util.URI</code> instances to locate our files, but as we will see later,
+we can just use a <code>java.lang.String</code> to indicate where those files are within the application class loader.</p>
+</div>
+<div class="listingblock">
+<div class="title">as URIs</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/modularising.adoc - <span class="key">include</span>::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=uris, indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then you can merge all of them. In this example we&#8217;ll only be mapping the query fields with the data fetchers
+needed to return some response.</p>
+</div>
+<div class="listingblock">
+<div class="title">as URIs</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+
+Unresolved directive <span class="keyword">in</span> dsl/modularising.adoc - <span class="key">include</span>::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=urisSchema, indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Merging schema fragment (only type definitions)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Merging another schema fragment but, this time, mapping inner types to some data fetchers</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Declaring the interest to map some of the fields of type <code>QueryType</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Mapping a given data fetcher to field <code>randomField</code></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>And using just strings to indicate where the files are in the classpath:</p>
+</div>
+<div class="listingblock">
+<div class="title">as URIs</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+
+Unresolved directive <span class="keyword">in</span> dsl/modularising.adoc - <span class="key">include</span>::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=resourcesSchema, indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_inputs">Inputs</h3>
 <div class="paragraph">
 <p>Apart from using scalar values, like enums or string when passing arguments to a given query
 you can also easily pass complex objects. This is particularly valuable in the case of mutations, where
@@ -1630,13 +1341,7 @@ you might want to pass in a whole object to be created. In GraphQL that means us
 <div class="listingblock">
 <div class="title">query</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> query = <span class="string"><span class="delimiter">'''</span><span class="content">
-query QueryMail($filter: MailFilter) {
-    result: searchByFilter(filter: $filter) {
-       subject
-    }
-}
-</span><span class="delimiter">'''</span></span></code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/inputs.adoc - <span class="key">include</span>::{testMain}/gql/dsl/InputTypeSpec.groovy[tags=inputTypeQuery, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1645,10 +1350,7 @@ query QueryMail($filter: MailFilter) {
 <div class="listingblock">
 <div class="title">declaration</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">GraphQLInputObjectType MailFilterType = DSL.input(<span class="string"><span class="delimiter">'</span><span class="content">MailFilter</span><span class="delimiter">'</span></span>) {
-  field <span class="string"><span class="delimiter">'</span><span class="content">from</span><span class="delimiter">'</span></span>, GraphQLString
-  field <span class="string"><span class="delimiter">'</span><span class="content">to</span><span class="delimiter">'</span></span>, GraphQLString
-}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/inputs.adoc - <span class="key">include</span>::{testMain}/gql/dsl/InputTypeSpec.groovy[tags=inputTypeDeclaration, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1657,12 +1359,11 @@ query QueryMail($filter: MailFilter) {
 <div class="listingblock">
 <div class="title">execution</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">ExecutionResult result =
-  DSL.execute(schema, query, [<span class="key">filter</span>: [<span class="key">from</span>: <span class="string"><span class="delimiter">'</span><span class="content">me@somedomain.com</span><span class="delimiter">'</span></span>, <span class="key">to</span>: <span class="string"><span class="delimiter">'</span><span class="content">you@somedomain.com</span><span class="delimiter">'</span></span>]])</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/inputs.adoc - <span class="key">include</span>::{testMain}/gql/dsl/InputTypeSpec.groovy[tags=inputTypeQueryExecution, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_arguments">3.5.1. Arguments</h4>
+<h4 id="_arguments">Arguments</h4>
 <div class="paragraph">
 <p>Input types can only be used as an argument of a <code>query</code> or a <code>mutation</code>. Therefore when
 declaring a given mutation, you can say that the argument of that <code>query</code> or <code>mutation</code>
@@ -1671,22 +1372,7 @@ can be of input type <code>X</code>:</p>
 <div class="listingblock">
 <div class="title">arguments</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">GraphQLSchema schema = DSL.schema {
-  queries {
-    field(<span class="string"><span class="delimiter">'</span><span class="content">searchByFilter</span><span class="delimiter">'</span></span>) {
-      type list(MailResult)
-
-      argument <span class="string"><span class="delimiter">'</span><span class="content">filter</span><span class="delimiter">'</span></span>, MailFilterType <span class="comment">// --&gt; input type</span>
-
-      fetcher { DataFetchingEnvironment env -&gt;
-        <span class="keyword">assert</span> env.arguments.filter.from == <span class="string"><span class="delimiter">'</span><span class="content">me@somedomain.com</span><span class="delimiter">'</span></span>
-        <span class="keyword">assert</span> env.arguments.filter.to == <span class="string"><span class="delimiter">'</span><span class="content">you@somedomain.com</span><span class="delimiter">'</span></span>
-
-        <span class="keyword">return</span> [[<span class="key">subject</span>: <span class="string"><span class="delimiter">'</span><span class="content">just this email here!</span><span class="delimiter">'</span></span>]]
-      }
-    }
-  }
-}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/inputs.adoc - <span class="key">include</span>::{testMain}/gql/dsl/InputTypeSpec.groovy[tags=inputTypeArgument, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="sidebarblock">
@@ -1716,9 +1402,9 @@ inside the <code>argument</code> scope</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_queries">3.6. Queries</h3>
+<h3 id="_queries">Queries</h3>
 <div class="sect3">
-<h4 id="_execution">3.6.1. Execution</h4>
+<h4 id="_execution">Execution</h4>
 <div class="sect4">
 <h5 id="_withouth_arguments">Withouth arguments</h5>
 <div class="paragraph">
@@ -1727,13 +1413,7 @@ inside the <code>argument</code> scope</p>
 <div class="listingblock">
 <div class="title">query</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> queryString = <span class="string"><span class="delimiter">'''</span><span class="content">
-  {
-    lastFilm {
-      title
-    }
-  }
-</span><span class="delimiter">'''</span></span></code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/queries.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=executeQueryStringNoArgumentsQuery, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1743,9 +1423,7 @@ inside the <code>argument</code> scope</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
 
-ExecutionResult result = DSL.execute(schema, queryString) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, ?&gt; dataMap = result.data <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="predefined-type">List</span>&lt;?&gt; errors = result.errors <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+Unresolved directive <span class="keyword">in</span> dsl/queries.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=executeQueryStringNoArguments, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1791,26 +1469,19 @@ data is going to return.</p>
 <div class="listingblock">
 <div class="title">query</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> queryString = <span class="string"><span class="delimiter">'''</span><span class="content">
-  query FindBondByYear($year: String) {
-    byYear(year: $year) {
-      year
-      title
-    }
-  }
-</span><span class="delimiter">'''</span></span></code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/queries.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=queryWithArguments, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">execution</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> result = DSL.execute(schema, queryString, [<span class="key">year</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">1962</span><span class="delimiter">&quot;</span></span>])</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/queries.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=queryWithArgumentsExecution, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_query_builders">3.6.2. Query builders</h4>
+<h4 id="_query_builders">Query builders</h4>
 <div class="paragraph">
 <p><strong>GQL</strong> allows you to execute queries directly or to build them to use them later via DSL
 builder. The former is useful if you already have the queries and you
@@ -1827,19 +1498,8 @@ to be able to declare and execute queries in one shot right ?</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
-<span class="keyword">import</span> <span class="include">graphql.ExecutionResult</span>
-<span class="keyword">import</span> <span class="include">graphql.schema.DataFetchingEnvironment</span>
-
-ExecutionResult result = DSL.execute(schema) {
-  query(<span class="string"><span class="delimiter">'</span><span class="content">byYear</span><span class="delimiter">'</span></span>, [<span class="key">year</span>: <span class="string"><span class="delimiter">'</span><span class="content">1962</span><span class="delimiter">'</span></span>]) { <i class="conum" data-value="1"></i><b>(1)</b>
-    returns(Film) { <i class="conum" data-value="2"></i><b>(2)</b>
-      title
-      year
-    }
-
-    alias <span class="string"><span class="delimiter">'</span><span class="content">first</span><span class="delimiter">'</span></span> <i class="conum" data-value="3"></i><b>(3)</b>
-  }
-}</code></pre>
+Unresolved directive <span class="keyword">in</span> dsl/queries.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=importExecutionResult, indent=<span class="integer">0</span>]
+Unresolved directive <span class="keyword">in</span> dsl/queries.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=staticQueryChecked, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1862,20 +1522,8 @@ present in type <code>Film</code></td>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
-<span class="keyword">import</span> <span class="include">graphql.ExecutionResult</span>
-<span class="keyword">import</span> <span class="include">graphql.schema.DataFetchingEnvironment</span>
-
-ExecutionResult result2 = DSL.execute(schema) {
-  query(<span class="string"><span class="delimiter">'</span><span class="content">byYear</span><span class="delimiter">'</span></span>, [<span class="key">year</span>: <span class="string"><span class="delimiter">'</span><span class="content">2015</span><span class="delimiter">'</span></span>]) { <i class="conum" data-value="1"></i><b>(1)</b>
-    returns { <i class="conum" data-value="2"></i><b>(2)</b>
-      title
-      year
-      bond
-    }
-
-    alias <span class="string"><span class="delimiter">'</span><span class="content">last</span><span class="delimiter">'</span></span> <i class="conum" data-value="3"></i><b>(3)</b>
-  }
-}</code></pre>
+Unresolved directive <span class="keyword">in</span> dsl/queries.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=importExecutionResult, indent=<span class="integer">0</span>]
+Unresolved directive <span class="keyword">in</span> dsl/queries.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=staticQueryUnchecked, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1906,52 +1554,10 @@ string against the other engine.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
 
-<span class="predefined-type">String</span> queryString = DSL.buildQuery {
-  query(<span class="string"><span class="delimiter">'</span><span class="content">byYear</span><span class="delimiter">'</span></span>, [<span class="key">year</span>: <span class="string"><span class="delimiter">'</span><span class="content">1962</span><span class="delimiter">'</span></span>]) {
-    returns(Film) {
-      title
-      year
-    }
-    alias <span class="string"><span class="delimiter">'</span><span class="content">first</span><span class="delimiter">'</span></span>
-  }
-
-  query(<span class="string"><span class="delimiter">'</span><span class="content">byYear</span><span class="delimiter">'</span></span>, [<span class="key">year</span>: <span class="string"><span class="delimiter">'</span><span class="content">2015</span><span class="delimiter">'</span></span>]) {
-    returns {
-      title
-      year
-      bond
-    }
-    alias <span class="string"><span class="delimiter">'</span><span class="content">last</span><span class="delimiter">'</span></span>
-  }
-}</code></pre>
+Unresolved directive <span class="keyword">in</span> dsl/queries.adoc - <span class="key">include</span>::{testMain}/gql/DSLSpec.groovy[tags=queryString, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 </div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_asts">4. ASTs</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>TODO</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_development">5. Development</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_source_code">5.1. Source code</h3>
-<div class="paragraph">
-<p>Source code is available at <a href="https://github.com/grooviter/gql" class="bare">https://github.com/grooviter/gql</a></p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_groovydoc">5.2. Groovydoc</h3>
-<div class="paragraph">
-<p>Groovy API is available at <a href="https://grooviter.github.io/gql/api/index.html" class="bare">https://grooviter.github.io/gql/api/index.html</a></p>
 </div>
 </div>
 </div>
@@ -1959,24 +1565,8 @@ string against the other engine.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.1.6-alpha<br>
-Last updated 2017-04-23 22:48:50 +00:00
+Last updated 2017-06-09 00:57:17 +00:00
 </div>
 </div>
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  tex2jax: {
-    inlineMath: [["\\(", "\\)"]],
-    displayMath: [["\\[", "\\]"]],
-    ignoreClass: "nostem|nolatexmath"
-  },
-  asciimath2jax: {
-    delimiters: [["\\$", "\\$"]],
-    ignoreClass: "nostem|noasciimath"
-  },
-  TeX: { equationNumbers: { autoNumber: "none" } }
-});
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.5.3/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
 </body>
 </html>

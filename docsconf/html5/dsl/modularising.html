@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.3">
-<title>Getting started</title>
+<title>Modularising</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -513,105 +513,109 @@ table.CodeRay td.code>pre{padding:0}
 <div id="header">
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
-<ul class="sectlevel1">
-<li><a href="#_getting_started">Getting started</a>
 <ul class="sectlevel2">
-<li><a href="#_hello_gql">Hello GQL</a></li>
-<li><a href="#_gradle">Gradle</a></li>
-</ul>
-</li>
+<li><a href="#_modularising">Modularising</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
-<div class="sect1">
-<h2 id="_getting_started">Getting started</h2>
-<div class="sectionbody">
 <div class="sect2">
-<h3 id="_hello_gql">Hello GQL</h3>
+<h3 id="_modularising">Modularising</h3>
 <div class="paragraph">
-<p>This is how a full GraphQL life cycle app looks like using <strong>GQL</strong>:</p>
+<p>Modularising the way you create GraphQL schemas has at least a couple of benefits:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Enables you to write using plain GraphQL language</strong>: Writing code is cool, but you may be used to writing GraphQL schemas
+using the GraphQL language directly.</p>
+</li>
+<li>
+<p><strong>It allows you to separate parts of the schema by areas of interest</strong>: No more a huge single file declaring
+everything in one place</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Lets say we have three different schema files in our classpath, and we would like to merge them all in order to
+create a sigle schema:</p>
 </div>
 <div class="listingblock">
+<div class="title">films</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql:0.1.5-alpha</span><span class="delimiter">'</span></span>)
-Unresolved directive <span class="keyword">in</span> getting.adoc - <span class="key">include</span>::{baseDir}/..<span class="regexp"><span class="delimiter">/</span><span class="content">src</span><span class="delimiter">/</span></span>test/groovy/gql/DSLSpec.groovy[tags=grabExample, indent=<span class="integer">0</span>]</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> modularising.adoc - <span class="key">include</span>::{testResources}/gql/dsl/films.graphqls[indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">bands</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> modularising.adoc - <span class="key">include</span>::{testResources}/gql/dsl/bands.graphqls[indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">qandm.graphqls</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> modularising.adoc - <span class="key">include</span>::{testResources}/gql/dsl/qandm.graphqls[indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this first example we will be using <code>java.util.URI</code> instances to locate our files, but as we will see later,
+we can just use a <code>java.lang.String</code> to indicate where those files are within the application class loader.</p>
+</div>
+<div class="listingblock">
+<div class="title">as URIs</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> modularising.adoc - <span class="key">include</span>::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=uris, indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then you can merge all of them. In this example we&#8217;ll only be mapping the query fields with the data fetchers
+needed to return some response.</p>
+</div>
+<div class="listingblock">
+<div class="title">as URIs</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+
+Unresolved directive <span class="keyword">in</span> modularising.adoc - <span class="key">include</span>::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=urisSchema, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Creates a type <code>GraphQLFilm</code></td>
+<td>Merging schema fragment (only type definitions)</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Creates a <code>GraphQL schema</code> using the previously defined types</td>
+<td>Merging another schema fragment but, this time, mapping inner types to some data fetchers</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Executes a <code>GraphQL query string</code> against the schema</td>
+<td>Declaring the interest to map some of the fields of type <code>QueryType</code></td>
 </tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
 <tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-You can execute the example as a Groovy script in the command line or using
-the <a href="http://www.groovy-lang.org/groovyconsole.html">Groovy console</a> both available in
-any Groovy distribution.
-</td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Mapping a given data fetcher to field <code>randomField</code></td>
 </tr>
 </table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-We have executed the query as a query string, however there is
-a safer way of building queries using the <code>DSL.query()`</code> builder. It gives you some sanity checks based on the types
-used.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_gradle">Gradle</h3>
-<div class="paragraph">
-<p>You can add the following dependency to your Gradle project</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="gradle">compile com.github.grooviter:gql:0.1.6-alpha'</code></pre>
-</div>
 </div>
 <div class="paragraph">
-<p>The library is available at Bintray so all you have to do is
-to include the <code>jcenter()</code> declaration in your dependency repositories
-in your Gradle script.</p>
+<p>And using just strings to indicate where the files are in the classpath:</p>
 </div>
 <div class="listingblock">
+<div class="title">as URIs</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">repositories {
-   jcenter()
-}</code></pre>
-</div>
-</div>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+
+Unresolved directive <span class="keyword">in</span> modularising.adoc - <span class="key">include</span>::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=resourcesSchema, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-30 21:29:14 +00:00
+Last updated 2017-06-09 00:57:17 +00:00
 </div>
 </div>
 </body>
