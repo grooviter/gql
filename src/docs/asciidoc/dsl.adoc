@@ -8,6 +8,8 @@ include::dsl/enums.adoc[]
 
 include::dsl/schema.adoc[]
 
+include::dsl/modularising.adoc[]
+
 include::dsl/inputs.adoc[]
 
 include::dsl/queries.adoc[]

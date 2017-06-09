@@ -17,17 +17,20 @@ class SchemaMergerBuilderSpec extends Specification {
 
   void 'check merging three different schemas byURI'() {
     given: 'two different schema URIs'
+    // tag::uris[]
     URI uriOne = ClassLoader.getSystemResource('gql/dsl/bands.graphqls').toURI()
     URI uriTwo = ClassLoader.getSystemResource('gql/dsl/films.graphqls').toURI()
     URI uriTop = ClassLoader.getSystemResource('gql/dsl/qandm.graphqls').toURI()
+    // end::uris[]
 
     and: 'an schema made of three different schema definitions'
+    // tag::urisSchema[]
     GraphQLSchema proxySchema = DSL.mergeSchemas {
-      byURI(uriOne)
+      byURI(uriOne)   // <1>
       byURI(uriTwo)
-      byURI(uriTop) {
-        mapType('Queries') {
-          link('randomFilm') { DataFetchingEnvironment env ->
+      byURI(uriTop) { // <2>
+        mapType('Queries') { // <3>
+          link('randomFilm') { DataFetchingEnvironment env -> // <4>
             return [title: 'Spectre']
           }
           link('randomBand') { DataFetchingEnvironment env ->
@@ -36,6 +39,7 @@ class SchemaMergerBuilderSpec extends Specification {
         }
       }
     }
+    // end::urisSchema[]
 
     when: 'executing a query related to the first schema'
     ExecutionResult resultOne = DSL.execute(proxySchema,'{ randomBand { name } }')
@@ -52,6 +56,7 @@ class SchemaMergerBuilderSpec extends Specification {
 
   void 'check merging three different schemas byResource'() {
     given: 'an schema made of three different schema definitions'
+    // tag::resourcesSchema[]
     GraphQLSchema proxySchema = DSL.mergeSchemas {
       byResource('gql/dsl/bands.graphqls')
       byResource('gql/dsl/films.graphqls')
@@ -66,6 +71,7 @@ class SchemaMergerBuilderSpec extends Specification {
         }
       }
     }
+    // end::resourcesSchema[]
 
     when: 'executing a query related to the first schema'
     ExecutionResult resultOne = DSL.execute(proxySchema,'{ randomBand { name } }')

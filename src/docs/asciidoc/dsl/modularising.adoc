@@ -1,0 +1,64 @@
+=== Modularising
+
+Modularising the way you create GraphQL schemas has at least a couple of benefits:
+
+- **Enables you to write using plain GraphQL language**: Writing code is cool, but you may be used to writing GraphQL schemas
+using the GraphQL language directly.
+- **It allows you to separate parts of the schema by areas of interest**: No more a huge single file declaring
+everything in one place
+
+Lets say we have three different schema files in our classpath, and we would like to merge them all in order to
+create a sigle schema:
+
+[source, groovy]
+.films
+----
+include::{testResources}/gql/dsl/films.graphqls[indent=0]
+----
+
+[source, groovy]
+.bands
+----
+include::{testResources}/gql/dsl/bands.graphqls[indent=0]
+----
+
+[source, groovy]
+.qandm.graphqls
+----
+include::{testResources}/gql/dsl/qandm.graphqls[indent=0]
+----
+
+In this first example we will be using `java.util.URI` instances to locate our files, but as we will see later,
+we can just use a `java.lang.String` to indicate where those files are within the application class loader.
+
+[source, groovy]
+.as URIs
+----
+include::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=uris, indent=0]
+----
+
+Then you can merge all of them. In this example we'll only be mapping the query fields with the data fetchers
+needed to return some response.
+
+[source, groovy]
+.as URIs
+----
+import gql.DSL
+
+include::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=urisSchema, indent=0]
+----
+
+<1> Merging schema fragment (only type definitions)
+<2> Merging another schema fragment but, this time, mapping inner types to some data fetchers
+<3> Declaring the interest to map some of the fields of type `QueryType`
+<4> Mapping a given data fetcher to field `randomField`
+
+And using just strings to indicate where the files are in the classpath:
+
+[source, groovy]
+.as URIs
+----
+import gql.DSL
+
+include::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=resourcesSchema, indent=0]
+----
