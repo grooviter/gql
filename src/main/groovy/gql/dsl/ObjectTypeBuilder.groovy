@@ -8,6 +8,8 @@ import graphql.schema.GraphQLInputType
 import graphql.schema.GraphQLInterfaceType
 import graphql.schema.GraphQLObjectType
 import graphql.schema.GraphQLOutputType
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.SimpleType
 
 /**
  * Builds a new {@link GraphQLObjectType}
@@ -17,6 +19,11 @@ import graphql.schema.GraphQLOutputType
 @SuppressWarnings('PropertyName')
 class ObjectTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
 
+  /**
+   * The underlying builder used to build the {@link GraphQLObjectType}
+   *
+   * @since 0.1.0
+   */
   GraphQLObjectType.Builder type = GraphQLObjectType.newObject()
 
   /**
@@ -184,7 +191,8 @@ class ObjectTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
      * @return the current builder instance
      * @since 0.1.0
      */
-    FieldBuilder fetcher(Closure<?> fetcher) {
+    FieldBuilder fetcher(
+      @ClosureParams(value = SimpleType, options = 'graphql.schema.DataFetchingEnvironment') Closure<?> fetcher) {
       builder.dataFetcher(fetcher as DataFetcher)
       return this
     }
