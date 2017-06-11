@@ -1,5 +1,4 @@
 /**
- * This package exposes DSL and annotations to make it easier to build
- * GraphQL apps
+ * This package exposes DSLs to build GraphQL and Relay apps
  */
 package gql
