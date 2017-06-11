@@ -1,0 +1,16 @@
+=== Connection
+
+A **Connection** is just a convention on how to access one-to-many relationships in a node, and how to
+paginate through those items. Those items are called **Edges**. Every edge has two fields:
+
+- **cursor**: identifies where in the pagination cursor is the edge located
+- **node**: the edge payload
+
+[source, groovy]
+----
+include::{testMain}/gql/relay/RelaySpec.groovy[tags=connection, indent=0]
+----
+
+<1> Declaring a connection type
+<2> Declaring the type of the connection's edges
+<3> Declaring the type of every edge's node

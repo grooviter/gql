@@ -1,0 +1,39 @@
+== Relay
+
+=== What is Relay ?
+
+https://facebook.github.io/react/blog/2015/02/20/introducing-relay-and-graphql.html
+
+=== What GQL implements ?
+
+According to the https://facebook.github.io/relay/[Relay] official site, the three core
+assumptions that Relay makes about a GraphQL server are that it provides:
+
+- A **mechanism for refetching** an object.
+- A description of **how to page** through connections.
+- Structure around **mutations** to make them **predictable**.
+
+Relay uses GraphQL as its query language, but it is not tied to a specific implementation of GraphQL. In order to
+achieve these three goals, the Relay specification defines three conceps: **Node**, **Connection**, **Edges**.
+
+You can think of the relationship between the three terms looking at this diagram:
+
+[ditaa]
+....
+
+ +----------+             +------------+             +---------+
+ |          |    (1, N)   |            |    (1, N)   |         |
+ |   Node   +------------>| Connection +------------>|  Edges  |
+ |          |             |            |             |         |
+ +----------+             +------------+             +---------+
+
+....
+
+A **Node** may have a **Connection** and a **Connection** may have 0 to N **Edges**. Lets see what these
+terms mean.
+
+include::relay/node.adoc[]
+
+include::relay/connection.adoc[]
+
+include::relay/example.adoc[]

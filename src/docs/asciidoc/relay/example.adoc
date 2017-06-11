@@ -1,0 +1,42 @@
+=== Full Example
+
+In this example we would like to get a certain number of the ships of the rebel faction.
+
+[source, groovy]
+.GraphQL query
+----
+include::{testMain}/gql/relay/RelaySpec.groovy[tags=query, indent=0]
+----
+
+So first thing to do is to declare the **Faction** type:
+
+[source, groovy]
+.Node
+----
+include::{testMain}/gql/relay/RelaySpec.groovy[tags=node, indent=0]
+----
+
+<1> Type's description
+<2> A faction has a **name**
+<3> A faction has **ships** which is a one-to-many relationship
+<4> Data fetcher
+
+The **Node** types can declare a special type of fetcher though the **listFetcher** node. That call can convert the
+result of a simple function returning a list to a **Connection** type.
+
+To declare a connection type you can use **Relay.connection**. In this example we're declaring edges of type
+**ShipEdges** which have nodes of type **Ship**.
+
+Every edge will have two fields: **node** which is every item of the relationship, and a **cursor** which locates
+every edge in the relationship, it could be taken as if it were a kind of offset.
+
+[source, groovy]
+.Connection
+----
+include::{testMain}/gql/relay/RelaySpec.groovy[tags=connection, indent=0]
+----
+
+
+
+
+

@@ -1,0 +1,21 @@
+=== Node
+
+A **Node** is a type that can be retrieved by an unique identifier. A node may have two types of
+fields: **simple fields**, and **connections**:
+
+- **id**: A node can be identified by an unique id
+- **field**: A node's simple attribute
+- **connection**: A node's one-to-many relationship
+
+They way a node handles fields of type one-to-many is through another type called **Connection**.
+This is how you can declare a node:
+
+[source, groovy]
+----
+include::{testMain}/gql/relay/RelaySpec.groovy[tags=node, indent=0]
+----
+
+<1> Node description
+<2> A normal field
+<3> A one-to-many field
+<4> A fetcher that builds a Connection instance out of the list returned by this closure
