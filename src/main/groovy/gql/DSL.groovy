@@ -2,6 +2,7 @@ package gql
 
 import gql.dsl.EnumTypeBuilder
 import gql.dsl.InputTypeBuilder
+import gql.dsl.InterfaceBuilder
 import gql.dsl.QueryBuilder
 import gql.dsl.ScalarTypeBuilder
 import gql.dsl.SchemaBuilder
@@ -13,9 +14,13 @@ import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLEnumType
 import graphql.schema.GraphQLFieldDefinition
 import graphql.schema.GraphQLInputObjectType
+import graphql.schema.GraphQLInterfaceType
 import graphql.schema.GraphQLScalarType
 import graphql.schema.GraphQLSchema
 import graphql.schema.GraphQLObjectType
+import graphql.schema.TypeResolver
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.SimpleType
 
 /**
  * Functions in this class ease the creation of different GraphQL
@@ -151,6 +156,23 @@ final class DSL {
   }
 
   /**
+   * Builds an interface type.
+   *
+   * @param name the name of the interface type
+   * @param builder the inner dsl responsible for defining the interface
+   * @return an instance of {@link GraphQLInterfaceType}
+   * @see InterfaceBuilder
+   * @since 0.1.8
+   */
+  static GraphQLInterfaceType 'interface'(String name, @DelegatesTo(InterfaceBuilder) Closure builder) {
+    Closure<InterfaceBuilder> clos = builder.clone() as Closure<InterfaceBuilder>
+    InterfaceBuilder sourceBuilder = new InterfaceBuilder().name(name)
+    InterfaceBuilder resultBuilder = sourceBuilder.with(clos) ?: sourceBuilder
+
+    return resultBuilder.build()
+  }
+
+  /**
    * Builds a scalar type.
    *
    * @param name of the scalar type
@@ -197,5 +219,19 @@ final class DSL {
     SchemaMergerBuilder builderResult = builderSource.with(clos) ?: builderSource
 
     return builderResult.build()
+  }
+
+  /**
+   * Creates an instance of {@link TypeResolver}. {@link TypeResolver} only has one method, the closure
+   * passed as parameter will act as an implementation of an instance of that type.
+   * <br/>
+   * The only valid parameter for that closure must be of type {@link graphql.TypeResolutionEnvironment}.
+   *
+   * @return an instance of {@link TypeResolver}
+   * @since 0.1.8
+   */
+  static TypeResolver typeResolver(
+    @ClosureParams(value = SimpleType, options = 'graphql.TypeResolutionEnvironment') Closure typeResolverClosure) {
+    return typeResolverClosure as TypeResolver
   }
 }
