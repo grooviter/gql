@@ -3,8 +3,8 @@
 A **Connection** is just a convention on how to access one-to-many relationships in a node, and how to
 paginate through those items. A **Connection** has two fields:
 
-- **pageInfo**: information regarding on how to paginate through the edges
-- **edges**: a collection of result items
+- **pageInfo**: information regarding on how to paginate through the edges.
+- **edges**: a collection of result items.
 
 Every edge has two fields:
 
@@ -17,5 +17,14 @@ include::{testMain}/gql/relay/RelaySpec.groovy[tags=connection, indent=0]
 ----
 
 <1> Declaring a connection type
-<2> Declaring the type of the connection's edges
-<3> Declaring the type of every edge's node
+<2> Declaring the type of the connection's edge items
+
+[sidebar]
+.Where is the **ShipEdge** type ?
+****
+Creating the intermediate type between connection and edge items is something repetitive. That's why
+the Relay dsl only let you declare the name of the item type. The convention says that the intermediate
+type will be **NameOfTheItemType** + **Edge**. Therefore if the edges items are of type **Ship** the
+edge type will be of type **ShipEdge**.
+
+****

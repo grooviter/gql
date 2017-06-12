@@ -24,12 +24,9 @@ class RelaySpec extends Specification {
     given: 'a schema with one node'
     GraphQLOutputType ShipConnection = Relay.connection('ShipConnection') {
       description 'a way of dealing with ship collections'
-      edges('ShipEdge') {
-        description 'a set of ships with pagination'
-        node('Ship') {
-          description 'a starship'
-          field 'name', GraphQLString
-        }
+      edges('Ship') {
+        description 'a starship'
+        field 'name', GraphQLString
       }
     }
 
@@ -73,12 +70,9 @@ class RelaySpec extends Specification {
     given:
     // tag::connection[]
     GraphQLOutputType ShipConnection = Relay.connection('ShipConnection') { // <1>
-      edges('ShipEdge') { // <2>
-        description 'a set of ships with pagination'
-        node('Ship') { // <3>
-          description 'a starship'
-          field 'name', GraphQLString
-        }
+      edges('Ship') { // <2>
+        description 'a starship'
+        field 'name', GraphQLString
       }
     }
     // end::connection[]

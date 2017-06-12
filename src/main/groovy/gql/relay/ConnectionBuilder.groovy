@@ -1,6 +1,7 @@
 package gql.relay
 
 import gql.DSL
+import gql.Relay
 import gql.dsl.ObjectTypeBuilder
 import graphql.schema.GraphQLFieldDefinition
 import graphql.schema.GraphQLObjectType
@@ -23,18 +24,29 @@ class ConnectionBuilder extends ObjectTypeBuilder implements RelayPrimitivesAwar
    * @return and instance of the current {@link ConnectionBuilder}
    * @since 0.1.8
    */
-  ConnectionBuilder edges(String name, @DelegatesTo(EdgesBuilder) Closure dsl) {
-    Closure<EdgesBuilder> clos = dsl.clone() as Closure<EdgesBuilder>
-    EdgesBuilder sourceBuilder = new EdgesBuilder().name(name) as EdgesBuilder
-    EdgesBuilder resultBuilder = sourceBuilder.with(clos) ?: sourceBuilder
+  ConnectionBuilder edges(String name, @DelegatesTo(NodeBuilder) Closure dsl) {
+    GraphQLObjectType Node = Relay.node(name, dsl)
+    GraphQLFieldDefinition nodeField = DSL.field('node') {
+      description Node.description
+      type Node
+    }
 
-    GraphQLObjectType edgeType = resultBuilder.build()
+    GraphQLFieldDefinition cursorField = DSL.field('cursor') {
+      description ''
+      type GraphQLString
+    }
+
+    GraphQLObjectType edgeType = new ObjectTypeBuilder()
+       .name("${name}Edge")
+       .addField(nodeField)
+       .addField(cursorField)
+       .build()
+
     GraphQLFieldDefinition edgesField = DSL.field('edges') {
       type list(edgeType)
     }
 
     addField(edgesField)
-
     return this
   }
 
