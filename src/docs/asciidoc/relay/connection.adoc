@@ -1,7 +1,12 @@
 === Connection
 
 A **Connection** is just a convention on how to access one-to-many relationships in a node, and how to
-paginate through those items. Those items are called **Edges**. Every edge has two fields:
+paginate through those items. A **Connection** has two fields:
+
+- **pageInfo**: information regarding on how to paginate through the edges
+- **edges**: a collection of result items
+
+Every edge has two fields:
 
 - **cursor**: identifies where in the pagination cursor is the edge located
 - **node**: the edge payload

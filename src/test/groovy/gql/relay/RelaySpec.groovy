@@ -73,8 +73,6 @@ class RelaySpec extends Specification {
     given:
     // tag::connection[]
     GraphQLOutputType ShipConnection = Relay.connection('ShipConnection') { // <1>
-      description 'a way of dealing with ship collections'
-
       edges('ShipEdge') { // <2>
         description 'a set of ships with pagination'
         node('Ship') { // <3>
@@ -87,12 +85,10 @@ class RelaySpec extends Specification {
 
     // tag::node[]
     GraphQLOutputType Faction = Relay.node('Faction') {
-      description 'party spirit especially when marked by dissension' // <1>
-
-      field 'name', GraphQLString // <2>
-      connection('ships'){ // <3>
+      field 'name', GraphQLString // <1>
+      connection('ships'){ // <2>
         type ShipConnection
-        listFetcher { // <4>
+        listFetcher { // <3>
           Integer limit = it.getArgument('first')
 
           return SHIPS.take(limit)

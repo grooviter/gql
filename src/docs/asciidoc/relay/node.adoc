@@ -19,3 +19,6 @@ include::{testMain}/gql/relay/RelaySpec.groovy[tags=node, indent=0]
 <2> A normal field
 <3> A one-to-many field
 <4> A fetcher that builds a Connection instance out of the list returned by this closure
+
+NOTE: You don't have to declare the **id** field. **GQL** has already added for you every
+time you declare a node type.

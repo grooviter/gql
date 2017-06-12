@@ -15,20 +15,19 @@ So first thing to do is to declare the **Faction** type:
 ----
 include::{testMain}/gql/relay/RelaySpec.groovy[tags=node, indent=0]
 ----
+<1> A faction has a **name**
+<2> A faction has **ships** which is a one-to-many relationship
+<3> Data fetcher
 
-<1> Type's description
-<2> A faction has a **name**
-<3> A faction has **ships** which is a one-to-many relationship
-<4> Data fetcher
 
-The **Node** types can declare a special type of fetcher though the **listFetcher** node. That call can convert the
+The **Node** types can declare a special type of fetcher, the **listFetcher**. That call can convert the
 result of a simple function returning a list to a **Connection** type.
 
 To declare a connection type you can use **Relay.connection**. In this example we're declaring edges of type
 **ShipEdges** which have nodes of type **Ship**.
 
-Every edge will have two fields: **node** which is every item of the relationship, and a **cursor** which locates
-every edge in the relationship, it could be taken as if it were a kind of offset.
+Every edge item will have two fields: **node** which is every item of the relationship, and a **cursor** which is
+a hash locating every edge in the relationship, it could be taken as if it were a kind of offset.
 
 [source, groovy]
 .Connection
@@ -36,7 +35,26 @@ every edge in the relationship, it could be taken as if it were a kind of offset
 include::{testMain}/gql/relay/RelaySpec.groovy[tags=connection, indent=0]
 ----
 
+And finally declare the schema:
+
+[source, groovy]
+.Schema
+----
+include::{testMain}/gql/relay/RelaySpec.groovy[tags=schema, indent=0]
+----
+
+Now when executing the query, that's how the execution flow will be:
 
 
+[ditaa]
+....
+
+ +----------+    +---------------+    +-----------------------+    +--------------------------+
+ |          |    |   Collects    |    | Gets ships edges      |    | list returned by         |
+ |  rebels  +----> static value  +----> executing ship field's+----> listFetcher is converted |
+ |          |    | from Faction  |    | field's listFetcher {}|    | to a Connection by GQL   |
+ +----------+    +---------------+    +-----------------------+    +--------------------------+
+
+....
 
 

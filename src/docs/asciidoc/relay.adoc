@@ -22,7 +22,7 @@ You can think of the relationship between the three terms looking at this diagra
 ....
 
  +----------+             +------------+             +---------+
- |          |    (1, N)   |            |    (1, N)   |         |
+ |          |    (0, N)   |            |    (0, N)   |         |
  |   Node   +------------>| Connection +------------>|  Edges  |
  |          |             |            |             |         |
  +----------+             +------------+             +---------+
