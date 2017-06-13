@@ -30,12 +30,14 @@ class RelaySpec extends Specification {
       }
     }
 
-    GraphQLOutputType Faction = Relay.node('Faction') {
+    // tag::simpleNode[]
+    GraphQLOutputType Faction = Relay.node('Faction') { // <1>
       description 'party spirit especially when marked by dissension'
 
       field 'name', GraphQLString
-      field 'ships', ShipConnection
+      field 'ships', ShipConnection // <2>
     }
+    // end::simpleNode[]
 
     GraphQLSchema schema = Relay.schema {
       queries {
@@ -77,7 +79,7 @@ class RelaySpec extends Specification {
     }
     // end::connection[]
 
-    // tag::node[]
+    // tag::nodeWithListFetcher[]
     GraphQLOutputType Faction = Relay.node('Faction') {
       field 'name', GraphQLString // <1>
       connection('ships'){ // <2>
@@ -89,7 +91,7 @@ class RelaySpec extends Specification {
         }
       }
     }
-    // end::node[]
+    // end::nodeWithListFetcher[]
 
     // tag::schema[]
     GraphQLSchema schema = Relay.schema {
@@ -187,7 +189,6 @@ class RelaySpec extends Specification {
            rebels {
              name
              ships($variant) {
-               pageInfo {
                  hasNextPage
                  hasPreviousPage
                }

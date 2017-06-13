@@ -13,7 +13,7 @@ So first thing to do is to declare the **Faction** type:
 [source, groovy]
 .Node
 ----
-include::{testMain}/gql/relay/RelaySpec.groovy[tags=node, indent=0]
+include::{testMain}/gql/relay/RelaySpec.groovy[tags=nodeWithListFetcher, indent=0]
 ----
 <1> A faction has a **name**
 <2> A faction has **ships** which is a one-to-many relationship
