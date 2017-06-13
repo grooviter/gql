@@ -189,6 +189,7 @@ class RelaySpec extends Specification {
            rebels {
              name
              ships($variant) {
+               pageInfo {
                  hasNextPage
                  hasPreviousPage
                }

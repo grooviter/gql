@@ -1,6 +1,14 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.1.8-alpha] - [2017-06-13]
+
+## Added
+
+- Added `DSL.interface()` method to create interfaces
+- First Relay classic implementation draft
+- Relay documentation
+
 ## [0.1.7-alpha] - [2017-06-09]
 
 ## Added
