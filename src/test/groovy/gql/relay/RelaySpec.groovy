@@ -144,4 +144,85 @@ class RelaySpec extends Specification {
     3         | true
     4         | false
   }
+
+  @Unroll
+  void 'check listFetcher calls'() {
+    given: 'a Relay schema'
+    GraphQLOutputType ShipConnection = Relay.connection('ShipConnection') {
+      edges('Ship') {
+        description 'a starship'
+        field 'name', GraphQLString
+      }
+    }
+
+    GraphQLOutputType Faction = Relay.node('Faction') {
+      field 'name', GraphQLString
+      connection('ships'){
+        type ShipConnection
+        listFetcher {
+          Integer limitl = it.getArgument('first')
+          Integer limitr = it.getArgument('last')
+
+          return limitl ?
+            SHIPS.take(limitl) :
+            SHIPS.takeRight(limitr)
+        }
+      }
+    }
+
+    GraphQLSchema schema = Relay.schema {
+      queries {
+        field('rebels') {
+          type Faction
+          fetcher {
+            return [id: 'RmFjdGlvbjox', name: 'Alliance to Restore the Republic']
+          }
+        }
+      }
+    }
+
+    and: 'a Relay query'
+    def query = """
+         {
+           rebels {
+             name
+             ships($variant) {
+               pageInfo {
+                 hasNextPage
+                 hasPreviousPage
+               }
+               edges {
+                 cursor
+                 node {
+                   id
+                   name
+                 }
+               }
+             }
+           }
+         }
+      """
+
+    when:''
+    ExecutionResult result = DSL.execute(schema, query)
+
+    then: 'we should get the expected number of edges'
+    result.data.rebels.ships.edges.node.id.last() == last
+    result.data.rebels.ships.edges.node.id.first() == first
+
+    and: 'we should get the correct expectations over the next page'
+    result.data.rebels.ships
+
+    where: 'possible number of results are'
+    noResults |        variant     | first              | last               || hasNext
+    1         | "first: 1"         | "WC1XaW5nCg=="     | "WC1XaW5nCg=="     || true
+    2         | "first: 2"         | "WC1XaW5nCg=="     | "U3RhckZpZ2h0ZXIK" || true
+    3         | "first: 3"         | "WC1XaW5nCg=="     | "TGFtYmRhCg=="     || true
+    4         | "first: 4"         | "WC1XaW5nCg=="     | "Q2xhd2NyYWZ0Cg==" || false
+    //-----------------------------------------------------------------------------
+    1         | "last: 1"          | "Q2xhd2NyYWZ0Cg==" | "Q2xhd2NyYWZ0Cg==" || true
+    2         | "last: 2"          | "TGFtYmRhCg=="     | "Q2xhd2NyYWZ0Cg==" || true
+    3         | "last: 3"          | "U3RhckZpZ2h0ZXIK" | "Q2xhd2NyYWZ0Cg==" || true
+    4         | "last: 4"          | "WC1XaW5nCg=="     | "Q2xhd2NyYWZ0Cg==" || false
+  }
 }
