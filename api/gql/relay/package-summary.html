@@ -22,16 +22,16 @@
 <html>
 <head>
 
-<title>gql (gql API)</title>
-<meta name="keywords" content="gql package">
+<title>gql.relay (gql API)</title>
+<meta name="keywords" content="gql.relay package">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link rel ="stylesheet" TYPE="text/css" HREF="../stylesheet.css" title="Style">
-<link href="../groovy.ico" type="image/x-icon" rel="shortcut icon">
-<link href="../groovy.ico" type="image/x-icon" rel="icon">
+<link rel ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" title="Style">
+<link href="../../groovy.ico" type="image/x-icon" rel="shortcut icon">
+<link href="../../groovy.ico" type="image/x-icon" rel="icon">
 <script type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="gql (gql API)";
+    parent.document.title="gql.relay (gql API)";
 }
 </script>
 <noscript>
@@ -49,18 +49,18 @@ function windowTitle()
 </a>
 <a name="navbar_top_firstrow"><!-- --></a>
 <ul class="navList" title="Navigation">
-    <li><a href="../overview-summary.html">Overview</a></li>
+    <li><a href="../../overview-summary.html">Overview</a></li>
     <li class="navBarCell1Rev">Package</li>
     <li>Class</li>
-    <li><a href="../deprecated-list.html">Deprecated</a></li>
-    <li><a href="../index-all.html">Index</a></li>
-    <li><a href="../help-doc.html">Help</a></li>
+    <li><a href="../../deprecated-list.html">Deprecated</a></li>
+    <li><a href="../../index-all.html">Index</a></li>
+    <li><a href="../../help-doc.html">Help</a></li>
 </ul>
 </div>
 
 <div class="subNav">
     <ul class="navList">
-        <li><a href="../index.html?gql/package-summary.html" target="_top">Frames</a></li>
+        <li><a href="../../index.html?gql/relay/package-summary.html" target="_top">Frames</a></li>
         <li><a href="package-summary.html" target="_top">No Frames</a></li>
     </ul>
 </div>
@@ -68,18 +68,45 @@ function windowTitle()
 <!-- ========= END OF TOP NAVBAR ========= -->
 
 <div class="header">
-    <h1 class="title">Package gql</h1>
+    <h1 class="title">Package gql.relay</h1>
 </div>
 
 
-<h2 title="Package gql Description" class="title">Package gql Description</h2>
-<div class="header"> This package exposes DSLs to build GraphQL and Relay apps
+<h2 title="Package gql.relay Description" class="title">Package gql.relay Description</h2>
+<div class="header"> This package contains internal classes to build Relay schemas using
+ a Groovy DSL
  
 </div>
 
 
 <div class="contentContainer">
 
+
+    <div class="summary">
+        <ul class="blockList">
+            <li class="blockList">
+                <table border="0" cellpadding="3" cellspacing="0" summary="Interface Summary">
+                    <caption><span>Interface Summary</span><span class="tabEnd">&nbsp;</span></caption>
+                    <tbody>
+                    <tr>
+                        <th class="colFirst" scope="col">Interface</th>
+                        <th class="colLast" scope="col">Description</th>
+                    </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="RelayPrimitivesAware.html" title="class in gql/relay">
+                                    RelayPrimitivesAware
+                                </a></strong>
+                            </td>
+                            <td>Basic primitives of a Relay implementation</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </li>
+            </ul>
+        </div>
+    
 
 
 
@@ -95,20 +122,39 @@ function windowTitle()
                     </tr>
 <tr class="altColor">
                             <td class="colOne">
-                                <strong><a href="DSL.html" title="class in gql">
-                                    DSL
+                                <strong><a href="ConnectionBuilder.html" title="class in gql/relay">
+                                    ConnectionBuilder
                                 </a></strong>
                             </td>
-                            <td>Functions in this class ease the creation of different GraphQL
- schema elements</td>
+                            <td>A Connection is a way of manipulating one-to-many relationships easy,
+ using a standardized way of expressing these one-to-many relationships.
+ </td>
                         </tr>
 <tr class="altColor">
                             <td class="colOne">
-                                <strong><a href="Relay.html" title="class in gql">
-                                    Relay
+                                <strong><a href="ConnectionFieldBuilder.html" title="class in gql/relay">
+                                    ConnectionFieldBuilder
                                 </a></strong>
                             </td>
-                            <td>DSL for building Relay abstractions</td>
+                            <td>Builds a new field of type connection. </td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="NodeBuilder.html" title="class in gql/relay">
+                                    NodeBuilder
+                                </a></strong>
+                            </td>
+                            <td>A `Node` type is just an instance of <a href='http://graphql-java.github.io/graphql-java/graphql/schema/GraphQLObjectType.html' title='GraphQLObjectType'>GraphQLObjectType</a> that
+ must have an identifier. </td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="RelaySchemaBuilder.html" title="class in gql/relay">
+                                    RelaySchemaBuilder
+                                </a></strong>
+                            </td>
+                            <td>Builds a new GraphQL schema but adding to the schema context the basic
+ Relay primitives</td>
                         </tr>
 
                     </tbody>
@@ -121,40 +167,6 @@ function windowTitle()
 
 
 
-
-    <div class="summary">
-        <ul class="blockList">
-            <li class="blockList">
-                <table border="0" cellpadding="3" cellspacing="0" summary="Annotation Type Summary">
-                    <caption><span>Annotation Type Summary</span><span class="tabEnd">&nbsp;</span></caption>
-                    <tbody>
-                    <tr>
-                        <th class="colFirst" scope="col">Annotation Type</th>
-                        <th class="colLast" scope="col">Description</th>
-                    </tr>
-<tr class="altColor">
-                            <td class="colOne">
-                                <strong><a href="Field.html" title="class in gql">
-                                    Field
-                                </a></strong>
-                            </td>
-                            <td>Represents a GraphQL field</td>
-                        </tr>
-<tr class="altColor">
-                            <td class="colOne">
-                                <strong><a href="GraphQL.html" title="class in gql">
-                                    GraphQL
-                                </a></strong>
-                            </td>
-                            <td>@since 0.1.0</td>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </li>
-            </ul>
-        </div>
-    
 
 
 </div>

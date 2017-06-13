@@ -513,7 +513,7 @@ table.CodeRay td.code>pre{padding:0}
 <div id="header">
 <h1>GQL</h1>
 <div class="details">
-<span id="revnumber">version 0.1.7-alpha</span>
+<span id="revnumber">version 0.1.8-alpha</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -563,11 +563,24 @@ table.CodeRay td.code>pre{padding:0}
 </li>
 </ul>
 </li>
-<li><a href="#_asts">4. ASTs</a></li>
-<li><a href="#_development">5. Development</a>
+<li><a href="#_relay">4. Relay</a>
 <ul class="sectlevel2">
-<li><a href="#_source_code">5.1. Source code</a></li>
-<li><a href="#_groovydoc">5.2. Groovydoc</a></li>
+<li><a href="#_what_is_relay">4.1. What is Relay ?</a></li>
+<li><a href="#_what_gql_implements">4.2. What GQL implements ?</a></li>
+<li><a href="#_node">4.3. Node</a>
+<ul class="sectlevel3">
+<li><a href="#_listfetcher">4.3.1. listFetcher</a></li>
+</ul>
+</li>
+<li><a href="#_connection">4.4. Connection</a></li>
+<li><a href="#_full_example">4.5. Full Example</a></li>
+</ul>
+</li>
+<li><a href="#_asts">5. ASTs</a></li>
+<li><a href="#_development">6. Development</a>
+<ul class="sectlevel2">
+<li><a href="#_source_code">6.1. Source code</a></li>
+<li><a href="#_groovydoc">6.2. Groovydoc</a></li>
 </ul>
 </li>
 </ul>
@@ -750,7 +763,7 @@ used.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="gradle">compile com.github.grooviter:gql:0.1.7-alpha'</code></pre>
+<pre class="CodeRay highlight"><code data-lang="gradle">compile com.github.grooviter:gql:0.1.8-alpha'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2065,7 +2078,324 @@ string against the other engine.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_asts">4. ASTs</h2>
+<h2 id="_relay">4. Relay</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_what_is_relay">4.1. What is Relay ?</h3>
+<div class="paragraph">
+<p><a href="https://facebook.github.io/react/blog/2015/02/20/introducing-relay-and-graphql.html" class="bare">https://facebook.github.io/react/blog/2015/02/20/introducing-relay-and-graphql.html</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_what_gql_implements">4.2. What GQL implements ?</h3>
+<div class="paragraph">
+<p>According to the <a href="https://facebook.github.io/relay/">Relay</a> official site, the three core
+assumptions that Relay makes about a GraphQL server are that it provides:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A <strong>mechanism for refetching</strong> an object.</p>
+</li>
+<li>
+<p>A description of <strong>how to page</strong> through connections.</p>
+</li>
+<li>
+<p>Structure around <strong>mutations</strong> to make them <strong>predictable</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Relay uses GraphQL as its query language, but it is not tied to a specific implementation of GraphQL. In order to
+achieve these three goals, the Relay specification defines three conceps: <strong>Node</strong>, <strong>Connection</strong>, <strong>Edges</strong>.</p>
+</div>
+<div class="paragraph">
+<p>You can think of the relationship between the three terms looking at this diagram:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/diag-2ef57b407f6f08c1248d3f6d37379067.png" alt="diag 2ef57b407f6f08c1248d3f6d37379067" width="680" height="140">
+</div>
+</div>
+<div class="paragraph">
+<p>A <strong>Node</strong> may have a <strong>Connection</strong> and a <strong>Connection</strong> may have 0 to N <strong>Edges</strong>. Lets see what these
+terms mean.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_node">4.3. Node</h3>
+<div class="paragraph">
+<p>A <strong>Node</strong> is a type that can be retrieved by an unique identifier. Therefore a node always has an <strong>id</strong> field.</p>
+</div>
+<div class="paragraph">
+<p>Apart from the <strong>id</strong> field, a node can have more fields. However there&#8217;s a special type of node field
+called <strong>connection</strong>. A <strong>Connection</strong> is a type of fields mapping one-to-many relationships.
+Here&#8217;s an example on how to declare a new node:</p>
+</div>
+<div class="listingblock">
+<div class="title">Simple Node</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">GraphQLOutputType Faction = Relay.node(<span class="string"><span class="delimiter">'</span><span class="content">Faction</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="1"></i><b>(1)</b>
+  description <span class="string"><span class="delimiter">'</span><span class="content">party spirit especially when marked by dissension</span><span class="delimiter">'</span></span>
+
+  field <span class="string"><span class="delimiter">'</span><span class="content">name</span><span class="delimiter">'</span></span>, GraphQLString
+  field <span class="string"><span class="delimiter">'</span><span class="content">ships</span><span class="delimiter">'</span></span>, ShipConnection <i class="conum" data-value="2"></i><b>(2)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Node description</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Fields</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You don&#8217;t have to declare the <strong>id</strong> field. <strong>GQL</strong> has already added for you every
+time you declare a node type.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Although you can always declare a connection as a normal field and build the connection type via the <code>DSL.connection()</code>
+method, you can do it directly in the DSL like this:</p>
+</div>
+<div class="listingblock">
+<div class="title">Node with embedded connection</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">GraphQLOutputType Faction = Relay.node(<span class="string"><span class="delimiter">'</span><span class="content">Faction</span><span class="delimiter">'</span></span>) {
+  field <span class="string"><span class="delimiter">'</span><span class="content">name</span><span class="delimiter">'</span></span>, GraphQLString <i class="conum" data-value="1"></i><b>(1)</b>
+  connection(<span class="string"><span class="delimiter">'</span><span class="content">ships</span><span class="delimiter">'</span></span>){ <i class="conum" data-value="2"></i><b>(2)</b>
+    type ShipConnection
+    listFetcher { <i class="conum" data-value="3"></i><b>(3)</b>
+      <span class="predefined-type">Integer</span> limit = <span class="local-variable">it</span>.getArgument(<span class="string"><span class="delimiter">'</span><span class="content">first</span><span class="delimiter">'</span></span>)
+
+      <span class="keyword">return</span> SHIPS.take(limit)
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Declaring a normal field</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Declaring a connection with connection edges' nodes of type <code>Ship</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Declaring a special fetcher to get the result</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_listfetcher">4.3.1. listFetcher</h4>
+<div class="paragraph">
+<p>To fetch the content of a <strong>connection</strong> field you can always use a simple data fetcher, but because a <strong>Connection</strong>
+field has always some repetitive meta data, GQL has abstracted the way that metadata is created.</p>
+</div>
+<div class="paragraph">
+<p>All you have to do is to make the <code>listFetcher { }</code> invocation to return a list of the edge items, then GQL will took
+over and it will fulfill the information relative to <code>pageInfo</code> and <code>edges</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_connection">4.4. Connection</h3>
+<div class="paragraph">
+<p>A <strong>Connection</strong> is just a convention on how to access one-to-many relationships in a node, and how to
+paginate through those items. A <strong>Connection</strong> has two fields:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>pageInfo</strong>: information regarding on how to paginate through the edges.</p>
+</li>
+<li>
+<p><strong>edges</strong>: a collection of result items.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Every edge has two fields:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>cursor</strong>: identifies where in the pagination cursor is the edge located</p>
+</li>
+<li>
+<p><strong>node</strong>: the edge payload</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">GraphQLOutputType ShipConnection = Relay.connection(<span class="string"><span class="delimiter">'</span><span class="content">ShipConnection</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="1"></i><b>(1)</b>
+  edges(<span class="string"><span class="delimiter">'</span><span class="content">Ship</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="2"></i><b>(2)</b>
+    description <span class="string"><span class="delimiter">'</span><span class="content">a starship</span><span class="delimiter">'</span></span>
+    field <span class="string"><span class="delimiter">'</span><span class="content">name</span><span class="delimiter">'</span></span>, GraphQLString
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Declaring a connection type</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Declaring the type of the connection&#8217;s edge items</td>
+</tr>
+</table>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Where is the <strong>ShipEdge</strong> type ?</div>
+<div class="paragraph">
+<p>Creating the intermediate type between connection and edge items is something repetitive. That&#8217;s why
+the Relay dsl only let you declare the name of the item type. The convention says that the intermediate
+type will be <strong>NameOfTheItemType</strong> + <strong>Edge</strong>. Therefore if the edges items are of type <strong>Ship</strong> the
+edge type will be of type <strong>ShipEdge</strong>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_full_example">4.5. Full Example</h3>
+<div class="paragraph">
+<p>In this example we would like to get a certain number of the ships of the rebel faction.</p>
+</div>
+<div class="listingblock">
+<div class="title">GraphQL query</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> query = <span class="string"><span class="delimiter">&quot;&quot;&quot;</span><span class="content">
+     {
+       rebels {
+         name
+         ships(first: </span><span class="inline"><span class="inline-delimiter">$</span>noResults</span><span class="content">) {
+           pageInfo {
+             hasNextPage
+           }
+           edges {
+             cursor
+             node {
+               name
+             }
+           }
+         }
+       }
+     }
+  </span><span class="delimiter">&quot;&quot;&quot;</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So first thing to do is to declare the <strong>Faction</strong> type:</p>
+</div>
+<div class="listingblock">
+<div class="title">Node</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">GraphQLOutputType Faction = Relay.node(<span class="string"><span class="delimiter">'</span><span class="content">Faction</span><span class="delimiter">'</span></span>) {
+  field <span class="string"><span class="delimiter">'</span><span class="content">name</span><span class="delimiter">'</span></span>, GraphQLString <i class="conum" data-value="1"></i><b>(1)</b>
+  connection(<span class="string"><span class="delimiter">'</span><span class="content">ships</span><span class="delimiter">'</span></span>){ <i class="conum" data-value="2"></i><b>(2)</b>
+    type ShipConnection
+    listFetcher { <i class="conum" data-value="3"></i><b>(3)</b>
+      <span class="predefined-type">Integer</span> limit = <span class="local-variable">it</span>.getArgument(<span class="string"><span class="delimiter">'</span><span class="content">first</span><span class="delimiter">'</span></span>)
+
+      <span class="keyword">return</span> SHIPS.take(limit)
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>A faction has a <strong>name</strong></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>A faction has <strong>ships</strong> which is a one-to-many relationship</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Data fetcher</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <strong>Node</strong> types can declare a special type of fetcher, the <strong>listFetcher</strong>. That call can convert the
+result of a simple function returning a list to a <strong>Connection</strong> type.</p>
+</div>
+<div class="paragraph">
+<p>To declare a connection type you can use <strong>Relay.connection</strong>. In this example we&#8217;re declaring edges of type
+<strong>ShipEdges</strong> which have nodes of type <strong>Ship</strong>.</p>
+</div>
+<div class="paragraph">
+<p>Every edge item will have two fields: <strong>node</strong> which is every item of the relationship, and a <strong>cursor</strong> which is
+a hash locating every edge in the relationship, it could be taken as if it were a kind of offset.</p>
+</div>
+<div class="listingblock">
+<div class="title">Connection</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">GraphQLOutputType ShipConnection = Relay.connection(<span class="string"><span class="delimiter">'</span><span class="content">ShipConnection</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="1"></i><b>(1)</b>
+  edges(<span class="string"><span class="delimiter">'</span><span class="content">Ship</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="2"></i><b>(2)</b>
+    description <span class="string"><span class="delimiter">'</span><span class="content">a starship</span><span class="delimiter">'</span></span>
+    field <span class="string"><span class="delimiter">'</span><span class="content">name</span><span class="delimiter">'</span></span>, GraphQLString
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And finally declare the schema:</p>
+</div>
+<div class="listingblock">
+<div class="title">Schema</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">GraphQLSchema schema = Relay.schema {
+  queries {
+    field(<span class="string"><span class="delimiter">'</span><span class="content">rebels</span><span class="delimiter">'</span></span>) {
+      type Faction
+      fetcher {
+        <span class="keyword">return</span> [<span class="key">id</span>: <span class="string"><span class="delimiter">'</span><span class="content">RmFjdGlvbjox</span><span class="delimiter">'</span></span>, <span class="key">name</span>: <span class="string"><span class="delimiter">'</span><span class="content">Alliance to Restore the Republic</span><span class="delimiter">'</span></span>]
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now when executing the query, that&#8217;s how the execution flow will be:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/diag-a1b1d993e3bdc4959ee957e749dcffd4.png" alt="diag a1b1d993e3bdc4959ee957e749dcffd4" width="990" height="140">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_asts">5. ASTs</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>TODO</p>
@@ -2073,16 +2403,16 @@ string against the other engine.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_development">5. Development</h2>
+<h2 id="_development">6. Development</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_source_code">5.1. Source code</h3>
+<h3 id="_source_code">6.1. Source code</h3>
 <div class="paragraph">
 <p>Source code is available at <a href="https://github.com/grooviter/gql" class="bare">https://github.com/grooviter/gql</a></p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_groovydoc">5.2. Groovydoc</h3>
+<h3 id="_groovydoc">6.2. Groovydoc</h3>
 <div class="paragraph">
 <p>Groovy API is available at <a href="https://grooviter.github.io/gql/api/index.html" class="bare">https://grooviter.github.io/gql/api/index.html</a></p>
 </div>
@@ -2092,8 +2422,8 @@ string against the other engine.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.1.7-alpha<br>
-Last updated 2017-06-09 00:57:17 +00:00
+Version 0.1.8-alpha<br>
+Last updated 2017-06-10 17:07:22 +00:00
 </div>
 </div>
 <script type="text/x-mathjax-config">
