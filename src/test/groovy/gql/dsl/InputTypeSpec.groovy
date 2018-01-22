@@ -113,8 +113,8 @@ class InputTypeSpec extends Specification {
     ExecutionResult result =
       DSL.execute(schema, query, [filter: input])
 
-    then: 'we should get what we want'
-    thrown(GraphQLException)
+    then: 'we should get execution errors'
+    result.errors
 
     where: 'possible invalid inputs are'
     input << [

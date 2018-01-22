@@ -94,13 +94,16 @@ class ConnectionFieldBuilder extends ObjectTypeBuilder.FieldBuilder {
           env.getSource(),
           newArguments,
           env.getContext(),
+          env.getRoot(),
+          env.getFieldDefinition(),
           env.getFields(),
           env.getFieldType(),
           env.getParentType(),
           env.getGraphQLSchema(),
           env.getFragmentsByName(),
           env.getExecutionId(),
-          env.getSelectionSet())
+          env.getSelectionSet(),
+          env.getFieldTypeInfo())
 
       List<T> data = closure(newEnvironment)
 
