@@ -517,6 +517,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_queries">Queries</a>
 <ul class="sectlevel3">
 <li><a href="#_execution">Execution</a></li>
+<li><a href="#_asynchronous_execution">Asynchronous Execution</a></li>
 <li><a href="#_query_builders">Query builders</a></li>
 </ul>
 </li>
@@ -604,6 +605,22 @@ data is going to return.</p>
 </div>
 </div>
 <div class="sect3">
+<h4 id="_asynchronous_execution">Asynchronous Execution</h4>
+<div class="paragraph">
+<p>GQL through <code>graphql-java</code> can use fully asynchronous execution when
+executing queries. You can get a
+<code>java.util.concurrent.CompleteableFuture</code> of an <code>ExecutionResult</code> by
+calling <code>DSL.executeAsync()</code> like this:</p>
+</div>
+<div class="paragraph">
+<p>If a data fetcher returns a CompletableFuture&lt;T&gt; object then this will
+be composed into the overall asynchronous query execution. This means
+you can fire off a number of field fetching requests in
+parallel. Exactly what threading strategy you use is up to your data
+fetcher code.</p>
+</div>
+</div>
+<div class="sect3">
 <h4 id="_query_builders">Query builders</h4>
 <div class="paragraph">
 <p><strong>GQL</strong> allows you to execute queries directly or to build them to use them later via DSL
@@ -686,7 +703,7 @@ Unresolved directive <span class="keyword">in</span> queries.adoc - <span class=
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-30 22:30:46 +00:00
+Last updated 2018-01-23 07:53:06 +00:00
 </div>
 </div>
 </body>

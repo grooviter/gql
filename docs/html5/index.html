@@ -513,7 +513,7 @@ table.CodeRay td.code>pre{padding:0}
 <div id="header">
 <h1>GQL</h1>
 <div class="details">
-<span id="revnumber">version 0.1.8-alpha</span>
+<span id="revnumber">version 0.1.9-alpha</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -549,7 +549,11 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_good_practices">3.4.3. Good practices</a></li>
 </ul>
 </li>
-<li><a href="#_modularising">3.5. Modularising</a></li>
+<li><a href="#_modularising">3.5. Modularising</a>
+<ul class="sectlevel3">
+<li><a href="#_custom_scalar_implementation">3.5.1. Custom Scalar implementation</a></li>
+</ul>
+</li>
 <li><a href="#_inputs">3.6. Inputs</a>
 <ul class="sectlevel3">
 <li><a href="#_arguments">3.6.1. Arguments</a></li>
@@ -558,7 +562,8 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_queries">3.7. Queries</a>
 <ul class="sectlevel3">
 <li><a href="#_execution">3.7.1. Execution</a></li>
-<li><a href="#_query_builders">3.7.2. Query builders</a></li>
+<li><a href="#_asynchronous_execution">3.7.2. Asynchronous Execution</a></li>
+<li><a href="#_query_builders">3.7.3. Query builders</a></li>
 </ul>
 </li>
 </ul>
@@ -576,11 +581,10 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_full_example">4.5. Full Example</a></li>
 </ul>
 </li>
-<li><a href="#_asts">5. ASTs</a></li>
-<li><a href="#_development">6. Development</a>
+<li><a href="#_development">5. Development</a>
 <ul class="sectlevel2">
-<li><a href="#_source_code">6.1. Source code</a></li>
-<li><a href="#_groovydoc">6.2. Groovydoc</a></li>
+<li><a href="#_source_code">5.1. Source code</a></li>
+<li><a href="#_groovydoc">5.2. Groovydoc</a></li>
 </ul>
 </li>
 </ul>
@@ -763,7 +767,7 @@ used.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="gradle">compile com.github.grooviter:gql:0.1.8-alpha'</code></pre>
+<pre class="CodeRay highlight"><code data-lang="gradle">compile com.github.grooviter:gql:0.1.9-alpha'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1663,8 +1667,11 @@ create a sigle schema:</p>
 <div class="listingblock">
 <div class="title">bands</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">type Band {
+<pre class="CodeRay highlight"><code data-lang="groovy">scalar CustomDate
+
+type Band {
   <span class="key">name</span>: <span class="predefined-type">String</span>
+  <span class="key">createdAt</span>: CustomDate
 }</code></pre>
 </div>
 </div>
@@ -1703,6 +1710,8 @@ needed to return some response.</p>
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
 
 GraphQLSchema proxySchema = DSL.mergeSchemas {
+  scalar(CustomDate)
+
   byURI(uriOne)   <i class="conum" data-value="1"></i><b>(1)</b>
   byURI(uriTwo)
   byURI(uriTop) { <i class="conum" data-value="2"></i><b>(2)</b>
@@ -1747,6 +1756,7 @@ GraphQLSchema proxySchema = DSL.mergeSchemas {
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
 
 GraphQLSchema proxySchema = DSL.mergeSchemas {
+  scalar(CustomDate)
   byResource(<span class="string"><span class="delimiter">'</span><span class="content">gql/dsl/bands.graphqls</span><span class="delimiter">'</span></span>)
   byResource(<span class="string"><span class="delimiter">'</span><span class="content">gql/dsl/films.graphqls</span><span class="delimiter">'</span></span>)
   byResource(<span class="string"><span class="delimiter">'</span><span class="content">gql/dsl/qandm.graphqls</span><span class="delimiter">'</span></span>) {
@@ -1760,6 +1770,65 @@ GraphQLSchema proxySchema = DSL.mergeSchemas {
     }
   }
 }</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_custom_scalar_implementation">3.5.1. Custom Scalar implementation</h4>
+<div class="paragraph">
+<p>If you&#8217;d like to add a custom scalar implementation when using the
+modularization mechanism, you can do it from version
+<code>0.1.9-alpha</code>. All you have to do is:</p>
+</div>
+<div class="paragraph">
+<p>Declare the scalar in the schema:</p>
+</div>
+<div class="listingblock">
+<div class="title">IDL</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">scalar CustomDate
+
+type Band {
+  <span class="key">name</span>: <span class="predefined-type">String</span>
+  <span class="key">createdAt</span>: CustomDate
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then create the scalar implementation with the Groovy DSL:</p>
+</div>
+<div class="listingblock">
+<div class="title">Custom scalar</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="directive">static</span> GraphQLScalarType CustomDate = DSL.scalar(<span class="string"><span class="delimiter">'</span><span class="content">CustomDate</span><span class="delimiter">'</span></span>) {
+  serialize { <span class="predefined-type">Date</span> date -&gt;
+    date.format(<span class="string"><span class="delimiter">'</span><span class="content">dd/MM/yyyy</span><span class="delimiter">'</span></span>)
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And finally add the reference to the <code>DSL.mergeSchemas</code> body:</p>
+</div>
+<div class="listingblock">
+<div class="title">Schema</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">GraphQLSchema proxySchema = DSL.mergeSchemas {
+  scalar(CustomDate)
+
+  byResource(<span class="string"><span class="delimiter">'</span><span class="content">gql/dsl/bands.graphqls</span><span class="delimiter">'</span></span>)
+  byResource(<span class="string"><span class="delimiter">'</span><span class="content">gql/dsl/films.graphqls</span><span class="delimiter">'</span></span>)
+  byURI(schemaRootUri) {
+    mapType(<span class="string"><span class="delimiter">'</span><span class="content">Queries</span><span class="delimiter">'</span></span>) {
+      link(<span class="string"><span class="delimiter">'</span><span class="content">randomBand</span><span class="delimiter">'</span></span>) { DataFetchingEnvironment env -&gt;
+        <span class="keyword">return</span> [
+          <span class="key">name</span>: <span class="string"><span class="delimiter">'</span><span class="content">Whitesnake</span><span class="delimiter">'</span></span>,
+          <span class="key">createdAt</span>: <span class="predefined-type">Date</span>.parse(<span class="string"><span class="delimiter">'</span><span class="content">dd-MM-yyyy</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">01-01-1977</span><span class="delimiter">'</span></span>)
+        ]
+      }
+    }
+  }
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -1956,7 +2025,23 @@ data is going to return.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_query_builders">3.7.2. Query builders</h4>
+<h4 id="_asynchronous_execution">3.7.2. Asynchronous Execution</h4>
+<div class="paragraph">
+<p>GQL through <code>graphql-java</code> can use fully asynchronous execution when
+executing queries. You can get a
+<code>java.util.concurrent.CompleteableFuture</code> of an <code>ExecutionResult</code> by
+calling <code>DSL.executeAsync()</code> like this:</p>
+</div>
+<div class="paragraph">
+<p>If a data fetcher returns a CompletableFuture&lt;T&gt; object then this will
+be composed into the overall asynchronous query execution. This means
+you can fire off a number of field fetching requests in
+parallel. Exactly what threading strategy you use is up to your data
+fetcher code.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_query_builders">3.7.3. Query builders</h4>
 <div class="paragraph">
 <p><strong>GQL</strong> allows you to execute queries directly or to build them to use them later via DSL
 builder. The former is useful if you already have the queries and you
@@ -2395,24 +2480,16 @@ a hash locating every edge in the relationship, it could be taken as if it were 
 </div>
 </div>
 <div class="sect1">
-<h2 id="_asts">5. ASTs</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>TODO</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_development">6. Development</h2>
+<h2 id="_development">5. Development</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_source_code">6.1. Source code</h3>
+<h3 id="_source_code">5.1. Source code</h3>
 <div class="paragraph">
 <p>Source code is available at <a href="https://github.com/grooviter/gql" class="bare">https://github.com/grooviter/gql</a></p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_groovydoc">6.2. Groovydoc</h3>
+<h3 id="_groovydoc">5.2. Groovydoc</h3>
 <div class="paragraph">
 <p>Groovy API is available at <a href="https://grooviter.github.io/gql/api/index.html" class="bare">https://grooviter.github.io/gql/api/index.html</a></p>
 </div>
@@ -2422,8 +2499,8 @@ a hash locating every edge in the relationship, it could be taken as if it were 
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.1.8-alpha<br>
-Last updated 2017-06-10 17:07:22 +00:00
+Version 0.1.9-alpha<br>
+Last updated 2018-01-23 07:53:06 +00:00
 </div>
 </div>
 <script type="text/x-mathjax-config">

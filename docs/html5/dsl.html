@@ -538,7 +538,11 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_good_practices">Good practices</a></li>
 </ul>
 </li>
-<li><a href="#_modularising">Modularising</a></li>
+<li><a href="#_modularising">Modularising</a>
+<ul class="sectlevel3">
+<li><a href="#_custom_scalar_implementation">Custom Scalar implementation</a></li>
+</ul>
+</li>
 <li><a href="#_inputs">Inputs</a>
 <ul class="sectlevel3">
 <li><a href="#_arguments">Arguments</a></li>
@@ -547,6 +551,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_queries">Queries</a>
 <ul class="sectlevel3">
 <li><a href="#_execution">Execution</a></li>
+<li><a href="#_asynchronous_execution">Asynchronous Execution</a></li>
 <li><a href="#_query_builders">Query builders</a></li>
 </ul>
 </li>
@@ -1327,6 +1332,41 @@ Unresolved directive <span class="keyword">in</span> dsl/modularising.adoc - <sp
 Unresolved directive <span class="keyword">in</span> dsl/modularising.adoc - <span class="key">include</span>::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=resourcesSchema, indent=<span class="integer">0</span>]</code></pre>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_custom_scalar_implementation">Custom Scalar implementation</h4>
+<div class="paragraph">
+<p>If you&#8217;d like to add a custom scalar implementation when using the
+modularization mechanism, you can do it from version
+<code>0.1.9-alpha</code>. All you have to do is:</p>
+</div>
+<div class="paragraph">
+<p>Declare the scalar in the schema:</p>
+</div>
+<div class="listingblock">
+<div class="title">IDL</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/modularising.adoc - <span class="key">include</span>::{testResources}/gql/dsl/bands.graphqls[indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then create the scalar implementation with the Groovy DSL:</p>
+</div>
+<div class="listingblock">
+<div class="title">Custom scalar</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/modularising.adoc - <span class="key">include</span>::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=customScalar, indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And finally add the reference to the <code>DSL.mergeSchemas</code> body:</p>
+</div>
+<div class="listingblock">
+<div class="title">Schema</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/modularising.adoc - <span class="key">include</span>::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=mergeSchemasWithCustomScalar, indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_inputs">Inputs</h3>
@@ -1481,6 +1521,22 @@ data is going to return.</p>
 </div>
 </div>
 <div class="sect3">
+<h4 id="_asynchronous_execution">Asynchronous Execution</h4>
+<div class="paragraph">
+<p>GQL through <code>graphql-java</code> can use fully asynchronous execution when
+executing queries. You can get a
+<code>java.util.concurrent.CompleteableFuture</code> of an <code>ExecutionResult</code> by
+calling <code>DSL.executeAsync()</code> like this:</p>
+</div>
+<div class="paragraph">
+<p>If a data fetcher returns a CompletableFuture&lt;T&gt; object then this will
+be composed into the overall asynchronous query execution. This means
+you can fire off a number of field fetching requests in
+parallel. Exactly what threading strategy you use is up to your data
+fetcher code.</p>
+</div>
+</div>
+<div class="sect3">
 <h4 id="_query_builders">Query builders</h4>
 <div class="paragraph">
 <p><strong>GQL</strong> allows you to execute queries directly or to build them to use them later via DSL
@@ -1565,7 +1621,7 @@ Unresolved directive <span class="keyword">in</span> dsl/queries.adoc - <span cl
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-06-09 00:57:17 +00:00
+Last updated 2018-01-22 23:13:32 +00:00
 </div>
 </div>
 </body>
