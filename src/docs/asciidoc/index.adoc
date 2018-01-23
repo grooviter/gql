@@ -27,8 +27,4 @@ include::dsl.adoc[]
 
 include::relay.adoc[]
 
-include::asts.adoc[]
-
 include::references.adoc[]
-
-
