@@ -56,6 +56,19 @@ include::{testMain}/gql/DSLSpec.groovy[tags=queryWithArguments, indent=0]
 include::{testMain}/gql/DSLSpec.groovy[tags=queryWithArgumentsExecution, indent=0]
 ----
 
+==== Asynchronous Execution
+
+GQL through `graphql-java` can use fully asynchronous execution when
+executing queries. You can get a
+`java.util.concurrent.CompleteableFuture` of an `ExecutionResult` by
+calling `DSL.executeAsync()` like this:
+
+If a data fetcher returns a CompletableFuture<T> object then this will
+be composed into the overall asynchronous query execution. This means
+you can fire off a number of field fetching requests in
+parallel. Exactly what threading strategy you use is up to your data
+fetcher code.
+
 ==== Query builders
 
 **GQL** allows you to execute queries directly or to build them to use them later via DSL

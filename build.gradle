@@ -20,13 +20,14 @@ apply from: "gradle/gh_pages.gradle"
 apply from: "gradle/docsconf.gradle"
 
 repositories {
+  mavenCentral()
   jcenter()
 }
 
 dependencies {
   compile 'com.github.grooviter:asteroid:0.2.4'
   compile 'org.codehaus.groovy:groovy-all:2.4.10'
-  compile 'com.graphql-java:graphql-java:3.0.0'
+  compile 'com.graphql-java:graphql-java:7.0'
 
   testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
   testCompile 'junit:junit:4.12'
@@ -35,4 +36,3 @@ dependencies {
 compileGroovy {
   groovyOptions.configurationScript = new File(projectDir, folder_compiler)
 }
-

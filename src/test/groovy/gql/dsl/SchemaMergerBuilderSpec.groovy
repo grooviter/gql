@@ -3,6 +3,7 @@ package gql.dsl
 import gql.DSL
 import graphql.ExecutionResult
 import graphql.schema.DataFetcher
+import graphql.schema.GraphQLScalarType
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLSchema
 import spock.lang.Specification
@@ -26,6 +27,8 @@ class SchemaMergerBuilderSpec extends Specification {
     and: 'an schema made of three different schema definitions'
     // tag::urisSchema[]
     GraphQLSchema proxySchema = DSL.mergeSchemas {
+      scalar(CustomDate)
+
       byURI(uriOne)   // <1>
       byURI(uriTwo)
       byURI(uriTop) { // <2>
@@ -58,6 +61,7 @@ class SchemaMergerBuilderSpec extends Specification {
     given: 'an schema made of three different schema definitions'
     // tag::resourcesSchema[]
     GraphQLSchema proxySchema = DSL.mergeSchemas {
+      scalar(CustomDate)
       byResource('gql/dsl/bands.graphqls')
       byResource('gql/dsl/films.graphqls')
       byResource('gql/dsl/qandm.graphqls') {
@@ -91,6 +95,7 @@ class SchemaMergerBuilderSpec extends Specification {
     URI schemaRootUri = ClassLoader.getSystemResource('gql/dsl/qandm.graphqls').toURI()
 
     GraphQLSchema proxySchema = DSL.mergeSchemas {
+      scalar(CustomDate)
       byResource('gql/dsl/bands.graphqls')
       byResource('gql/dsl/films.graphqls')
       byURI(schemaRootUri) {
@@ -117,4 +122,49 @@ class SchemaMergerBuilderSpec extends Specification {
     then: 'we should succeed too'
     resultTwo.data.randomFilm.title == 'Spectre'
   }
+
+  void 'check merging custom scalar'() {
+    given: 'an schema made of three different schema definitions'
+    URI schemaRootUri = ClassLoader.getSystemResource('gql/dsl/qandm.graphqls').toURI()
+
+    // tag::mergeSchemasWithCustomScalar[]
+    GraphQLSchema proxySchema = DSL.mergeSchemas {
+      scalar(CustomDate)
+
+      byResource('gql/dsl/bands.graphqls')
+      byResource('gql/dsl/films.graphqls')
+      byURI(schemaRootUri) {
+        mapType('Queries') {
+          link('randomBand') { DataFetchingEnvironment env ->
+            return [
+              name: 'Whitesnake',
+              createdAt: Date.parse('dd-MM-yyyy','01-01-1977')
+            ]
+          }
+        }
+      }
+    }
+    // end::mergeSchemasWithCustomScalar[]
+
+    when: 'executing a query related to the first schema'
+    ExecutionResult resultOne = DSL.execute(
+      proxySchema,'''{
+        randomBand {
+          name
+          createdAt
+        }
+      }''')
+
+    then: 'we should succeed and find it'
+    resultOne.data.randomBand.name == 'Whitesnake'
+    resultOne.data.randomBand.createdAt == '01/01/1977'
+  }
+
+  // tag::customScalar[]
+  static GraphQLScalarType CustomDate = DSL.scalar('CustomDate') {
+    serialize { Date date ->
+      date.format('dd/MM/yyyy')
+    }
+  }
+  // end::customScalar[]
 }

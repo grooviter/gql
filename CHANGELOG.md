@@ -1,6 +1,18 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.1.9-alpha] - [2018-01-23]
+
+## Added
+
+- Asynchronous execution
+- Now it's possible to add custom scalar implementation when merging
+  IDL schemas
+
+## Removed
+
+- ASTs are removed
+
 ## [0.1.8-alpha] - [2017-06-13]
 
 ## Added

@@ -1,3 +1,6 @@
+scalar CustomDate
+
 type Band {
   name: String
+  createdAt: CustomDate
 }

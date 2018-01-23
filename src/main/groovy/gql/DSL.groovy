@@ -9,6 +9,7 @@ import gql.dsl.SchemaBuilder
 import gql.dsl.ObjectTypeBuilder
 import gql.dsl.SchemaMergerBuilder
 import graphql.GraphQL
+import graphql.ExecutionInput
 import graphql.ExecutionResult
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLEnumType
@@ -21,6 +22,7 @@ import graphql.schema.GraphQLObjectType
 import graphql.schema.TypeResolver
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
+import java.util.concurrent.CompletableFuture
 
 /**
  * Functions in this class ease the creation of different GraphQL
@@ -79,7 +81,7 @@ final class DSL {
    * @examples <a target="_blank" href="/gql/docs/html5/index.html#_queries">Executing GraphQL queries</a>
    * @param schema the schema defining the queryString
    * @param query the query string
-   * @param
+   * @param arguments optional arguments passed to the query
    * @return an instance of {@link ExecutionResult}
    * @since 0.1.0
    */
@@ -94,7 +96,7 @@ final class DSL {
   }
 
   /**
-   * Builds GraphQL queries top wrapper
+   * Builds a GraphQL query using a DSL and execute it
    *
    * @examples <a target="_blank" href="/gql/docs/html5/index.html#_queries">Executing GraphQL queries</a>
    * @param variables variables used in nested queries
@@ -104,6 +106,41 @@ final class DSL {
    */
   static ExecutionResult execute(GraphQLSchema schema, @DelegatesTo(QueryBuilder) Closure queries) {
     return execute(schema, buildQuery(queries))
+  }
+
+  /**
+   * Executes the queryString asynchronously against the underlying
+   * schema without any specific context.
+   *
+   * @examples <a target="_blank" href="/gql/docs/html5/index.html#_queries">Executing GraphQL queries</a>
+   * @param schema the schema defining the queryString
+   * @param query the query string
+   * @param arguments optional arguments passed to the query
+   * @return an instance of {@link CompletableFuture} that will be resolved in a {@link ExecutionResult}
+   * @since 0.1.9
+   */
+  static CompletableFuture<ExecutionResult> executeAsync(GraphQLSchema schema, String query, Map<String,Object> arguments = [:]) {
+    GraphQL graphQL = new GraphQL(schema)
+    ExecutionInput executionInput = ExecutionInput
+      .newExecutionInput()
+      .query(query)
+      .variables(arguments)
+      .build();
+
+    return graphQL.executeAsync(executionInput)
+  }
+
+  /**
+   * Builds a GraphQL query using a DSL and execute it asynchronously
+   *
+   * @examples <a target="_blank" href="/gql/docs/html5/index.html#_queries">Executing GraphQL queries</a>
+   * @param variables variables used in nested queries
+   * @param queries closure wrapping different queries to be executed remotely
+   * @return a map with all the response
+   * @since 0.1.9
+   */
+  static CompletableFuture<ExecutionResult> executeAsync(GraphQLSchema schema, @DelegatesTo(QueryBuilder) Closure queries) {
+    return executeAsync(schema, buildQuery(queries))
   }
 
   /**
