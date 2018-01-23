@@ -2,6 +2,7 @@ package gql.dsl
 
 import graphql.schema.DataFetcher
 import graphql.schema.GraphQLSchema
+import graphql.schema.GraphQLScalarType
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.SchemaGenerator
 import graphql.schema.idl.SchemaParser
@@ -23,7 +24,8 @@ class SchemaMergerBuilder {
   private final SchemaGenerator schemaGenerator = new SchemaGenerator()
   private final TypeDefinitionRegistry typeRegistry = new TypeDefinitionRegistry()
   private final List<TypeDefinitionRegistry> registries = []
-  private final List<TypeRuntimeWiring> wiringList = []
+  private final List<TypeRuntimeWiring> typedWiringList = []
+  private final List<GraphQLScalarType> scalarTypeList = []
 
   /**
    * Loads a given schema definition from a given {@link URI} instance
@@ -53,7 +55,7 @@ class SchemaMergerBuilder {
     List<TypeRuntimeWiring> typeRuntimeWiringList = resultBuilder.build()
 
     registries << schemaParser.parse(uri.toURL().text)
-    wiringList.addAll(typeRuntimeWiringList)
+    typedWiringList.addAll(typeRuntimeWiringList)
 
     return this
   }
@@ -81,6 +83,19 @@ class SchemaMergerBuilder {
   }
 
   /**
+   * Loads a given scalar in the current schema
+   *
+   * @param scalar the scalar to be added to the schema
+   * @return the current {@link SchemaMergerBuilder} instance
+   * @since 0.1.9
+   */
+  SchemaMergerBuilder scalar(GraphQLScalarType scalarType) {
+    scalarTypeList.add(scalarType)
+
+    return this
+  }
+
+  /**
    * Returns an schema of the merged definitions
    *
    * @return an instance of {@link GraphQLSchema} with all the merged definitions
@@ -90,14 +105,21 @@ class SchemaMergerBuilder {
     TypeDefinitionRegistry registry = registries
       .inject(typeRegistry, this.&merge)
 
-    RuntimeWiring.Builder builder = wiringList
-      .inject(RuntimeWiring.newRuntimeWiring(), this.&aggregateWirings)
+    RuntimeWiring.Builder builderWithTypes = typedWiringList
+      .inject(RuntimeWiring.newRuntimeWiring(), this.&aggregateTypedWirings)
 
-    return schemaGenerator.makeExecutableSchema(registry, builder.build())
+    RuntimeWiring.Builder builderWithScalars = scalarTypeList
+      .inject(builderWithTypes, this.&aggregateScalarTypes)
+
+    return schemaGenerator.makeExecutableSchema(registry, builderWithScalars.build())
   }
 
-  private static RuntimeWiring.Builder aggregateWirings(RuntimeWiring.Builder builder, TypeRuntimeWiring wiring) {
+  private static RuntimeWiring.Builder aggregateTypedWirings(RuntimeWiring.Builder builder, TypeRuntimeWiring wiring) {
     return builder.type(wiring)
+  }
+
+  private static RuntimeWiring.Builder aggregateScalarTypes(RuntimeWiring.Builder builder, GraphQLScalarType scalarType) {
+    return builder.scalar(scalarType)
   }
 
   private static TypeDefinitionRegistry merge(TypeDefinitionRegistry seed, TypeDefinitionRegistry next) {

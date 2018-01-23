@@ -62,3 +62,33 @@ import gql.DSL
 
 include::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=resourcesSchema, indent=0]
 ----
+
+==== Custom Scalar implementation
+
+If you'd like to add a custom scalar implementation when using the
+modularization mechanism, you can do it from version
+`0.1.9-alpha`. All you have to do is:
+
+Declare the scalar in the schema:
+
+[source, groovy]
+.IDL
+----
+include::{testResources}/gql/dsl/bands.graphqls[indent=0]
+----
+
+Then create the scalar implementation with the Groovy DSL:
+
+[source, groovy]
+.Custom scalar
+----
+include::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=customScalar, indent=0]
+----
+
+And finally add the reference to the `DSL.mergeSchemas` body:
+
+[source, groovy]
+.Schema
+----
+include::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=mergeSchemasWithCustomScalar, indent=0]
+----
