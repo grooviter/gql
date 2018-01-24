@@ -1,0 +1,29 @@
+plugins {
+  id 'groovy'
+  id 'org.asciidoctor.convert' version '1.5.3'
+}
+
+apply from: "../gradle/bintray.gradle"
+apply from: "../gradle/gh_pages.gradle"
+apply from: "../gradle/docsconf.gradle"
+
+dependencies {
+  compile project(':gql-core')
+
+  compile "io.ratpack:ratpack-core:$ratpack"
+  compile "io.ratpack:ratpack-guice:$ratpack"
+  compile "org.codehaus.groovy:groovy-all:$groovy"
+}
+
+publishing {
+  publications {
+    'mavenCustom'(MavenPublication) {
+      groupId    "$releaseGroup"
+      artifactId 'gql-ratpack'
+      version    "$releaseVersion"
+
+      from components.java
+      artifact sourcesJar
+    }
+  }
+}

@@ -10,19 +10,6 @@ artifacts {
   archives sourcesJar
 }
 
- publishing {
-  publications {
-    'mavenCustom'(MavenPublication) {
-      groupId    "$releaseGroup"
-      artifactId 'gql'
-      version    "$releaseVersion"
-
-      from components.java
-      artifact sourcesJar
-    }
-  }
-}
-
 bintray {
   user         = "$bintrayUser"
   key          = "$bintrayKey"

@@ -1,6 +1,16 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - [2018-01-??]
+
+## Added
+
+- Ratpack module including a handler exposing GraphQL
+
+## Changed
+
+- GQL project estructure
+
 ## [0.1.9-alpha] - [2018-01-23]
 
 ## Added

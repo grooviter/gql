@@ -21,10 +21,10 @@ sourceSets {
 groovydoc {
   link 'https://docs.oracle.com/javase/8/docs/api/', 'java'
   link 'http://docs.groovy-lang.org/latest/html/api/', 'groovy', 'org.codehaus.groovy'
-  link 'http://grooviter.github.io/asteroid/javadocs', 'asteroid'
   link 'http://graphql-java.github.io/graphql-java', 'graphql'
+  docTitle project.name
 
-  destinationDir = file("$buildDir/site/api")
+  destinationDir = file("../gql-docs/build/site/api")
   classpath = sourceSets.groovydoc.output + classpath
 }
 
