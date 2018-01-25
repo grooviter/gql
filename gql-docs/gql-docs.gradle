@@ -1,0 +1,18 @@
+plugins {
+  id 'org.asciidoctor.convert' version '1.5.3'
+}
+
+apply from: "../gradle/gh_pages.gradle"
+
+asciidoctor {
+  requires 'asciidoctor-diagram'
+
+  outputDir file("$buildDir/site/docs")
+  attributes 'endpoint-url': 'http://github.com/grooviter/gql',
+    'source-highlighter': 'coderay',
+    'releaseVersion': releaseVersion,
+    'imagesdir': './images',
+    'toc': 'left',
+    'icons': 'font',
+    'toclevels': 3
+}

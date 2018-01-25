@@ -1,3 +1,4 @@
+include 'gql-docs'
 include 'gql-core'
 include 'gql-ratpack'
 
