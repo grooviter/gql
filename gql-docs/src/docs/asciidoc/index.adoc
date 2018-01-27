@@ -3,6 +3,7 @@
 :numbered:
 :imagesDir: images/
 :baseDir: ../../../../..
+:baseDirFirstLevel: ../../../..
 :stem:
 
 :core: {baseDir}/gql-core
@@ -28,5 +29,7 @@ include::getting.adoc[]
 include::dsl.adoc[]
 
 include::relay.adoc[]
+
+include::ratpack.adoc[]
 
 include::references.adoc[]
