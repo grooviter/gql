@@ -1,14 +1,14 @@
-plugins {
-  id 'groovy'
-  id 'maven-publish'
-}
+apply plugin: 'groovy'
+apply plugin: 'maven-publish'
 
 dependencies {
   compile project(':gql-core')
-
   compile "io.ratpack:ratpack-core:$ratpack"
   compile "io.ratpack:ratpack-guice:$ratpack"
-  compile "org.codehaus.groovy:groovy-all:$groovy"
+
+  testCompile "io.ratpack:ratpack-test:$ratpack"
+  testCompile "org.spockframework:spock-core:$spock"
+  testCompile 'org.objenesis:objenesis:2.1'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -31,4 +31,10 @@ publishing {
       artifact sourcesJar
     }
   }
+}
+
+task('console', type: JavaExec) {
+    main = 'groovy.ui.Console'
+    project.dependencies.add("compile", 'org.codehaus.groovy:groovy-all:2.4.12')
+    classpath = sourceSets.main.runtimeClasspath
 }

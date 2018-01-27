@@ -1,0 +1,40 @@
+== Ratpack
+
+Ratpack http://ratpack.io is a set of Java libraries for building
+scalable HTTP applications.
+
+To be able to expose a GraphQL schema in an HTTP endpoint with Ratpack
+follow these steps:
+
+[source, groovy]
+----
+@Grapes([
+  @Grab('io.ratpack:ratpack-groovy:1.5.1'),
+  @Grab('org.slf4j:slf4j-simple:1.7.25')
+   @Grab('org.apache.ivy:ivy:2.3.0')
+  @Grab('github.grooviter:gql:0.1.9-alpha')
+])
+import static ratpack.groovy.Groovy.ratpack
+
+import gql.DSL
+
+def schema = DSL.schema {
+    queries('Queries') {
+      field('hello') {
+        type GraphQLString
+        staticValue 'GraphQL and Groovy!'
+      }
+    }
+}
+
+ratpack {
+    registryOf { r ->
+      r.add schema
+    }
+    handlers {
+        post('graphql') { ctx->
+           ctx.render('hello')
+        }
+    }
+}
+----

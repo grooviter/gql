@@ -6,7 +6,7 @@ bintray {
   key          = "$bintrayKey"
 
   publish      = true
-  publications = ['mavenCustom']
+  publications = ['gql-core', 'gql-ratpack']
 
   pkg {
     repo            = 'maven'
