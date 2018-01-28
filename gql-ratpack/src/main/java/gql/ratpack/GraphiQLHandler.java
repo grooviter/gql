@@ -13,7 +13,7 @@ import ratpack.handling.Context;
  * client.
  *
  * By default the handler is disable, so in order to enable it you
- * should set the {@link GraphQLModule.Config}#activateGraphiQL to
+ * should set the {@link GraphQLModuleConfig}#activateGraphiQL to
  * true when enabling the module
  *
  * @since 0.2.0
