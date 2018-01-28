@@ -13,7 +13,7 @@ All notable changes to this project will be documented in this file.
 
 - GQL project estructure
 - `gql` artifact is now `gql-core`
-- Downgraded Gradle 3.5 => 3.4 due to Ratpack plugin
+- Upgraded Gradle 3.5 => 4 due to Groovy compilation problems
 
 ## [0.1.9-alpha] - [2018-01-23]
 
