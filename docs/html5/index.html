@@ -513,7 +513,7 @@ table.CodeRay td.code>pre{padding:0}
 <div id="header">
 <h1>GQL</h1>
 <div class="details">
-<span id="revnumber">version 0.1.9-alpha</span>
+<span id="revnumber">version 0.2.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -581,10 +581,16 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_full_example">4.5. Full Example</a></li>
 </ul>
 </li>
-<li><a href="#_development">5. Development</a>
+<li><a href="#_ratpack">5. Ratpack</a>
 <ul class="sectlevel2">
-<li><a href="#_source_code">5.1. Source code</a></li>
-<li><a href="#_groovydoc">5.2. Groovydoc</a></li>
+<li><a href="#_example">5.1. Example</a></li>
+<li><a href="#_configuration">5.2. Configuration</a></li>
+</ul>
+</li>
+<li><a href="#_development">6. Development</a>
+<ul class="sectlevel2">
+<li><a href="#_source_code">6.1. Source code</a></li>
+<li><a href="#_groovydoc">6.2. Groovydoc</a></li>
 </ul>
 </li>
 </ul>
@@ -683,7 +689,7 @@ a look at the official tutorial at <a href="http://graphql.org/learn/" class="ba
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql:0.1.5-alpha</span><span class="delimiter">'</span></span>)
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql-core:0.2.0</span><span class="delimiter">'</span></span>)
 <span class="keyword">import</span> <span class="include">gql.DSL</span>
 
 <span class="keyword">def</span> GraphQLFilm = DSL.type(<span class="string"><span class="delimiter">'</span><span class="content">Film</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="1"></i><b>(1)</b>
@@ -767,7 +773,7 @@ used.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="gradle">compile com.github.grooviter:gql:0.1.9-alpha'</code></pre>
+<pre class="CodeRay highlight"><code data-lang="gradle">compile 'com.github.grooviter:gql-core:0.2.0'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2480,16 +2486,145 @@ a hash locating every edge in the relationship, it could be taken as if it were 
 </div>
 </div>
 <div class="sect1">
-<h2 id="_development">5. Development</h2>
+<h2 id="_ratpack">5. Ratpack</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Ratpack <a href="http://ratpack.io" class="bare">http://ratpack.io</a> is a set of Java libraries for building
+scalable HTTP applications.</p>
+</div>
+<div class="paragraph">
+<p>You can use Ratpack to make a given GraphQL schema available through
+HTTP.</p>
+</div>
+<div class="sect2">
+<h3 id="_example">5.1. Example</h3>
+<div class="paragraph">
+<p>Here is a minimum Groovy working example of a GraphQL schema exposed
+through HTTP thanks to Ratpack.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grapes</span>([
+  <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">io.ratpack:ratpack-groovy:1.5.1</span><span class="delimiter">'</span></span>),
+  <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">org.slf4j:slf4j-simple:1.7.25</span><span class="delimiter">'</span></span>),
+  <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql-ratpack:0.2.0</span><span class="delimiter">'</span></span>)
+])
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">ratpack.groovy.Groovy.ratpack</span>
+
+<span class="keyword">import</span> <span class="include">gql.DSL</span>
+<span class="keyword">import</span> <span class="include">gql.ratpack.GraphQLModule</span>
+<span class="keyword">import</span> <span class="include">gql.ratpack.GraphQLHandler</span>
+<span class="keyword">import</span> <span class="include">gql.ratpack.GraphiQLHandler</span>
+
+<span class="keyword">def</span> schema = DSL.schema { <i class="conum" data-value="1"></i><b>(1)</b>
+    queries(<span class="string"><span class="delimiter">'</span><span class="content">Queries</span><span class="delimiter">'</span></span>) {
+      field(<span class="string"><span class="delimiter">'</span><span class="content">hello</span><span class="delimiter">'</span></span>) {
+        type GraphQLString
+        staticValue <span class="string"><span class="delimiter">'</span><span class="content">GraphQL and Groovy!</span><span class="delimiter">'</span></span>
+      }
+    }
+}
+
+ratpack {
+    bindings {
+      module GraphQLModule <i class="conum" data-value="2"></i><b>(2)</b>
+
+      bindInstance schema <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+    handlers {
+        post(<span class="string"><span class="delimiter">'</span><span class="content">graphql</span><span class="delimiter">'</span></span>, GraphQLHandler) <i class="conum" data-value="4"></i><b>(4)</b>
+        get(<span class="string"><span class="delimiter">'</span><span class="content">graphql/browser</span><span class="delimiter">'</span></span>, GraphiQLHandler) <i class="conum" data-value="5"></i><b>(5)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Create the schema using <code>gql.DSL</code> api</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Add the <code>gql.ratpack.GraphQLModule</code> in order to provide sane defaults to handlers and GraphiQL configuration</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Add the schema to Ratpack&#8217;s registry</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Register the <code>GraphQLHandler</code> to handle all GrahpQL request at <code>/graphql</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Register the <code>GraphiQLHandler</code> to be able to expose GraphiQL client at <code>/graphql/browser</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_configuration">5.2. Configuration</h3>
+<div class="paragraph">
+<p>If you would like to disable the GraphiQL client, you can always configure the
+GraphQLModule setting the <code>activateGraphiQL</code> to <code>false</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">ratpack {
+    bindings {
+      module(GraphQLModule) { conf -&gt;
+        conf.activateGraphiQL = <span class="predefined-constant">false</span> <i class="conum" data-value="1"></i><b>(1)</b>
+      }
+      <span class="comment">//...</span>
+    }
+    handlers {
+     <span class="comment">//...</span>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Setting the <code>activateGraphiQL</code> to false will disable GraphiQL client</td>
+</tr>
+</table>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">GraphiQL Client limitation</div>
+<div class="paragraph">
+<p>At the moment, the GraphQL module provides GraphiQL as an static html
+page. However the resources (scripts/css) required to make it work
+properly aren&#8217;t loaded from Ratpack but retrieved online once it&#8217;s
+loaded by the browser.</p>
+</div>
+<div class="paragraph">
+<p>That means the GraphiQL client will only work if the browser accessing
+it has online access.</p>
+</div>
+<div class="paragraph">
+<p>Of course, the idea for upcoming releases would be to serve everything
+from the module so that it could be used under any circumstances.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_development">6. Development</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_source_code">5.1. Source code</h3>
+<h3 id="_source_code">6.1. Source code</h3>
 <div class="paragraph">
 <p>Source code is available at <a href="https://github.com/grooviter/gql" class="bare">https://github.com/grooviter/gql</a></p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_groovydoc">5.2. Groovydoc</h3>
+<h3 id="_groovydoc">6.2. Groovydoc</h3>
 <div class="paragraph">
 <p>Groovy API is available at <a href="https://grooviter.github.io/gql/api/index.html" class="bare">https://grooviter.github.io/gql/api/index.html</a></p>
 </div>
@@ -2499,8 +2634,8 @@ a hash locating every edge in the relationship, it could be taken as if it were 
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.1.9-alpha<br>
-Last updated 2018-01-23 07:53:06 +00:00
+Version 0.2.0<br>
+Last updated 2018-01-25 16:55:53 +00:00
 </div>
 </div>
 <script type="text/x-mathjax-config">

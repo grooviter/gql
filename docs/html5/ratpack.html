@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.3">
-<title>Enums</title>
+<title>Ratpack</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -513,42 +513,150 @@ table.CodeRay td.code>pre{padding:0}
 <div id="header">
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_ratpack">Ratpack</a>
 <ul class="sectlevel2">
-<li><a href="#_enums">Enums</a></li>
+<li><a href="#_example">Example</a></li>
+<li><a href="#_configuration">Configuration</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
 <div id="content">
+<div class="sect1">
+<h2 id="_ratpack">Ratpack</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Ratpack <a href="http://ratpack.io" class="bare">http://ratpack.io</a> is a set of Java libraries for building
+scalable HTTP applications.</p>
+</div>
+<div class="paragraph">
+<p>You can use Ratpack to make a given GraphQL schema available through
+HTTP.</p>
+</div>
 <div class="sect2">
-<h3 id="_enums">Enums</h3>
+<h3 id="_example">Example</h3>
 <div class="paragraph">
-<p>Also called Enums, enumeration types are a special kind of scalar that is restricted to a particular set of allowed
-values. You can define a enum type with <code>DSL.enum</code>:</p>
+<p>Here is a minimum Groovy working example of a GraphQL schema exposed
+through HTTP thanks to Ratpack.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
-<span class="keyword">import</span> <span class="include">graphql.schema.GraphQLEnumType</span>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grapes</span>([
+  <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">io.ratpack:ratpack-groovy:1.5.1</span><span class="delimiter">'</span></span>),
+  <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">org.slf4j:slf4j-simple:1.7.25</span><span class="delimiter">'</span></span>),
+  <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql-ratpack:0.2.0</span><span class="delimiter">'</span></span>)
+])
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">ratpack.groovy.Groovy.ratpack</span>
 
-Unresolved directive <span class="keyword">in</span> enums.adoc - <span class="key">include</span>::{testMain}/gql/dsl/EnumTypeSpec.groovy[tags=declaringEnum, indent=<span class="integer">0</span>]</code></pre>
+<span class="keyword">import</span> <span class="include">gql.DSL</span>
+<span class="keyword">import</span> <span class="include">gql.ratpack.GraphQLModule</span>
+<span class="keyword">import</span> <span class="include">gql.ratpack.GraphQLHandler</span>
+<span class="keyword">import</span> <span class="include">gql.ratpack.GraphiQLHandler</span>
+
+<span class="keyword">def</span> schema = DSL.schema { <i class="conum" data-value="1"></i><b>(1)</b>
+    queries(<span class="string"><span class="delimiter">'</span><span class="content">Queries</span><span class="delimiter">'</span></span>) {
+      field(<span class="string"><span class="delimiter">'</span><span class="content">hello</span><span class="delimiter">'</span></span>) {
+        type GraphQLString
+        staticValue <span class="string"><span class="delimiter">'</span><span class="content">GraphQL and Groovy!</span><span class="delimiter">'</span></span>
+      }
+    }
+}
+
+ratpack {
+    bindings {
+      module GraphQLModule <i class="conum" data-value="2"></i><b>(2)</b>
+
+      bindInstance schema <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+    handlers {
+        post(<span class="string"><span class="delimiter">'</span><span class="content">graphql</span><span class="delimiter">'</span></span>, GraphQLHandler) <i class="conum" data-value="4"></i><b>(4)</b>
+        get(<span class="string"><span class="delimiter">'</span><span class="content">graphql/browser</span><span class="delimiter">'</span></span>, GraphiQLHandler) <i class="conum" data-value="5"></i><b>(5)</b>
+    }
+}</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Create the schema using <code>gql.DSL</code> api</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Add the <code>gql.ratpack.GraphQLModule</code> in order to provide sane defaults to handlers and GraphiQL configuration</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Add the schema to Ratpack&#8217;s registry</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Register the <code>GraphQLHandler</code> to handle all GrahpQL request at <code>/graphql</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Register the <code>GraphiQLHandler</code> to be able to expose GraphiQL client at <code>/graphql/browser</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_configuration">Configuration</h3>
 <div class="paragraph">
-<p>Then you can use that type as any other type for your type&#8217;s fields</p>
+<p>If you would like to disable the GraphiQL client, you can always configure the
+GraphQLModule setting the <code>activateGraphiQL</code> to <code>false</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
-<span class="keyword">import</span> <span class="include">graphql.schema.GraphQLObjectType</span>
-
-Unresolved directive <span class="keyword">in</span> enums.adoc - <span class="key">include</span>::{testMain}/gql/dsl/EnumTypeSpec.groovy[tags=enumTypeInclusion, indent=<span class="integer">0</span>]</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">ratpack {
+    bindings {
+      module(GraphQLModule) { conf -&gt;
+        conf.activateGraphiQL = <span class="predefined-constant">false</span> <i class="conum" data-value="1"></i><b>(1)</b>
+      }
+      <span class="comment">//...</span>
+    }
+    handlers {
+     <span class="comment">//...</span>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Setting the <code>activateGraphiQL</code> to false will disable GraphiQL client</td>
+</tr>
+</table>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">GraphiQL Client limitation</div>
+<div class="paragraph">
+<p>At the moment, the GraphQL module provides GraphiQL as an static html
+page. However the resources (scripts/css) required to make it work
+properly aren&#8217;t loaded from Ratpack but retrieved online once it&#8217;s
+loaded by the browser.</p>
+</div>
+<div class="paragraph">
+<p>That means the GraphiQL client will only work if the browser accessing
+it has online access.</p>
+</div>
+<div class="paragraph">
+<p>Of course, the idea for upcoming releases would be to serve everything
+from the module so that it could be used under any circumstances.</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-01-24 19:41:17 +00:00
+Last updated 2018-01-28 18:09:31 +00:00
 </div>
 </div>
 </body>
