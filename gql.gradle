@@ -19,3 +19,8 @@ subprojects {
     }
   }
 }
+
+task release() {
+  dependsOn ':gql-core:bintrayUpload', ':gql-ratpack:bintrayUpload',
+            ':gql-docs:gitPublishPush'
+}

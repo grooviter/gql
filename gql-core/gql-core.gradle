@@ -3,6 +3,7 @@ plugins {
   id 'maven-publish'
 }
 
+apply plugin: 'com.jfrog.bintray'
 apply from: "../gradle/groovydoc.gradle"
 
 dependencies {
@@ -53,6 +54,33 @@ publishing {
 
       from components.java
       artifact sourcesJar
+    }
+  }
+}
+
+bintray {
+  user         = "$bintrayUser"
+  key          = "$bintrayKey"
+
+  publish      = true
+  publications = ['gql-core']
+
+  pkg {
+    repo            = 'maven'
+    name            = 'gql'
+    userOrg         = 'grooviter'
+    desc            =  "$releaseDescription"
+    websiteUrl      = 'http://grooviter.github.io/gql/'
+    issueTrackerUrl = 'https://github.com/grooviter/gql/issues'
+    licenses        = ['Apache-2.0']
+    vcsUrl          = 'https://github.com/grooviter/gql.git'
+    labels          = ['groovy', 'graphql', 'dsl', 'asts']
+
+    version {
+      name      = "$releaseVersion"
+      desc      = 'GQL Release'
+      released  = new Date()
+      vcsTag    = "$releaseVersion"
     }
   }
 }

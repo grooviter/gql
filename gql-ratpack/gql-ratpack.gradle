@@ -1,6 +1,7 @@
 apply plugin: 'groovy'
 apply plugin: 'jacoco'
 apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
 
 dependencies {
   compile project(':gql-core')
@@ -34,8 +35,29 @@ publishing {
   }
 }
 
-task('console', type: JavaExec) {
-    main = 'groovy.ui.Console'
-    project.dependencies.add("compile", 'org.codehaus.groovy:groovy-all:2.4.12')
-    classpath = sourceSets.main.runtimeClasspath
+bintray {
+  user         = "$bintrayUser"
+  key          = "$bintrayKey"
+
+  publish      = true
+  publications = ['gql-ratpack']
+
+  pkg {
+    repo            = 'maven'
+    name            = 'gql'
+    userOrg         = 'grooviter'
+    desc            =  "$releaseDescription"
+    websiteUrl      = 'http://grooviter.github.io/gql/'
+    issueTrackerUrl = 'https://github.com/grooviter/gql/issues'
+    licenses        = ['Apache-2.0']
+    vcsUrl          = 'https://github.com/grooviter/gql.git'
+    labels          = ['groovy', 'graphql', 'dsl', 'asts']
+
+    version {
+      name      = "$releaseVersion"
+      desc      = 'GQL Ratpack integration Release'
+      released  = new Date()
+      vcsTag    = "$releaseVersion"
+    }
+  }
 }
