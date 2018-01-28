@@ -1,10 +1,13 @@
 package gql.ratpack;
 
+import static java.util.Arrays.asList;
 import static gql.DSL.executeAsync;
 import static ratpack.jackson.Jackson.json;
 import static com.google.common.collect.ImmutableMap.of;
 
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Collection;
 import graphql.ExecutionResult;
 import graphql.schema.GraphQLSchema;
 import ratpack.func.Action;
@@ -15,6 +18,8 @@ import ratpack.exec.Upstream;
 import ratpack.exec.Downstream;
 import ratpack.handling.Handler;
 import ratpack.handling.Context;
+import com.fasterxml.jackson.core.JsonLocation;
+import com.fasterxml.jackson.core.JsonParseException;
 
 /**
  * GraphQL endpoint. This handler will be exposing a given GraphQL
@@ -31,14 +36,24 @@ public class GraphQLHandler implements Handler {
   public void handle(Context ctx) throws Exception {
       ctx
         .parse(Map.class)
-        .onError(renderGraphQLError(ctx))
+        .onError(JsonParseException.class, renderGraphQLError(ctx))
         .flatMap(executeGraphQL(ctx))
         .then(renderGraphQL(ctx));
   }
 
-  private Action<Throwable> renderGraphQLError(Context ctx) {
-    return (Throwable error) -> {
-      ctx.render(json(of("errors", of("message", error.getMessage()))));
+  private Action<JsonParseException> renderGraphQLError(Context ctx) {
+    return (JsonParseException error) -> {
+      JsonLocation location = error.getLocation();
+      Collection<Map> locations =
+        asList(of("line",
+                  location.getLineNr(),
+                  "column",
+                  location.getColumnNr()));
+
+        ctx.render(json(of("errors", of("message",
+                                        "JsonParseException: " + error.getOriginalMessage(),
+                                        "locations",
+                                        locations))));
     };
   }
 
@@ -59,7 +74,11 @@ public class GraphQLHandler implements Handler {
 
   private Action<ExecutionResult> renderGraphQL(Context ctx) {
     return (ExecutionResult result) -> {
-      ctx.render(json(of("errors", result.getErrors(), "data", result.getData())));
+      Map<String,Object> resultMap = new HashMap<>();
+      resultMap.put("errors", result.getErrors());
+      resultMap.put("data", result.getData());
+
+      ctx.render(json(resultMap));
     };
   }
 }

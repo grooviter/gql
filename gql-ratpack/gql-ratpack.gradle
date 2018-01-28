@@ -1,4 +1,5 @@
 apply plugin: 'groovy'
+apply plugin: 'jacoco'
 apply plugin: 'maven-publish'
 
 dependencies {
@@ -6,7 +7,7 @@ dependencies {
   compile "io.ratpack:ratpack-core:$ratpack"
   compile "io.ratpack:ratpack-guice:$ratpack"
 
-  testCompile "io.ratpack:ratpack-test:$ratpack"
+  testCompile "io.ratpack:ratpack-groovy-test:$ratpack"
   testCompile "org.spockframework:spock-core:$spock"
   testCompile 'org.objenesis:objenesis:2.1'
 }

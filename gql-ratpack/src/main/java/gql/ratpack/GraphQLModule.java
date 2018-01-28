@@ -27,17 +27,7 @@ import ratpack.guice.ConfigurableModule;
  *
  * @since 0.2.0
  */
-public class GraphQLModule extends ConfigurableModule<GraphQLModule.Config> {
-
-  /**
-   * GraphQL module configuration. You can set things like to
-   * enable/disable GraphiQL
-   *
-   * @since 0.2.0
-   */
-  public static class Config {
-    boolean activateGraphiQL = true;
-  }
+public class GraphQLModule extends ConfigurableModule<GraphQLModuleConfig> {
 
   @Override
   public void configure() {

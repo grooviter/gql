@@ -81,4 +81,38 @@ class GraphQLHandlerSpec extends Specification {
     and: 'result data should be received'
     result.rendered(JsonRender).object.data == [echoName: 'Hello John']
   }
+
+  void 'trying to execute a badly formed query'() {
+    given: 'the handler and the schema'
+    def handler = new GraphQLHandler()
+    def schema = DSL.schema {
+      queries('Queries') {
+        field('hello') {
+          type GraphQLString
+          staticValue('world!')
+        }
+      }
+    }
+    // json is not properly formed
+    def body = '{ "query: "{ hello }"}'
+
+    and: 'setting the schema in the registry'
+      def requestFixture = RequestFixture
+      .requestFixture()
+      .registry { r ->
+        r.add(GraphQLSchema, schema)
+    }
+
+    when: 'executing the query against the handler'
+    def result = requestFixture
+      .body(body, 'application/json')
+      .handle(handler)
+
+    then: 'errors should be found'
+    with(result.rendered(JsonRender).object.errors) {
+      locations.find().line == 1
+      locations.find().column == 13
+      message.startsWith 'JsonParseException'
+    }
+  }
 }
