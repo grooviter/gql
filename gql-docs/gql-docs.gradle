@@ -1,0 +1,53 @@
+plugins {
+  id 'org.asciidoctor.convert' version '1.5.3'
+}
+
+apply plugin: "org.ajoberstar.git-publish"
+
+task generateDocumentation() {
+  dependsOn ':gql-core:groovydoc',':gql-ratpack:javadoc', asciidoctor
+
+  doLast {
+    copy {
+      from "src/docs/site"
+      into "$buildDir/site"
+    }
+  }
+}
+
+task setAuthentication() {
+  doLast {
+    System.setProperty('org.ajoberstar.grgit.auth.username', githubToken)
+  }
+}
+
+gitPublish {
+  repoUri = 'https://github.com/grooviter/gql.git'
+  branch = 'gh-pages'
+
+  contents {
+    from file('build/site')
+  }
+
+  commitMessage = "Released version ${releaseVersion}"
+}
+
+gitPublishPush {
+  dependsOn 'setAuthentication'
+  dependsOn 'generateDocumentation'
+}
+
+
+
+asciidoctor {
+  requires 'asciidoctor-diagram'
+
+  outputDir file("$buildDir/site/docs")
+  attributes 'endpoint-url': 'http://github.com/grooviter/gql',
+    'source-highlighter': 'coderay',
+    'releaseVersion': releaseVersion,
+    'imagesdir': './images',
+    'toc': 'left',
+    'icons': 'font',
+    'toclevels': 3
+}

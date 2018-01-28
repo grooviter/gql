@@ -1,6 +1,20 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - [2018-01-??]
+
+## Added
+
+- Documentation moved to its own Gradle module
+- Ratpack GraphQL module
+- Add docs of Ratpack module in the GQL user guide
+
+## Changed
+
+- GQL project estructure
+- `gql` artifact is now `gql-core`
+- Upgraded Gradle 3.5 => 4 due to Groovy compilation problems
+
 ## [0.1.9-alpha] - [2018-01-23]
 
 ## Added

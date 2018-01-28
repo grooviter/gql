@@ -6,8 +6,8 @@ This is how a full GraphQL life cycle app looks like using **GQL**:
 
 [source, groovy]
 ----
-@Grab('com.github.grooviter:gql:0.1.5-alpha')
-include::{baseDir}/../src/test/groovy/gql/DSLSpec.groovy[tags=grabExample, indent=0]
+@Grab('com.github.grooviter:gql-core:0.2.0')
+include::{baseDirFirstLevel}/gql-core/src/test/groovy/gql/DSLSpec.groovy[tags=grabExample, indent=0]
 ----
 
 <1> Creates a type `GraphQLFilm`
@@ -28,7 +28,7 @@ You can add the following dependency to your Gradle project
 
 [source, gradle, subs="attributes"]
 ----
-compile com.github.grooviter:gql:{releaseVersion}'
+compile 'com.github.grooviter:gql-core:{releaseVersion}'
 ----
 
 The library is available at Bintray so all you have to do is

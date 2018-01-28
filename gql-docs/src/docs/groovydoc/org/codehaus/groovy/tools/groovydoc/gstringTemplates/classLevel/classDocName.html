@@ -40,7 +40,7 @@
     boolean hasEnumConstants = classDoc.enumConstants()
     def doGithubLink = { t ->
        def linkName = classDoc.fullPathName
-       return "https://github.com/grooviter/gql/blob/master/src/main/groovy/${linkName}.groovy"
+       return "https://github.com/grooviter/${props.docTitle}/blob/master/src/main/groovy/${linkName}.groovy"
     }
     def dolink = { t, boolean b ->
         boolean isArray = false

@@ -14,6 +14,6 @@ In order to use `GQL` in your Groovy code you can find it in Bintray:
 
 Then you can add the dependency to your project:
 
-    compile 'com.github.grooviter:gql:0.1.9-alpha'
+    compile 'com.github.grooviter:gql-core:0.2.0'
 
 Current documentation is available at: http://grooviter.github.io/gql/
