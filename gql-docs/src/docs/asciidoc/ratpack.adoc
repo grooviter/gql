@@ -3,22 +3,29 @@
 Ratpack http://ratpack.io is a set of Java libraries for building
 scalable HTTP applications.
 
-To be able to expose a GraphQL schema in an HTTP endpoint with Ratpack
-follow these steps:
+You can use Ratpack to make a given GraphQL schema available through
+HTTP.
+
+=== Example
+
+Here is a minimum Groovy working example of a GraphQL schema exposed
+through HTTP thanks to Ratpack.
 
 [source, groovy]
 ----
 @Grapes([
   @Grab('io.ratpack:ratpack-groovy:1.5.1'),
-  @Grab('org.slf4j:slf4j-simple:1.7.25')
-   @Grab('org.apache.ivy:ivy:2.3.0')
-  @Grab('github.grooviter:gql:0.1.9-alpha')
+  @Grab('org.slf4j:slf4j-simple:1.7.25'),
+  @Grab('com.github.grooviter:gql-ratpack:0.2.0')
 ])
 import static ratpack.groovy.Groovy.ratpack
 
 import gql.DSL
+import gql.ratpack.GraphQLModule
+import gql.ratpack.GraphQLHandler
+import gql.ratpack.GraphiQLHandler
 
-def schema = DSL.schema {
+def schema = DSL.schema { // <1>
     queries('Queries') {
       field('hello') {
         type GraphQLString
@@ -28,13 +35,56 @@ def schema = DSL.schema {
 }
 
 ratpack {
-    registryOf { r ->
-      r.add schema
+    bindings {
+      module GraphQLModule // <2>
+
+      bindInstance schema // <3>
     }
     handlers {
-        post('graphql') { ctx->
-           ctx.render('hello')
-        }
+        post('graphql', GraphQLHandler) // <4>
+        get('graphql/browser', GraphiQLHandler) // <5>
     }
 }
 ----
+<1> Create the schema using `gql.DSL` api
+<2> Add the `gql.ratpack.GraphQLModule` in order to provide sane defaults to handlers and GraphiQL configuration
+<3> Add the schema to Ratpack's registry
+<4> Register the `GraphQLHandler` to handle all GrahpQL request at `/graphql`
+<5> Register the `GraphiQLHandler` to be able to expose GraphiQL client at `/graphql/browser`.
+
+=== Configuration
+
+If you would like to disable the GraphiQL client, you can always configure the
+GraphQLModule setting the `activateGraphiQL` to `false`.
+
+[source, groovy]
+----
+ratpack {
+    bindings {
+      module(GraphQLModule) { conf ->
+        conf.activateGraphiQL = false // <1>
+      }
+      //...
+    }
+    handlers {
+     //...
+    }
+}
+----
+
+<1> Setting the `activateGraphiQL` to false will disable GraphiQL client
+
+[sidebar]
+.GraphiQL Client limitation
+****
+At the moment, the GraphQL module provides GraphiQL as an static html
+page. However the resources (scripts/css) required to make it work
+properly aren't loaded from Ratpack but retrieved online once it's
+loaded by the browser.
+
+That means the GraphiQL client will only work if the browser accessing
+it has online access.
+
+Of course, the idea for upcoming releases would be to serve everything
+from the module so that it could be used under any circumstances.
+****
