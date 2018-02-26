@@ -1,15 +1,26 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - [2018-03-06]
+
+### Added
+
+- Context param in new `execute(...)` and `executeAsync(...)` calls
+
+### Deprecated
+
+- All `execute(...)` and `executeAsync(...)`. In version 1.0.0 is planned
+to exist a unifying way to execute queries against a given schema.
+
 ## [0.2.0] - [2018-01-??]
 
-## Added
+### Added
 
 - Documentation moved to its own Gradle module
 - Ratpack GraphQL module
 - Add docs of Ratpack module in the GQL user guide
 
-## Changed
+### Changed
 
 - GQL project estructure
 - `gql` artifact is now `gql-core`
@@ -17,19 +28,19 @@ All notable changes to this project will be documented in this file.
 
 ## [0.1.9-alpha] - [2018-01-23]
 
-## Added
+### Added
 
 - Asynchronous execution
 - Now it's possible to add custom scalar implementation when merging
   IDL schemas
 
-## Removed
+### Removed
 
 - ASTs are removed
 
 ## [0.1.8-alpha] - [2017-06-13]
 
-## Added
+### Added
 
 - Added `DSL.interface()` method to create interfaces
 - First Relay classic implementation draft
@@ -37,11 +48,11 @@ All notable changes to this project will be documented in this file.
 
 ## [0.1.7-alpha] - [2017-06-09]
 
-## Added
+### Added
 
 - Now is possible to modularising GraphQL schemas using GraphQL language
 
-## Updated
+### Updated
 
 - Update gradle wrapper to 3.5
 - Move documentation configuration to its own gradle file

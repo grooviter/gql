@@ -139,4 +139,55 @@ class AsyncExecutionSpec extends Specification {
     String bond
     Integer year
   }
+
+  void 'using execution builder'() {
+    given: 'the definition of an input and an output type'
+    GraphQLInputObjectType MailFilterType = DSL.input('MailFilter') {
+      field 'from', GraphQLString
+      field 'to', GraphQLString
+    }
+
+    GraphQLOutputType MailResult = DSL.type('Mail') {
+      field 'subject', GraphQLString
+    }
+
+    and: 'defining the schema to query'
+    GraphQLSchema schema = DSL.schema {
+      queries {
+        field('searchByFilter') {
+          type list(MailResult)
+
+          argument 'filter', MailFilterType // --> input type
+
+          fetcher { DataFetchingEnvironment env ->
+            assert env.arguments.filter.from == 'me@somedomain.com'
+            assert env.arguments.filter.to == 'you@somedomain.com'
+
+            return [[subject: "just this email here ${env.context.user}!"]]
+          }
+        }
+      }
+    }
+    and: 'the query'
+    def query = '''
+    query QueryMail($filter: MailFilter) {
+        result: searchByFilter(filter: $filter) {
+           subject
+        }
+    }
+    '''
+
+    when: 'executing the query with the required parameters'
+    CompletableFuture<ExecutionResult> future =
+      DSL.executeAsync(schema, query) {
+        withContext(user: 'John')
+        withVariables(filter: [
+          from: 'me@somedomain.com',
+          to: 'you@somedomain.com'
+        ])
+      }
+
+    then: 'we should get what we want'
+    future.get().data.result.first().subject == 'just this email here John!'
+  }
 }
