@@ -1,7 +1,11 @@
 package gql.dsl
 
 import groovy.util.logging.Slf4j
+import groovy.transform.Immutable
 import graphql.ExecutionInput
+import graphql.execution.instrumentation.Instrumentation
+import graphql.execution.instrumentation.NoOpInstrumentation
+import graphql.execution.instrumentation.ChainedInstrumentation
 
 /**
  * Builds a new {@link ExecutionInput} instance
@@ -11,10 +15,17 @@ import graphql.ExecutionInput
 @Slf4j
 class ExecutionBuilder {
 
+  @Immutable(knownImmutableClasses = [ExecutionInput, Instrumentation])
+  static class Result {
+    ExecutionInput input
+    Instrumentation instrumentation
+  }
+
   /**
    * @since 0.3.0
    */
   ExecutionInput.Builder executionBuilder = ExecutionInput.newExecutionInput()
+  Instrumentation instrumentation = new NoOpInstrumentation()
 
   /**
    * @param variables
@@ -47,10 +58,23 @@ class ExecutionBuilder {
   }
 
   /**
+   * @param instrumentation
    * @return
    * @since 0.3.0
    */
-  ExecutionInput build() {
-    return executionBuilder.build()
+  ExecutionBuilder withInstrumentation(Instrumentation... instrumentations) {
+    instrumentation = new ChainedInstrumentation(instrumentations as List<Instrumentation>)
+    return this
+  }
+
+  /**
+   * @return
+   * @since 0.3.0
+   */
+  ExecutionBuilder.Result build() {
+    return new ExecutionBuilder.Result(
+      input: executionBuilder.build(),
+      instrumentation: instrumentation
+    )
   }
 }

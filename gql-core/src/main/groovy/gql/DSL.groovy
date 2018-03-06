@@ -125,10 +125,13 @@ final class DSL {
     Closure<ExecutionBuilder> clos = builder.clone() as Closure<ExecutionBuilder>
     ExecutionBuilder builderSource = new ExecutionBuilder()
     ExecutionBuilder builderResult = builderSource.with(clos) ?: builderSource
-    GraphQL graphQL = new GraphQL(schema)
+    ExecutionBuilder.Result result = builderResult.withQuery(query).build()
 
-    return graphQL
-      .execute(builderResult.withQuery(query).build())
+    return GraphQL
+      .newGraphQL(schema)
+      .instrumentation(result.instrumentation)
+      .build()
+      .execute(result.input)
   }
 
   /**
@@ -181,9 +184,13 @@ final class DSL {
     Closure<ExecutionBuilder> clos = builder.clone() as Closure<ExecutionBuilder>
     ExecutionBuilder builderSource = new ExecutionBuilder()
     ExecutionBuilder builderResult = builderSource.with(clos) ?: builderSource
-    GraphQL graphQL = new GraphQL(schema)
+    ExecutionBuilder.Result result = builderResult.withQuery(query).build()
 
-    return graphQL.executeAsync(builderResult.withQuery(query).build())
+    return GraphQL
+      .newGraphQL(schema)
+      .instrumentation(result.instrumentation)
+      .build()
+      .executeAsync(result.input)
   }
 
   /**
