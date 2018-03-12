@@ -5,11 +5,15 @@ import static gql.DSL.executeAsync;
 import static ratpack.jackson.Jackson.json;
 import static com.google.common.collect.ImmutableMap.of;
 
+import groovy.lang.Closure;
+import gql.dsl.ExecutionBuilder;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collection;
 import graphql.ExecutionResult;
 import graphql.schema.GraphQLSchema;
+import graphql.execution.instrumentation.Instrumentation;
+import graphql.execution.instrumentation.NoOpInstrumentation;
 import ratpack.func.Action;
 import ratpack.func.Function;
 import ratpack.exec.Blocking;
@@ -61,14 +65,32 @@ public class GraphQLHandler implements Handler {
   private Function<Map, Promise<ExecutionResult>> executeGraphQL(Context ctx) {
     return (Map payload) -> {
       String query = payload.get("query").toString();
-      Map<String,Object> params = (Map<String,Object>) payload.get("variables");
+      Map<String,Object> variables = (Map<String,Object>) payload.get("variables");
 
       Upstream<ExecutionResult> upstream = (downstream) -> {
-        executeAsync(ctx.get(GraphQLSchema.class), query, params)
+        GraphQLSchema schema = ctx.get(GraphQLSchema.class);
+        Instrumentation instrumentation = ctx
+          .maybeGet(Instrumentation.class)
+          .orElse(new NoOpInstrumentation());
+
+        executeAsync(schema,
+                     query,
+                     createExecutionBuilder(ctx, variables, instrumentation))
         .thenAccept(value -> downstream.success(value));
       };
 
       return Promise.async(upstream);
+    };
+  }
+
+  private Closure<ExecutionBuilder> createExecutionBuilder(Context ctx, Map<String,Object> variables, Instrumentation instrumentation) {
+    return new Closure<ExecutionBuilder>(null) {
+      public ExecutionBuilder doCall(Object o) {
+        return new ExecutionBuilder()
+          .withContext(ctx)
+          .withVariables(variables)
+          .withInstrumentation(instrumentation);
+      }
     };
   }
 
