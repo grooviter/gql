@@ -96,6 +96,6 @@ class ExecutionSpec extends Specification {
 
     then: 'we should be allowed to pass'
     sampleError.message == 'Exception while fetching data (/hello) : No user present'
-    sampleError.extensions == [type: 'type', i18n: 'error.not.present']
+    sampleError.extensions == [i18n: 'error.not.present']
   }
 }

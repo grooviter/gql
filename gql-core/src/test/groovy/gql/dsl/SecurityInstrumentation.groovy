@@ -9,7 +9,7 @@ import graphql.ErrorType
 import graphql.GraphQLError
 import graphql.GraphQLException
 import graphql.language.SourceLocation
-import gql.exception.CustomException
+import gql.exception.I18nException
 
 /**
  * Example of instrumentation, this time used to check whether the user can invoke
@@ -21,7 +21,7 @@ class SecurityInstrumentation extends NoOpInstrumentation {
   @Override
   DataFetcher<?> instrumentDataFetcher(DataFetcher<?> dataFetcher, InstrumentationFieldFetchParameters parameters) {
     String user = parameters.environment?.context?.user?.toString()
-    DataFetcher<?> errorFn = { env -> throw new CustomException('type','No user present', 'error.not.present') } as DataFetcher
+    DataFetcher<?> errorFn = { env -> throw new I18nException('No user present', 'error.not.present') } as DataFetcher
 
     return user ? dataFetcher : errorFn
   }

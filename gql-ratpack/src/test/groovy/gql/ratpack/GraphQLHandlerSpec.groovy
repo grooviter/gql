@@ -8,7 +8,6 @@ import ratpack.test.handling.RequestFixture
 import gql.DSL
 import graphql.schema.GraphQLSchema
 import graphql.execution.instrumentation.Instrumentation
-import graphql.execution.instrumentation.NoOpInstrumentation
 
 class GraphQLHandlerSpec extends Specification {
 
@@ -195,6 +194,11 @@ class GraphQLHandlerSpec extends Specification {
       .handle(handler)
 
     then: 'errors should be found'
-    result.rendered(JsonRender).object.errors
+    result
+      .rendered(JsonRender)
+      .object
+      .errors
+      .first()
+      .extensions.i18n == 'error.security.authorization'
   }
 }
