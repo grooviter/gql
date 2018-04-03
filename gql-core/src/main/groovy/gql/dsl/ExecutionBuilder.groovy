@@ -109,7 +109,7 @@ class ExecutionBuilder {
   ExecutionBuilder.Result build() {
     return new ExecutionBuilder.Result(
       input: executionBuilder.build(),
-      instrumentation: instrumentation
+      instrumentation: instrumentation,
     )
   }
 }

@@ -24,6 +24,7 @@ class RelaySchemaBuilder extends SchemaBuilder implements RelayPrimitivesAware {
    * @return an instance of {@link GraphQLInterfaceType}
    * @since 0.1.8
    */
+  @SuppressWarnings('MethodName')
   GraphQLInterfaceType NodeInterface(
     @ClosureParams(value = SimpleType, options = 'graphql.TypeResolutionEnvironment') Closure typeResolver) {
     return DSL.interface('Node') {
@@ -40,6 +41,7 @@ class RelaySchemaBuilder extends SchemaBuilder implements RelayPrimitivesAware {
    * @return an instance of {@link GraphQLInterfaceType}
    * @since 0.1.8
    */
+  @SuppressWarnings('MethodName')
   GraphQLInterfaceType ConnectionInterface(
     @ClosureParams(value = SimpleType, options = 'graphql.TypeResolutionEnvironment') Closure typeResolver) {
     return DSL.interface('Connection') {

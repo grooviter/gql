@@ -56,7 +56,7 @@ class Relay {
    * @return an instance of {@link GraphQLObjectType} with the characteristics of a Relay connection
    * @since 0.1.8
    */
-  static GraphQLObjectType connection(String name, @DelegatesTo(ConnectionBuilder) Closure dsl){
+  static GraphQLObjectType connection(String name, @DelegatesTo(ConnectionBuilder) Closure dsl) {
     Closure<ConnectionBuilder> clos = dsl.clone() as Closure<ConnectionBuilder>
     ConnectionBuilder sourceBuilder = new ConnectionBuilder().name(name) as ConnectionBuilder
     ConnectionBuilder resultBuilder = sourceBuilder.with(clos) ?: sourceBuilder

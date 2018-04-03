@@ -4,6 +4,7 @@ plugins {
 }
 
 apply plugin: 'com.jfrog.bintray'
+apply from: "../gradle/quality.gradle"
 apply from: "../gradle/groovydoc.gradle"
 
 dependencies {

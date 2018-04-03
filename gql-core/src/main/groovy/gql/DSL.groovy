@@ -151,7 +151,8 @@ final class DSL {
    * @deprecated it will be removed in version 1.0.0
    * @since 0.1.9
    */
-  static CompletableFuture<ExecutionResult> executeAsync(GraphQLSchema schema, String query, Map<String,Object> arguments = [:]) {
+  static CompletableFuture<ExecutionResult> executeAsync(
+    GraphQLSchema schema, String query, Map<String,Object> arguments = [:]) {
     GraphQL graphQL = new GraphQL(schema)
     ExecutionInput executionInput = ExecutionInput
       .newExecutionInput()
@@ -172,7 +173,8 @@ final class DSL {
    * @deprecated it will be removed in version 1.0.0
    * @since 0.1.9
    */
-  static CompletableFuture<ExecutionResult> executeAsync(GraphQLSchema schema, @DelegatesTo(QueryBuilder) Closure queries) {
+  static CompletableFuture<ExecutionResult> executeAsync(
+    GraphQLSchema schema, @DelegatesTo(QueryBuilder) Closure queries) {
     return executeAsync(schema, buildQuery(queries))
   }
 
@@ -185,7 +187,8 @@ final class DSL {
    * @deprecated it will be removed in version 1.0.0
    * @since 0.3.0
    */
-  static CompletableFuture<ExecutionResult> executeAsync(GraphQLSchema schema, String query, @DelegatesTo(ExecutionBuilder) Closure builder) {
+  static CompletableFuture<ExecutionResult> executeAsync(
+    GraphQLSchema schema, String query, @DelegatesTo(ExecutionBuilder) Closure builder) {
     Closure<ExecutionBuilder> clos = builder.clone() as Closure<ExecutionBuilder>
     ExecutionBuilder builderSource = new ExecutionBuilder()
     ExecutionBuilder builderResult = builderSource.with(clos) ?: builderSource

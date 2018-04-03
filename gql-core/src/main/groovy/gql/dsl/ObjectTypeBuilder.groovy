@@ -1,6 +1,5 @@
 package gql.dsl
 
-import graphql.language.Argument
 import graphql.schema.DataFetcher
 import graphql.schema.GraphQLArgument
 import graphql.schema.GraphQLFieldDefinition
@@ -223,7 +222,10 @@ class ObjectTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
      * @return current builder instance
      * @since 0.1.6
      */
-    FieldBuilder argument(String name, GraphQLInputType inputType, @DelegatesTo(value = ArgumentBuilder, strategy = Closure.DELEGATE_ONLY) Closure dsl) {
+    FieldBuilder argument(
+      String name,
+      GraphQLInputType inputType,
+      @DelegatesTo(value = ArgumentBuilder, strategy = Closure.DELEGATE_ONLY) Closure dsl) {
       Closure<ArgumentBuilder> clos = dsl.clone() as Closure<ArgumentBuilder>
       ArgumentBuilder builderSource = new ArgumentBuilder(inputType).name(name)
       ArgumentBuilder builderResult = builderSource.with(clos) ?: builderSource
@@ -231,8 +233,6 @@ class ObjectTypeBuilder implements ScalarsAware, NonNullAware, ListAware {
       builder.argument(builderResult.build())
       return this
     }
-
-
 
     /**
      * Adds field fetcher. Fetcher is responsible to retrieve this field data.
