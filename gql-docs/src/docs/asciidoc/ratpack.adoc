@@ -94,33 +94,7 @@ for things like:
 
 You could also be able to access the context through `instrumentation`.
 
-=== Custom exceptions
-
-If you throw a `GraphQLException` with a message like 'my error'
-within a data fetcher, the message you get is something like:
-
-[source, text]
-----
-Exception while fetching data (/login) : my error
-----
-
-That could be a problem if you'd like to internationalize your error
-messages. Fortunately you can add what's called `extensions` to your
-exceptions. All you have to do is to create a class that extends from
-`GraphQLException` and implements `GraphQLError`, and then override
-the `Map<String,Object> getExtensions()` method to get your custom
-error properties.
-
-GQL integration provides a shortcut in case you only wanted to provide
-a message and a i18n key to your errors via the
-`gql.exception.I18nException`. Inside a data fetcher you can throw a
-`I18nException` and the error will show both the message and the key
-`i18n` in the error extensions.
-
-[source, groovy]
-----
-throw new I18nException('User not authorized', 'ERROR.SECURITY.NOT_ALLOWED')
-----
+include::ratpack/errors.adoc[]
 
 === Instrumentation
 

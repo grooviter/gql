@@ -2,7 +2,6 @@ package gql.dsl
 
 import gql.DSL
 import graphql.execution.instrumentation.NoOpInstrumentation
-import graphql.language.SourceLocation
 import graphql.execution.ExecutionPath
 import graphql.schema.DataFetcher
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
@@ -14,6 +13,7 @@ import graphql.GraphQLError
  *
  * @since 0.3.0
  */
+// tag::instrumentation[]
 class SecurityInstrumentation extends NoOpInstrumentation {
   @Override
   DataFetcher<?> instrumentDataFetcher(DataFetcher<?> dataFetcher, InstrumentationFieldFetchParameters parameters) {
@@ -23,12 +23,6 @@ class SecurityInstrumentation extends NoOpInstrumentation {
       return dataFetcher
     }
 
-    SourceLocation sourceLocation = parameters
-      .getEnvironment()
-      .getFields()
-      .find()
-      .getSourceLocation()
-
     ExecutionPath path = parameters
       .getEnvironment()
       .getFieldTypeInfo()
@@ -37,7 +31,6 @@ class SecurityInstrumentation extends NoOpInstrumentation {
     GraphQLError error = DSL.error {
       message 'No user present'
       extensions(i18n:'error.not.present')
-      locations([sourceLocation])
     }
 
     parameters
@@ -47,3 +40,4 @@ class SecurityInstrumentation extends NoOpInstrumentation {
     return { env -> } as DataFetcher
   }
 }
+// end::instrumentation[]
