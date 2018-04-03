@@ -3,19 +3,18 @@ package gql.dsl
 import gql.DSL
 import gql.test.util.Queries
 import graphql.ExecutionResult
-import graphql.GraphQLException
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLInputObjectType
 import graphql.schema.GraphQLOutputType
 import graphql.schema.GraphQLObjectType
 import graphql.schema.GraphQLSchema
 import spock.lang.Specification
-import spock.lang.Unroll
 import java.util.concurrent.CompletableFuture
 
 /**
  * @since 0.1.9
  */
+@SuppressWarnings('VariableName')
 class AsyncExecutionSpec extends Specification {
 
   void 'create an simple input type'() {
@@ -110,7 +109,6 @@ class AsyncExecutionSpec extends Specification {
     then: 'we should get the expected values'
     result.data.first.title == 'DR. NO'
     result.data.first.year == '1962'
-
 
     when:
     // tag::staticQueryUnchecked[]

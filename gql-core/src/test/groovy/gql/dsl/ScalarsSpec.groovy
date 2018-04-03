@@ -7,6 +7,7 @@ import spock.lang.Specification
 /**
  * @since 0.1.3
  */
+@SuppressWarnings('VariableName')
 class ScalarsSpec extends Specification {
 
   void 'serializing an scalar type output'() {
@@ -55,14 +56,14 @@ class ScalarsSpec extends Specification {
   Map stringValueToMap(String value) {
     return [
       unit: "$value"[0..-2].toDouble(), // 1.23
-      key: "$value"[-1..-1] // 'Y'
+      key: "$value"[-1..-1], // 'Y'
     ]
   }
 
   List<Map> getOrderList() {
     return [
       [subject: 'beer', units: 2, price: [unit: 2.23, key: '$']],
-      [subject: 'bread', units: 1, price: [unit: 0.45, key: 'E']]
+      [subject: 'bread', units: 1, price: [unit: 0.45, key: 'E']],
     ]
   }
 
@@ -74,7 +75,7 @@ class ScalarsSpec extends Specification {
         String value = money.value // from a StringValue
         return [
           unit: "$value"[0..-2].toDouble(), // 1.23
-          key: "$value"[-1..-1] // 'Y'
+          key: "$value"[-1..-1], // 'Y'
         ]
       }
     }
@@ -132,7 +133,7 @@ class ScalarsSpec extends Specification {
       parseValue { String value -> // '1.25PTA'
         return [
           unit: value[0..-4].toDouble(), // 1.25
-          key: value[-1..-3].reverse() // 'PTA'
+          key: value[-1..-3].reverse(), // 'PTA'
         ]
       }
     }
@@ -176,7 +177,7 @@ class ScalarsSpec extends Specification {
     def result = DSL.execute(
       schema,
       query,
-      [price: '1.25PTA']
+      [price: '1.25PTA'],
     )
     // end::queryWithVariableExecution[]
 

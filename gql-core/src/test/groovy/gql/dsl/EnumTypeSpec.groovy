@@ -5,6 +5,7 @@ import graphql.schema.GraphQLEnumType
 import graphql.schema.GraphQLObjectType
 import spock.lang.Specification
 
+@SuppressWarnings('VariableName')
 class EnumTypeSpec extends Specification {
 
   void 'build an enum type'() {

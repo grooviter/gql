@@ -2,7 +2,6 @@ package gql.dsl
 
 import gql.DSL
 import graphql.ExecutionResult
-import graphql.GraphQLException
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLInputObjectType
 import graphql.schema.GraphQLOutputType
@@ -13,6 +12,7 @@ import spock.lang.Unroll
 /**
  * @since 0.1.4
  */
+@SuppressWarnings('VariableName')
 class InputTypeSpec extends Specification {
 
   void 'create an simple input type'() {
@@ -120,7 +120,7 @@ class InputTypeSpec extends Specification {
     input << [
       [to: 'you@somedomain.com'],
       [from: 'me@somedomain.com'],
-      [:]
+      [:],
     ]
   }
 }

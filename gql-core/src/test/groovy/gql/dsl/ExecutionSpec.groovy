@@ -1,7 +1,5 @@
 package gql.dsl
 
-import graphql.ExecutionResult
-import graphql.schema.GraphQLSchema
 import graphql.schema.DataFetchingEnvironment
 import spock.lang.Specification
 import gql.DSL

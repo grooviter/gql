@@ -189,6 +189,7 @@ class DSLSpec extends Specification {
     dataMap.hello == 'world'
   }
 
+  @SuppressWarnings('UnusedVariable')
   void 'execute query with fetcher (function)'() {
     given: 'a type'
     GraphQLObjectType filmType = DSL.type('film') {
@@ -219,7 +220,7 @@ class DSLSpec extends Specification {
         lastFilm {
           title
         }
-      }          
+      }
     '''
     // end::executeQueryStringNoArgumentsQuery[]
 
@@ -439,7 +440,6 @@ class DSLSpec extends Specification {
     result.data.first.title == 'DR. NO'
     result.data.first.year == '1962'
 
-
     when:
     // tag::staticQueryUnchecked[]
     ExecutionResult result2 = DSL.execute(schema) {
@@ -591,7 +591,7 @@ class DSLSpec extends Specification {
           }
         }
       }
-      
+
       def query = """
         {
           lastFilm {

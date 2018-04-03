@@ -1,17 +1,12 @@
 package gql.dsl
 
 import gql.DSL
-import groovy.transform.InheritConstructors
-import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.instrumentation.NoOpInstrumentation
 import graphql.language.SourceLocation
 import graphql.execution.ExecutionPath
 import graphql.schema.DataFetcher
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
-import graphql.ErrorType
 import graphql.GraphQLError
-import graphql.GraphQLException
-import graphql.language.SourceLocation
 
 /**
  * Example of instrumentation, this time used to check whether the user can invoke
