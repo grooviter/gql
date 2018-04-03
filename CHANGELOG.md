@@ -11,6 +11,10 @@ All notable changes to this project will be documented in this file.
 - `DSL.error` and `DSL.errorFetcher` to ease the creation of
   internationalized error messages.
 
+### Fixed
+
+- `gql-core` Codenarc issues
+
 ### Deprecated
 
 - All `execute(...)` and `executeAsync(...)`. In version 1.0.0 is planned
