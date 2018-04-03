@@ -1,12 +1,11 @@
 package gql.ratpack
 
-import java.util.concurrent.CompletableFuture
 import ratpack.handling.Context
 import graphql.schema.DataFetcher
-import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import graphql.execution.instrumentation.NoOpInstrumentation
+import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 
-import gql.exception.I18nException
+import gql.DSL
 
 class SecurityChecker extends NoOpInstrumentation {
   @Override
@@ -16,8 +15,9 @@ class SecurityChecker extends NoOpInstrumentation {
     return context
       .header('Authorization')
       .map { dataFetcher }
-      .orElse { env ->
-        throw new I18nException('security', 'error.security.authorization')
-      }
+      .orElse(DSL.errorFetcher(parameters) {
+        message 'security'
+        extensions(i18n: 'error.security.authorization')
+      })
   }
 }

@@ -95,7 +95,7 @@ class ExecutionSpec extends Specification {
     def sampleError = resultWithoutContext.errors.first()
 
     then: 'we should be allowed to pass'
-    sampleError.message == 'Exception while fetching data (/hello) : No user present'
+    sampleError.message == 'No user present'
     sampleError.extensions == [i18n: 'error.not.present']
   }
 }

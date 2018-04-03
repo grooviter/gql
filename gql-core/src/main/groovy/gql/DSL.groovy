@@ -9,9 +9,12 @@ import gql.dsl.SchemaBuilder
 import gql.dsl.ObjectTypeBuilder
 import gql.dsl.SchemaMergerBuilder
 import gql.dsl.ExecutionBuilder
+import gql.dsl.GraphQLErrorBuilder
 import graphql.GraphQL
+import graphql.GraphQLError
 import graphql.ExecutionInput
 import graphql.ExecutionResult
+import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLEnumType
 import graphql.schema.GraphQLFieldDefinition
@@ -21,6 +24,8 @@ import graphql.schema.GraphQLScalarType
 import graphql.schema.GraphQLSchema
 import graphql.schema.GraphQLObjectType
 import graphql.schema.TypeResolver
+import graphql.execution.ExecutionPath
+import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
 import java.util.concurrent.CompletableFuture
@@ -320,5 +325,54 @@ final class DSL {
   static TypeResolver typeResolver(
     @ClosureParams(value = SimpleType, options = 'graphql.TypeResolutionEnvironment') Closure typeResolverClosure) {
     return typeResolverClosure as TypeResolver
+  }
+
+  /**
+   * Builds a new instance of type {@link GraphQLError}
+   *
+   * @param options different options for a {@link GraphQLError} instance
+   * @return an instance of {@link GraphQLError}
+   * @since 0.3.0
+   */
+  static GraphQLError error(@DelegatesTo(GraphQLErrorBuilder) Closure options) {
+    Closure<GraphQLErrorBuilder> clos = options.clone() as Closure<GraphQLErrorBuilder>
+    GraphQLErrorBuilder builderSource = new GraphQLErrorBuilder()
+    GraphQLErrorBuilder builderResult = builderSource.with(clos) ?: builderSource
+
+    return builderResult.build()
+  }
+
+  /**
+   * When instrumenting a {@link DataFetcher} via {@link
+   * Instrumentation#instrumentDataFetcher} you should return whether
+   * the current data fetcher with no changes or a modified data fetcher.
+   *
+   * Sometimes you may want to return an error as a result of a given
+   * condition. This method creates an instance of a {@link
+   * DataFetcher} which sets a {@link GraphQLError} to the current
+   * execution context and returns no data
+   *
+   * @param parameters current instrumentation parameters
+   * @param options used to create the {@link GraphQLError}
+   * @return an instance of {@link DataFetcher}
+   * @since 0.3.0
+   */
+  static DataFetcher<?> errorFetcher(
+    InstrumentationFieldFetchParameters parameters,
+    @DelegatesTo(GraphQLErrorBuilder) Closure options) {
+    final GraphQLError error = error(options)
+
+    return { DataFetchingEnvironment env ->
+      ExecutionPath path = parameters
+        .getEnvironment()
+        .getFieldTypeInfo()
+        .getPath()
+
+      parameters
+        .getExecutionContext()
+        .addError(error, path)
+
+      return null
+    } as DataFetcher<?>
   }
 }

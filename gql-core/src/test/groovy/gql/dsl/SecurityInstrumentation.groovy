@@ -1,15 +1,17 @@
 package gql.dsl
 
+import gql.DSL
 import groovy.transform.InheritConstructors
 import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.instrumentation.NoOpInstrumentation
+import graphql.language.SourceLocation
+import graphql.execution.ExecutionPath
 import graphql.schema.DataFetcher
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import graphql.ErrorType
 import graphql.GraphQLError
 import graphql.GraphQLException
 import graphql.language.SourceLocation
-import gql.exception.I18nException
 
 /**
  * Example of instrumentation, this time used to check whether the user can invoke
@@ -21,8 +23,32 @@ class SecurityInstrumentation extends NoOpInstrumentation {
   @Override
   DataFetcher<?> instrumentDataFetcher(DataFetcher<?> dataFetcher, InstrumentationFieldFetchParameters parameters) {
     String user = parameters.environment?.context?.user?.toString()
-    DataFetcher<?> errorFn = { env -> throw new I18nException('No user present', 'error.not.present') } as DataFetcher
 
-    return user ? dataFetcher : errorFn
+    if (user) {
+      return dataFetcher
+    }
+
+    SourceLocation sourceLocation = parameters
+      .getEnvironment()
+      .getFields()
+      .find()
+      .getSourceLocation()
+
+    ExecutionPath path = parameters
+      .getEnvironment()
+      .getFieldTypeInfo()
+      .getPath()
+
+    GraphQLError error = DSL.error {
+      message 'No user present'
+      extensions(i18n:'error.not.present')
+      locations([sourceLocation])
+    }
+
+    parameters
+      .getExecutionContext()
+      .addError(error as graphql.GraphQLError, path)
+
+    return { env -> } as DataFetcher
   }
 }

@@ -1,16 +1,15 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
-## [0.3.0] - [2018-03-06]
+## [0.3.0] - [2018-04-04]
 
 ### Added
 
 - Context param in new `execute(...)` and `executeAsync(...)` calls
 - Ratpack context as execution context in `gql-ratpack` integration
 - Ratpack's integration aware of instrumentation added to registry
-- `gql.exception.I18nException` to ease the creation of
-  internationalized error messages. It adds a `i18n` key to error
-  extensions.
+- `DSL.error` and `DSL.errorFetcher` to ease the creation of
+  internationalized error messages.
 
 ### Deprecated
 
