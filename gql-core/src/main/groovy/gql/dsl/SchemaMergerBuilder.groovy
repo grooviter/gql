@@ -34,7 +34,7 @@ class SchemaMergerBuilder {
    * @return the current instance of {@link SchemaMergerBuilder}
    * @since 0.1.7
    */
-  SchemaMergerBuilder byURI(URI uri){
+  SchemaMergerBuilder byURI(URI uri) {
     registries << schemaParser.parse(uri.toURL().text)
     return this
   }
@@ -118,7 +118,8 @@ class SchemaMergerBuilder {
     return builder.type(wiring)
   }
 
-  private static RuntimeWiring.Builder aggregateScalarTypes(RuntimeWiring.Builder builder, GraphQLScalarType scalarType) {
+  private static RuntimeWiring.Builder aggregateScalarTypes(
+    RuntimeWiring.Builder builder, GraphQLScalarType scalarType) {
     return builder.scalar(scalarType)
   }
 

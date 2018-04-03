@@ -1,10 +1,10 @@
 package gql.dsl
 
-import graphql.schema.GraphQLEnumType
-import groovy.transform.TupleConstructor
-
 import static graphql.schema.GraphQLEnumType.Builder
 import static graphql.schema.GraphQLEnumType.newEnum
+
+import graphql.schema.GraphQLEnumType
+import groovy.transform.TupleConstructor
 
 /**
  * Builds a {@link GraphQLEnumType}
@@ -58,13 +58,14 @@ class EnumTypeBuilder {
     return this
   }
 
-/**
- * Adds enum type name
- *
- * @param name enum type name
- * @return current enum type builder
- * @since 0.1.3
- */
+  /**
+   * Adds enum type name
+   *
+   * @param name enum type name
+   * @return current enum type builder
+   * @since 0.1.3
+   */
+  @SuppressWarnings('ConfusingMethodName')
   EnumTypeBuilder name(String name) {
     this.name = name
     return this
@@ -77,6 +78,7 @@ class EnumTypeBuilder {
    * @return current enum type builder
    * @since 0.1.3
    */
+  @SuppressWarnings('ConfusingMethodName')
   EnumTypeBuilder description(String description) {
     this.description = description
     return this

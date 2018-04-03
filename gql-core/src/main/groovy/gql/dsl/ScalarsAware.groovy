@@ -10,6 +10,7 @@ import graphql.schema.GraphQLScalarType
  *
  * @since 0.1.1
  */
+@SuppressWarnings('FieldName')
 interface ScalarsAware {
 
   GraphQLScalarType GraphQLInt = Scalars.GraphQLInt

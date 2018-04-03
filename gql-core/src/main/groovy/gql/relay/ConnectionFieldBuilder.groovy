@@ -21,14 +21,18 @@ import groovy.transform.stc.SimpleType
  */
 class ConnectionFieldBuilder extends ObjectTypeBuilder.FieldBuilder {
 
+  private static final String STRING_FIRST = 'first'
+  private static final String STRING_LAST = 'last'
+
   /**
    * Argument used to indicate how many items we want to get going
    * forwards
    *
    * @since 0.1.8
    */
+  @SuppressWarnings('PropertyName')
   final GraphQLArgument FIRST = new ArgumentBuilder(GraphQLInt)
-    .name('first')
+    .name(STRING_FIRST)
     .description('take next number items')
     .build()
 
@@ -38,6 +42,7 @@ class ConnectionFieldBuilder extends ObjectTypeBuilder.FieldBuilder {
    *
    * @since 0.1.8
    */
+  @SuppressWarnings('PropertyName')
   final GraphQLArgument AFTER = new ArgumentBuilder(GraphQLString)
     .name('after')
     .description('new items will be fetched after the item identified by this id')
@@ -49,8 +54,9 @@ class ConnectionFieldBuilder extends ObjectTypeBuilder.FieldBuilder {
    *
    * @since 0.1.8
    */
+  @SuppressWarnings('PropertyName')
   final GraphQLArgument LAST = new ArgumentBuilder(GraphQLInt)
-    .name('last')
+    .name(STRING_LAST)
     .description('take previous number of items')
     .build()
 
@@ -60,6 +66,7 @@ class ConnectionFieldBuilder extends ObjectTypeBuilder.FieldBuilder {
    *
    * @since 0.1.8
    */
+  @SuppressWarnings('PropertyName')
   final GraphQLArgument BEFORE = new ArgumentBuilder(GraphQLString)
     .name('before')
     .description('new items will be fetched before the item identified by this id')
@@ -70,7 +77,9 @@ class ConnectionFieldBuilder extends ObjectTypeBuilder.FieldBuilder {
    * the programer the burden of creating each edge node/cursor pair, and how to build the <b>pageInfo</b> field.
    * The programmer can now be focused on how to get the data instead of building the response structure.
    *
-   * @relay <a target="_blank" href="https://facebook.github.io/relay/graphql/connections.htm">Relay Cursor Connections Specification</a>
+   * @relay <a target="_blank"
+   *  href="https://facebook.github.io/relay/graphql/connections.htm">Relay
+   *  Cursor Connections Specification</a>
    * @param closure the body of the {@link DataFetcher#get} method
    * @return the current {@link ConnectionBuilder} instance
    * @since 0.1.8
@@ -112,11 +121,9 @@ class ConnectionFieldBuilder extends ObjectTypeBuilder.FieldBuilder {
   }
 
   private static Map<String,? extends Object> convertEntry(String key, Object value) {
-    if (key in ['first', 'last'] && value) {
-      return [(key): ((Integer) value) + 1]
-    }
-
-    return [(key): value]
+    return (key in [STRING_FIRST, STRING_LAST] && value) ?
+      [(key): ((Integer) value) + 1] :
+      [(key): value]
   }
 
   @Override

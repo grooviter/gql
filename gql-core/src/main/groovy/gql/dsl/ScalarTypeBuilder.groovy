@@ -31,6 +31,7 @@ class ScalarTypeBuilder {
    * @return current builder instance
    * @since 0.1.3
    */
+  @SuppressWarnings('ConfusingMethodName')
   ScalarTypeBuilder name(String name) {
     this.name = name
     return this
@@ -43,6 +44,7 @@ class ScalarTypeBuilder {
    * @return current builder instance
    * @since 0.1.3
    */
+  @SuppressWarnings('ConfusingMethodName')
   ScalarTypeBuilder description(String description) {
     this.description = description
     return this

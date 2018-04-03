@@ -24,6 +24,7 @@ class ConnectionBuilder extends ObjectTypeBuilder implements RelayPrimitivesAwar
    * @return and instance of the current {@link ConnectionBuilder}
    * @since 0.1.8
    */
+  @SuppressWarnings('VariableName')
   ConnectionBuilder edges(String name, @DelegatesTo(NodeBuilder) Closure dsl) {
     GraphQLObjectType Node = Relay.node(name, dsl)
     GraphQLFieldDefinition nodeField = DSL.field('node') {

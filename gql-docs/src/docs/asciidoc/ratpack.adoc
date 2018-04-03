@@ -16,7 +16,7 @@ through HTTP thanks to Ratpack.
 @Grapes([
   @Grab('io.ratpack:ratpack-groovy:1.5.1'),
   @Grab('org.slf4j:slf4j-simple:1.7.25'),
-  @Grab('com.github.grooviter:gql-ratpack:0.2.0')
+  @Grab('com.github.grooviter:gql-ratpack:0.3.0')
 ])
 import static ratpack.groovy.Groovy.ratpack
 
@@ -51,6 +51,67 @@ ratpack {
 <3> Add the schema to Ratpack's registry
 <4> Register the `GraphQLHandler` to handle all GrahpQL request at `/graphql`
 <5> Register the `GraphiQLHandler` to be able to expose GraphiQL client at `/graphql/browser`.
+
+=== Execution context
+
+`GQL` Ratpack integration uses the Ratpack's handle context as the
+GraphQL execution context. That enables to access Ratpack's context from
+a data fetcher.
+
+[source, groovy]
+----
+import ratpack.handling.Context
+import graphql.schema.DataFetchingEnvironment
+
+def schema = DSL.schema {
+    queries('Queries') {
+      field('hello') {
+        type GraphQLString
+        dataFetcher { DataFetchingEnvironment env ->
+          Context context = env.context as Context
+
+          return context
+            .header('Authorization')       // <1>
+            .map { 'GraphQL and Groovy' }  // <2>
+            .orElse 'Unauthorizated'       // <3>
+        }
+      }
+    }
+}
+----
+
+<1> Takes content from header `Authorization`
+<2> If it had a value it returns a positive message
+<3> Otherwise informs the user is not authorized
+
+Having the possibility of accessing Ratpack's context could be useful
+for things like:
+
+- Authentication
+- Authorization
+- Logging
+- ...
+
+You could also be able to access the context through `instrumentation`.
+
+include::ratpack/errors.adoc[]
+
+=== Instrumentation
+
+Following `graphql-java` documentation The
+graphql.execution.instrumentation.Instrumentation interface allows you
+to inject code that can observe the execution of a query and also
+change the runtime behaviour.
+
+The `gql-ratpack` makes possible to add a given instance of type
+`graphql.execution.instrumentation.Instrumentation` to the registry
+and that instance will be used by the current execution.
+
+If you'd like to use more than one instrumentation then you may create
+an instance of
+`graphql.execution.instrumentation.ChainedInstrumentation` and add all
+other instrumentation instances to it, context will be passed through
+the chained instrumentation to all children.
 
 === Configuration
 

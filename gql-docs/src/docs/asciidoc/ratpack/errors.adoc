@@ -1,0 +1,33 @@
+=== GraphQL errors
+
+`gql-java` catches exceptions thrown while executing data fetchers and
+shows their information along with the stack trace as output.
+
+[sidebar]
+.Error vs Exception
+****
+An exception should be considered something unexpected, different than
+an error. An error could be a valid output.
+****
+
+The problem is that errors can't be thrown and the only way to
+propagate them when executing a data fetcher is via a data fetcher
+instrumentation.
+
+[source, groovy]
+----
+include::{testMain}/gql/dsl/SecurityInstrumentation.groovy[tags=instrumentation, indent=0]
+----
+
+You can create a `GraphQLError` using `DSL.error`. But if what you
+want to create is a fetcher adding an error to the current execution
+context, this could be improved using `DSL.errorFetcher`:
+
+[source, groovy]
+----
+include::{ratpack}/src/test/groovy/gql/ratpack/SecurityChecker.groovy[indent=0]
+----
+
+In the previous example if there's no `Authorization` header then an
+error will be shown in the response, otherwise the expected data
+fetcher will take over the execution.

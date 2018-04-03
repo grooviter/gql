@@ -7,6 +7,7 @@ import ratpack.test.handling.RequestFixture
 
 import gql.DSL
 import graphql.schema.GraphQLSchema
+import graphql.execution.instrumentation.Instrumentation
 
 class GraphQLHandlerSpec extends Specification {
 
@@ -114,5 +115,90 @@ class GraphQLHandlerSpec extends Specification {
       locations.find().column == 13
       message.startsWith 'JsonParseException'
     }
+  }
+
+  void 'execute a query when security check passes'() {
+    given: 'the handler, the schema, and the body'
+    def handler = new GraphQLHandler()
+    def schema = DSL.schema {
+      queries('Queries') {
+        field('echoName') {
+          type GraphQLString
+          argument 'name', GraphQLString
+          fetcher { env -> "Hello ${env.arguments.name}" }
+        }
+      }
+    }
+    def body = '''{
+      "query": "query EchoMyName($name: String) { \
+         echoName(name: $name) \
+      }",
+      "variables": {
+        "name": "John"
+      }
+    }
+    '''
+
+    and: 'setting the schema in the registry'
+    def requestFixture = RequestFixture
+      .requestFixture()
+      .registry { r ->
+        r.add(GraphQLSchema, schema)
+         .add(Instrumentation, new SecurityChecker())
+    }
+
+    when: 'executing the query against the handler'
+    def result = requestFixture
+      .body(body, 'application/json')
+      .header('Authorization', 'JWT random')
+      .handle(handler)
+
+    then: 'no errors should be found'
+    !result.rendered(JsonRender).object.errors
+    result.rendered(JsonRender).object.data == [echoName: 'Hello John']
+  }
+
+  void 'throws exception when security check fails'() {
+    given: 'the handler, the schema, and the body'
+    def handler = new GraphQLHandler()
+    def schema = DSL.schema {
+      queries('Queries') {
+        field('echoName') {
+          type GraphQLString
+          argument 'name', GraphQLString
+          fetcher { env -> "Hello ${env.arguments.name}" }
+        }
+      }
+    }
+    def body = '''{
+      "query": "query EchoMyName($name: String) { \
+         echoName(name: $name) \
+      }",
+      "variables": {
+        "name": "John"
+      }
+    }
+    '''
+
+    and: 'setting the schema in the registry'
+    def requestFixture = RequestFixture
+      .requestFixture()
+      .registry { r ->
+        r.add(GraphQLSchema, schema)
+         .add(Instrumentation, new SecurityChecker())
+    }
+
+    when: 'executing the query without credentials'
+    def result = requestFixture
+      .body(body, 'application/json')
+      .handle(handler)
+
+    then: 'errors should be found'
+    result
+      .rendered(JsonRender)
+      .object
+      .errors
+      .first()
+      .extensions.i18n == 'error.security.authorization'
   }
 }

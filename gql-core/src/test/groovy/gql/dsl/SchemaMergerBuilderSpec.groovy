@@ -14,6 +14,7 @@ import spock.lang.Specification
  *
  * @since 0.1.7
  */
+@SuppressWarnings('PropertyName')
 class SchemaMergerBuilderSpec extends Specification {
 
   void 'check merging three different schemas byURI'() {
@@ -45,7 +46,7 @@ class SchemaMergerBuilderSpec extends Specification {
     // end::urisSchema[]
 
     when: 'executing a query related to the first schema'
-    ExecutionResult resultOne = DSL.execute(proxySchema,'{ randomBand { name } }')
+    ExecutionResult resultOne = DSL.execute(proxySchema, '{ randomBand { name } }')
 
     then: 'we should succeed and find it'
     resultOne.data.randomBand.name == 'Whitesnake'
@@ -78,7 +79,7 @@ class SchemaMergerBuilderSpec extends Specification {
     // end::resourcesSchema[]
 
     when: 'executing a query related to the first schema'
-    ExecutionResult resultOne = DSL.execute(proxySchema,'{ randomBand { name } }')
+    ExecutionResult resultOne = DSL.execute(proxySchema, '{ randomBand { name } }')
 
     then: 'we should succeed and find it'
     resultOne.data.randomBand.name == 'Whitesnake'
@@ -111,7 +112,7 @@ class SchemaMergerBuilderSpec extends Specification {
     }
 
     when: 'executing a query related to the first schema'
-    ExecutionResult resultOne = DSL.execute(proxySchema,'{ randomBand { name } }')
+    ExecutionResult resultOne = DSL.execute(proxySchema, '{ randomBand { name } }')
 
     then: 'we should succeed and find it'
     resultOne.data.randomBand.name == 'Whitesnake'
@@ -138,7 +139,7 @@ class SchemaMergerBuilderSpec extends Specification {
           link('randomBand') { DataFetchingEnvironment env ->
             return [
               name: 'Whitesnake',
-              createdAt: Date.parse('dd-MM-yyyy','01-01-1977')
+              createdAt: Date.parse('dd-MM-yyyy', '01-01-1977')
             ]
           }
         }
@@ -148,7 +149,7 @@ class SchemaMergerBuilderSpec extends Specification {
 
     when: 'executing a query related to the first schema'
     ExecutionResult resultOne = DSL.execute(
-      proxySchema,'''{
+      proxySchema, '''{
         randomBand {
           name
           createdAt

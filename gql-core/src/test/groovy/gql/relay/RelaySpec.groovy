@@ -11,13 +11,14 @@ import spock.lang.Unroll
 /**
  * @since 0.1.8
  */
+@SuppressWarnings('VariableName')
 class RelaySpec extends Specification {
 
   static final List<Map> SHIPS = [
     [id: 'WC1XaW5nCg==', name: 'X-Wing'],
     [id: 'U3RhckZpZ2h0ZXIK', name: 'StarFighter'],
     [id: 'TGFtYmRhCg==', name: 'Lambda'],
-    [id: 'Q2xhd2NyYWZ0Cg==', name: 'Clawcraft']
+    [id: 'Q2xhd2NyYWZ0Cg==', name: 'Clawcraft'],
   ]
 
   void 'create a simple Relay schema'() {
@@ -55,7 +56,7 @@ class RelaySpec extends Specification {
            rebels {
              id
              name
-           }           
+           }
          }
       '''
     )
@@ -82,7 +83,7 @@ class RelaySpec extends Specification {
     // tag::nodeWithListFetcher[]
     GraphQLOutputType Faction = Relay.node('Faction') {
       field 'name', GraphQLString // <1>
-      connection('ships'){ // <2>
+      connection('ships') { // <2>
         type ShipConnection
         listFetcher { // <3>
           Integer limit = it.getArgument('first')
@@ -110,7 +111,7 @@ class RelaySpec extends Specification {
     // tag::query[]
     def query = """
          {
-           rebels {             
+           rebels {
              name
              ships(first: $noResults) {
                pageInfo {
@@ -123,7 +124,7 @@ class RelaySpec extends Specification {
                  }
                }
              }
-           }           
+           }
          }
       """
     // end::query[]
@@ -159,7 +160,7 @@ class RelaySpec extends Specification {
 
     GraphQLOutputType Faction = Relay.node('Faction') {
       field 'name', GraphQLString
-      connection('ships'){
+      connection('ships') {
         type ShipConnection
         listFetcher {
           Integer limitl = it.getArgument('first')

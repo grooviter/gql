@@ -2,7 +2,6 @@ package gql.relay
 
 import gql.DSL
 import graphql.schema.GraphQLFieldDefinition
-import graphql.schema.GraphQLInterfaceType
 import graphql.schema.GraphQLObjectType
 
 /**
@@ -17,6 +16,7 @@ interface RelayPrimitivesAware {
    *
    * @since 0.1.8
    */
+  @SuppressWarnings('FieldName')
   static final GraphQLFieldDefinition IdField = DSL.field('id') {
     description 'The id of an object'
     type nonNull(GraphQLID)
@@ -27,6 +27,7 @@ interface RelayPrimitivesAware {
    *
    * @since 0.1.8
    */
+  @SuppressWarnings('FieldName')
   static final GraphQLObjectType PageInfo = DSL.type('PageInfo') {
     description 'Information about pagination in a connection.'
 
@@ -56,6 +57,7 @@ interface RelayPrimitivesAware {
    *
    * @since 0.1.8
    */
+  @SuppressWarnings('FieldName')
   static final GraphQLFieldDefinition PageInfoField = DSL.field('pageInfo') {
     description 'Information about pagination in the current connection.'
     type nonNull(PageInfo)

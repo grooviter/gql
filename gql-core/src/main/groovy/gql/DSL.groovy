@@ -8,9 +8,13 @@ import gql.dsl.ScalarTypeBuilder
 import gql.dsl.SchemaBuilder
 import gql.dsl.ObjectTypeBuilder
 import gql.dsl.SchemaMergerBuilder
+import gql.dsl.ExecutionBuilder
+import gql.dsl.GraphQLErrorBuilder
 import graphql.GraphQL
+import graphql.GraphQLError
 import graphql.ExecutionInput
 import graphql.ExecutionResult
+import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLEnumType
 import graphql.schema.GraphQLFieldDefinition
@@ -20,6 +24,8 @@ import graphql.schema.GraphQLScalarType
 import graphql.schema.GraphQLSchema
 import graphql.schema.GraphQLObjectType
 import graphql.schema.TypeResolver
+import graphql.execution.ExecutionPath
+import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
 import java.util.concurrent.CompletableFuture
@@ -83,6 +89,7 @@ final class DSL {
    * @param query the query string
    * @param arguments optional arguments passed to the query
    * @return an instance of {@link ExecutionResult}
+   * @deprecated it will be removed in version 1.0.0
    * @since 0.1.0
    */
   static ExecutionResult execute(GraphQLSchema schema, String query, Map<String,Object> arguments = [:]) {
@@ -102,10 +109,34 @@ final class DSL {
    * @param variables variables used in nested queries
    * @param queries closure wrapping different queries to be executed remotely
    * @return a map with all the response
+   * @deprecated it will be removed in version 1.0.0
    * @since 0.1.0
    */
   static ExecutionResult execute(GraphQLSchema schema, @DelegatesTo(QueryBuilder) Closure queries) {
     return execute(schema, buildQuery(queries))
+  }
+
+  /**
+   * Executes a given query against a given schema
+   *
+   * @param schema schema the query will be executed against
+   * @param query the GraphQL query string
+   * @param builder builder to add extra information to the execution context
+   * @return an instance of {@link Execution result} with the result of executing the query
+   * @deprecated it will be removed in version 1.0.0
+   * @since 0.3.0
+   */
+  static ExecutionResult execute(GraphQLSchema schema, String query, @DelegatesTo(ExecutionBuilder) Closure builder) {
+    Closure<ExecutionBuilder> clos = builder.clone() as Closure<ExecutionBuilder>
+    ExecutionBuilder builderSource = new ExecutionBuilder()
+    ExecutionBuilder builderResult = builderSource.with(clos) ?: builderSource
+    ExecutionBuilder.Result result = builderResult.withQuery(query).build()
+
+    return GraphQL
+      .newGraphQL(schema)
+      .instrumentation(result.instrumentation)
+      .build()
+      .execute(result.input)
   }
 
   /**
@@ -117,30 +148,57 @@ final class DSL {
    * @param query the query string
    * @param arguments optional arguments passed to the query
    * @return an instance of {@link CompletableFuture} that will be resolved in a {@link ExecutionResult}
+   * @deprecated it will be removed in version 1.0.0
    * @since 0.1.9
    */
-  static CompletableFuture<ExecutionResult> executeAsync(GraphQLSchema schema, String query, Map<String,Object> arguments = [:]) {
+  static CompletableFuture<ExecutionResult> executeAsync(
+    GraphQLSchema schema, String query, Map<String,Object> arguments = [:]) {
     GraphQL graphQL = new GraphQL(schema)
     ExecutionInput executionInput = ExecutionInput
       .newExecutionInput()
       .query(query)
       .variables(arguments)
-      .build();
+      .build()
 
     return graphQL.executeAsync(executionInput)
   }
 
   /**
-   * Builds a GraphQL query using a DSL and execute it asynchronously
+   * Executes a GraphQL query using a DSL and execute it asynchronously
    *
    * @examples <a target="_blank" href="/gql/docs/html5/index.html#_queries">Executing GraphQL queries</a>
    * @param variables variables used in nested queries
    * @param queries closure wrapping different queries to be executed remotely
    * @return a map with all the response
+   * @deprecated it will be removed in version 1.0.0
    * @since 0.1.9
    */
-  static CompletableFuture<ExecutionResult> executeAsync(GraphQLSchema schema, @DelegatesTo(QueryBuilder) Closure queries) {
+  static CompletableFuture<ExecutionResult> executeAsync(
+    GraphQLSchema schema, @DelegatesTo(QueryBuilder) Closure queries) {
     return executeAsync(schema, buildQuery(queries))
+  }
+
+  /**
+   * Executes a GraphQL query using a DSL and execute it asynchronously
+   *
+   * @param schema schema the query will be executed against
+   * @param query the GraphQL query string
+   * @param builder builder to add extra information to the execution context
+   * @deprecated it will be removed in version 1.0.0
+   * @since 0.3.0
+   */
+  static CompletableFuture<ExecutionResult> executeAsync(
+    GraphQLSchema schema, String query, @DelegatesTo(ExecutionBuilder) Closure builder) {
+    Closure<ExecutionBuilder> clos = builder.clone() as Closure<ExecutionBuilder>
+    ExecutionBuilder builderSource = new ExecutionBuilder()
+    ExecutionBuilder builderResult = builderSource.with(clos) ?: builderSource
+    ExecutionBuilder.Result result = builderResult.withQuery(query).build()
+
+    return GraphQL
+      .newGraphQL(schema)
+      .instrumentation(result.instrumentation)
+      .build()
+      .executeAsync(result.input)
   }
 
   /**
@@ -270,5 +328,54 @@ final class DSL {
   static TypeResolver typeResolver(
     @ClosureParams(value = SimpleType, options = 'graphql.TypeResolutionEnvironment') Closure typeResolverClosure) {
     return typeResolverClosure as TypeResolver
+  }
+
+  /**
+   * Builds a new instance of type {@link GraphQLError}
+   *
+   * @param options different options for a {@link GraphQLError} instance
+   * @return an instance of {@link GraphQLError}
+   * @since 0.3.0
+   */
+  static GraphQLError error(@DelegatesTo(GraphQLErrorBuilder) Closure options) {
+    Closure<GraphQLErrorBuilder> clos = options.clone() as Closure<GraphQLErrorBuilder>
+    GraphQLErrorBuilder builderSource = new GraphQLErrorBuilder()
+    GraphQLErrorBuilder builderResult = builderSource.with(clos) ?: builderSource
+
+    return builderResult.build()
+  }
+
+  /**
+   * When instrumenting a {@link DataFetcher} via {@link
+   * Instrumentation#instrumentDataFetcher} you should return whether
+   * the current data fetcher with no changes or a modified data fetcher.
+   *
+   * Sometimes you may want to return an error as a result of a given
+   * condition. This method creates an instance of a {@link
+   * DataFetcher} which sets a {@link GraphQLError} to the current
+   * execution context and returns no data
+   *
+   * @param parameters current instrumentation parameters
+   * @param options used to create the {@link GraphQLError}
+   * @return an instance of {@link DataFetcher}
+   * @since 0.3.0
+   */
+  static DataFetcher<?> errorFetcher(
+    InstrumentationFieldFetchParameters parameters,
+    @DelegatesTo(GraphQLErrorBuilder) Closure options) {
+    final GraphQLError error = error(options)
+
+    return { DataFetchingEnvironment env ->
+      ExecutionPath path = parameters
+        .getEnvironment()
+        .getFieldTypeInfo()
+        .getPath()
+
+      parameters
+        .getExecutionContext()
+        .addError(error, path)
+
+      return null
+    } as DataFetcher<?>
   }
 }
