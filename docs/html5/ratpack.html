@@ -517,6 +517,9 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_ratpack">Ratpack</a>
 <ul class="sectlevel2">
 <li><a href="#_example">Example</a></li>
+<li><a href="#_execution_context">Execution context</a></li>
+<li><a href="#_graphql_errors">GraphQL errors</a></li>
+<li><a href="#_instrumentation">Instrumentation</a></li>
 <li><a href="#_configuration">Configuration</a></li>
 </ul>
 </li>
@@ -546,7 +549,7 @@ through HTTP thanks to Ratpack.</p>
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grapes</span>([
   <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">io.ratpack:ratpack-groovy:1.5.1</span><span class="delimiter">'</span></span>),
   <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">org.slf4j:slf4j-simple:1.7.25</span><span class="delimiter">'</span></span>),
-  <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql-ratpack:0.2.0</span><span class="delimiter">'</span></span>)
+  <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql-ratpack:0.3.0</span><span class="delimiter">'</span></span>)
 ])
 <span class="keyword">import</span> <span class="include">static</span> <span class="include">ratpack.groovy.Groovy.ratpack</span>
 
@@ -603,6 +606,137 @@ ratpack {
 </div>
 </div>
 <div class="sect2">
+<h3 id="_execution_context">Execution context</h3>
+<div class="paragraph">
+<p><code>GQL</code> Ratpack integration uses the Ratpack&#8217;s handle context as the
+GraphQL execution context. That enables to access Ratpack&#8217;s context from
+a data fetcher.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">ratpack.handling.Context</span>
+<span class="keyword">import</span> <span class="include">graphql.schema.DataFetchingEnvironment</span>
+
+<span class="keyword">def</span> schema = DSL.schema {
+    queries(<span class="string"><span class="delimiter">'</span><span class="content">Queries</span><span class="delimiter">'</span></span>) {
+      field(<span class="string"><span class="delimiter">'</span><span class="content">hello</span><span class="delimiter">'</span></span>) {
+        type GraphQLString
+        dataFetcher { DataFetchingEnvironment env -&gt;
+          <span class="predefined-type">Context</span> context = env.context <span class="keyword">as</span> <span class="predefined-type">Context</span>
+
+          <span class="keyword">return</span> context
+            .header(<span class="string"><span class="delimiter">'</span><span class="content">Authorization</span><span class="delimiter">'</span></span>)       <i class="conum" data-value="1"></i><b>(1)</b>
+            .map { <span class="string"><span class="delimiter">'</span><span class="content">GraphQL and Groovy</span><span class="delimiter">'</span></span> }  <i class="conum" data-value="2"></i><b>(2)</b>
+            .orElse <span class="string"><span class="delimiter">'</span><span class="content">Unauthorizated</span><span class="delimiter">'</span></span>       <i class="conum" data-value="3"></i><b>(3)</b>
+        }
+      }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Takes content from header <code>Authorization</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>If it had a value it returns a positive message</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Otherwise informs the user is not authorized</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Having the possibility of accessing Ratpack&#8217;s context could be useful
+for things like:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Authentication</p>
+</li>
+<li>
+<p>Authorization</p>
+</li>
+<li>
+<p>Logging</p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You could also be able to access the context through <code>instrumentation</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_graphql_errors">GraphQL errors</h3>
+<div class="paragraph">
+<p><code>gql-java</code> catches exceptions thrown while executing data fetchers and
+shows their information along with the stack trace as output.</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Error vs Exception</div>
+<div class="paragraph">
+<p>An exception should be considered something unexpected, different than
+an error. An error could be a valid output.</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The problem is that errors can&#8217;t be thrown and the only way to
+propagate them when executing a data fetcher is via a data fetcher
+instrumentation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> ratpack/errors.adoc - <span class="key">include</span>::{testMain}/gql/dsl/SecurityInstrumentation.groovy[tags=instrumentation, indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can create a <code>GraphQLError</code> using <code>DSL.error</code>. But if what you
+want to create is a fetcher adding an error to the current execution
+context, this could be improved using <code>DSL.errorFetcher</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> ratpack/errors.adoc - <span class="key">include</span>::{ratpack}/src/test/groovy/gql/ratpack/SecurityChecker.groovy[indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the previous example if there&#8217;s no <code>Authorization</code> header then an
+error will be shown in the response, otherwise the expected data
+fetcher will take over the execution.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_instrumentation">Instrumentation</h3>
+<div class="paragraph">
+<p>Following <code>graphql-java</code> documentation The
+graphql.execution.instrumentation.Instrumentation interface allows you
+to inject code that can observe the execution of a query and also
+change the runtime behaviour.</p>
+</div>
+<div class="paragraph">
+<p>The <code>gql-ratpack</code> makes possible to add a given instance of type
+<code>graphql.execution.instrumentation.Instrumentation</code> to the registry
+and that instance will be used by the current execution.</p>
+</div>
+<div class="paragraph">
+<p>If you&#8217;d like to use more than one instrumentation then you may create
+an instance of
+<code>graphql.execution.instrumentation.ChainedInstrumentation</code> and add all
+other instrumentation instances to it, context will be passed through
+the chained instrumentation to all children.</p>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_configuration">Configuration</h3>
 <div class="paragraph">
 <p>If you would like to disable the GraphiQL client, you can always configure the
@@ -656,7 +790,7 @@ from the module so that it could be used under any circumstances.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-01-28 18:48:44 +00:00
+Last updated 2018-04-03 22:29:03 +00:00
 </div>
 </div>
 </body>

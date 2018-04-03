@@ -513,7 +513,7 @@ table.CodeRay td.code>pre{padding:0}
 <div id="header">
 <h1>GQL</h1>
 <div class="details">
-<span id="revnumber">version 0.2.0</span>
+<span id="revnumber">version 0.3.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -584,7 +584,10 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_ratpack">5. Ratpack</a>
 <ul class="sectlevel2">
 <li><a href="#_example">5.1. Example</a></li>
-<li><a href="#_configuration">5.2. Configuration</a></li>
+<li><a href="#_execution_context">5.2. Execution context</a></li>
+<li><a href="#_graphql_errors">5.3. GraphQL errors</a></li>
+<li><a href="#_instrumentation">5.4. Instrumentation</a></li>
+<li><a href="#_configuration">5.5. Configuration</a></li>
 </ul>
 </li>
 <li><a href="#_development">6. Development</a>
@@ -773,7 +776,7 @@ used.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="gradle">compile 'com.github.grooviter:gql-core:0.2.0'</code></pre>
+<pre class="CodeRay highlight"><code data-lang="gradle">compile 'com.github.grooviter:gql-core:0.3.0'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1103,7 +1106,7 @@ For that we use the <code>parseLiteral</code> function.</p>
     <span class="predefined-type">String</span> value = money.value <span class="comment">// from a StringValue</span>
     <span class="keyword">return</span> [
       <span class="key">unit</span>: <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">$</span>value</span><span class="delimiter">&quot;</span></span>[<span class="integer">0</span>..-<span class="integer">2</span>].toDouble(), <span class="comment">// 1.23</span>
-      <span class="key">key</span>: <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">$</span>value</span><span class="delimiter">&quot;</span></span>[-<span class="integer">1</span>..-<span class="integer">1</span>] <span class="comment">// 'Y'</span>
+      <span class="key">key</span>: <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">$</span>value</span><span class="delimiter">&quot;</span></span>[-<span class="integer">1</span>..-<span class="integer">1</span>], <span class="comment">// 'Y'</span>
     ]
   }
 }</code></pre>
@@ -1202,7 +1205,7 @@ query:</p>
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> result = DSL.execute(
   schema,
   query,
-  [<span class="key">price</span>: <span class="string"><span class="delimiter">'</span><span class="content">1.25PTA</span><span class="delimiter">'</span></span>]
+  [<span class="key">price</span>: <span class="string"><span class="delimiter">'</span><span class="content">1.25PTA</span><span class="delimiter">'</span></span>],
 )</code></pre>
 </div>
 </div>
@@ -1216,7 +1219,7 @@ query:</p>
   parseValue { <span class="predefined-type">String</span> value -&gt; <span class="comment">// '1.25PTA'</span>
     <span class="keyword">return</span> [
       <span class="key">unit</span>: value[<span class="integer">0</span>..-<span class="integer">4</span>].toDouble(), <span class="comment">// 1.25</span>
-      <span class="key">key</span>: value[-<span class="integer">1</span>..-<span class="integer">3</span>].reverse() <span class="comment">// 'PTA'</span>
+      <span class="key">key</span>: value[-<span class="integer">1</span>..-<span class="integer">3</span>].reverse(), <span class="comment">// 'PTA'</span>
     ]
   }
 }</code></pre>
@@ -1828,7 +1831,7 @@ type Band {
       link(<span class="string"><span class="delimiter">'</span><span class="content">randomBand</span><span class="delimiter">'</span></span>) { DataFetchingEnvironment env -&gt;
         <span class="keyword">return</span> [
           <span class="key">name</span>: <span class="string"><span class="delimiter">'</span><span class="content">Whitesnake</span><span class="delimiter">'</span></span>,
-          <span class="key">createdAt</span>: <span class="predefined-type">Date</span>.parse(<span class="string"><span class="delimiter">'</span><span class="content">dd-MM-yyyy</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">01-01-1977</span><span class="delimiter">'</span></span>)
+          <span class="key">createdAt</span>: <span class="predefined-type">Date</span>.parse(<span class="string"><span class="delimiter">'</span><span class="content">dd-MM-yyyy</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">01-01-1977</span><span class="delimiter">'</span></span>)
         ]
       }
     }
@@ -2268,7 +2271,7 @@ method, you can do it directly in the DSL like this:</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">GraphQLOutputType Faction = Relay.node(<span class="string"><span class="delimiter">'</span><span class="content">Faction</span><span class="delimiter">'</span></span>) {
   field <span class="string"><span class="delimiter">'</span><span class="content">name</span><span class="delimiter">'</span></span>, GraphQLString <i class="conum" data-value="1"></i><b>(1)</b>
-  connection(<span class="string"><span class="delimiter">'</span><span class="content">ships</span><span class="delimiter">'</span></span>){ <i class="conum" data-value="2"></i><b>(2)</b>
+  connection(<span class="string"><span class="delimiter">'</span><span class="content">ships</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="2"></i><b>(2)</b>
     type ShipConnection
     listFetcher { <i class="conum" data-value="3"></i><b>(3)</b>
       <span class="predefined-type">Integer</span> limit = <span class="local-variable">it</span>.getArgument(<span class="string"><span class="delimiter">'</span><span class="content">first</span><span class="delimiter">'</span></span>)
@@ -2406,7 +2409,7 @@ edge type will be of type <strong>ShipEdge</strong>.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">GraphQLOutputType Faction = Relay.node(<span class="string"><span class="delimiter">'</span><span class="content">Faction</span><span class="delimiter">'</span></span>) {
   field <span class="string"><span class="delimiter">'</span><span class="content">name</span><span class="delimiter">'</span></span>, GraphQLString <i class="conum" data-value="1"></i><b>(1)</b>
-  connection(<span class="string"><span class="delimiter">'</span><span class="content">ships</span><span class="delimiter">'</span></span>){ <i class="conum" data-value="2"></i><b>(2)</b>
+  connection(<span class="string"><span class="delimiter">'</span><span class="content">ships</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="2"></i><b>(2)</b>
     type ShipConnection
     listFetcher { <i class="conum" data-value="3"></i><b>(3)</b>
       <span class="predefined-type">Integer</span> limit = <span class="local-variable">it</span>.getArgument(<span class="string"><span class="delimiter">'</span><span class="content">first</span><span class="delimiter">'</span></span>)
@@ -2507,7 +2510,7 @@ through HTTP thanks to Ratpack.</p>
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grapes</span>([
   <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">io.ratpack:ratpack-groovy:1.5.1</span><span class="delimiter">'</span></span>),
   <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">org.slf4j:slf4j-simple:1.7.25</span><span class="delimiter">'</span></span>),
-  <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql-ratpack:0.2.0</span><span class="delimiter">'</span></span>)
+  <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql-ratpack:0.3.0</span><span class="delimiter">'</span></span>)
 ])
 <span class="keyword">import</span> <span class="include">static</span> <span class="include">ratpack.groovy.Groovy.ratpack</span>
 
@@ -2564,7 +2567,185 @@ ratpack {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_configuration">5.2. Configuration</h3>
+<h3 id="_execution_context">5.2. Execution context</h3>
+<div class="paragraph">
+<p><code>GQL</code> Ratpack integration uses the Ratpack&#8217;s handle context as the
+GraphQL execution context. That enables to access Ratpack&#8217;s context from
+a data fetcher.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">ratpack.handling.Context</span>
+<span class="keyword">import</span> <span class="include">graphql.schema.DataFetchingEnvironment</span>
+
+<span class="keyword">def</span> schema = DSL.schema {
+    queries(<span class="string"><span class="delimiter">'</span><span class="content">Queries</span><span class="delimiter">'</span></span>) {
+      field(<span class="string"><span class="delimiter">'</span><span class="content">hello</span><span class="delimiter">'</span></span>) {
+        type GraphQLString
+        dataFetcher { DataFetchingEnvironment env -&gt;
+          <span class="predefined-type">Context</span> context = env.context <span class="keyword">as</span> <span class="predefined-type">Context</span>
+
+          <span class="keyword">return</span> context
+            .header(<span class="string"><span class="delimiter">'</span><span class="content">Authorization</span><span class="delimiter">'</span></span>)       <i class="conum" data-value="1"></i><b>(1)</b>
+            .map { <span class="string"><span class="delimiter">'</span><span class="content">GraphQL and Groovy</span><span class="delimiter">'</span></span> }  <i class="conum" data-value="2"></i><b>(2)</b>
+            .orElse <span class="string"><span class="delimiter">'</span><span class="content">Unauthorizated</span><span class="delimiter">'</span></span>       <i class="conum" data-value="3"></i><b>(3)</b>
+        }
+      }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Takes content from header <code>Authorization</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>If it had a value it returns a positive message</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Otherwise informs the user is not authorized</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Having the possibility of accessing Ratpack&#8217;s context could be useful
+for things like:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Authentication</p>
+</li>
+<li>
+<p>Authorization</p>
+</li>
+<li>
+<p>Logging</p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You could also be able to access the context through <code>instrumentation</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_graphql_errors">5.3. GraphQL errors</h3>
+<div class="paragraph">
+<p><code>gql-java</code> catches exceptions thrown while executing data fetchers and
+shows their information along with the stack trace as output.</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Error vs Exception</div>
+<div class="paragraph">
+<p>An exception should be considered something unexpected, different than
+an error. An error could be a valid output.</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The problem is that errors can&#8217;t be thrown and the only way to
+propagate them when executing a data fetcher is via a data fetcher
+instrumentation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">SecurityInstrumentation</span> <span class="directive">extends</span> NoOpInstrumentation {
+  <span class="annotation">@Override</span>
+  DataFetcher&lt;?&gt; instrumentDataFetcher(DataFetcher&lt;?&gt; dataFetcher, InstrumentationFieldFetchParameters parameters) {
+    <span class="predefined-type">String</span> user = parameters.environment?.context?.user?.toString()
+
+    <span class="keyword">if</span> (user) {
+      <span class="keyword">return</span> dataFetcher
+    }
+
+    ExecutionPath path = parameters
+      .getEnvironment()
+      .getFieldTypeInfo()
+      .getPath()
+
+    GraphQLError error = DSL.error {
+      message <span class="string"><span class="delimiter">'</span><span class="content">No user present</span><span class="delimiter">'</span></span>
+      extensions(<span class="key">i18n</span>:<span class="string"><span class="delimiter">'</span><span class="content">error.not.present</span><span class="delimiter">'</span></span>)
+    }
+
+    parameters
+      .getExecutionContext()
+      .addError(error <span class="keyword">as</span> graphql.GraphQLError, path)
+
+    <span class="keyword">return</span> { env -&gt; } <span class="keyword">as</span> DataFetcher
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can create a <code>GraphQLError</code> using <code>DSL.error</code>. But if what you
+want to create is a fetcher adding an error to the current execution
+context, this could be improved using <code>DSL.errorFetcher</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> gql.ratpack
+
+<span class="keyword">import</span> <span class="include">ratpack.handling.Context</span>
+<span class="keyword">import</span> <span class="include">graphql.schema.DataFetcher</span>
+<span class="keyword">import</span> <span class="include">graphql.execution.instrumentation.NoOpInstrumentation</span>
+<span class="keyword">import</span> <span class="include">graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters</span>
+
+<span class="keyword">import</span> <span class="include">gql.DSL</span>
+
+<span class="type">class</span> <span class="class">SecurityChecker</span> <span class="directive">extends</span> NoOpInstrumentation {
+  <span class="annotation">@Override</span>
+  DataFetcher&lt;?&gt; instrumentDataFetcher(DataFetcher&lt;?&gt; dataFetcher, InstrumentationFieldFetchParameters parameters) {
+    <span class="predefined-type">Context</span> context = parameters.environment.context <span class="keyword">as</span> <span class="predefined-type">Context</span>
+
+    <span class="keyword">return</span> context
+      .header(<span class="string"><span class="delimiter">'</span><span class="content">Authorization</span><span class="delimiter">'</span></span>)
+      .map { dataFetcher }
+      .orElse(DSL.errorFetcher(parameters) {
+        message <span class="string"><span class="delimiter">'</span><span class="content">security</span><span class="delimiter">'</span></span>
+        extensions(<span class="key">i18n</span>: <span class="string"><span class="delimiter">'</span><span class="content">error.security.authorization</span><span class="delimiter">'</span></span>)
+      })
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the previous example if there&#8217;s no <code>Authorization</code> header then an
+error will be shown in the response, otherwise the expected data
+fetcher will take over the execution.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_instrumentation">5.4. Instrumentation</h3>
+<div class="paragraph">
+<p>Following <code>graphql-java</code> documentation The
+graphql.execution.instrumentation.Instrumentation interface allows you
+to inject code that can observe the execution of a query and also
+change the runtime behaviour.</p>
+</div>
+<div class="paragraph">
+<p>The <code>gql-ratpack</code> makes possible to add a given instance of type
+<code>graphql.execution.instrumentation.Instrumentation</code> to the registry
+and that instance will be used by the current execution.</p>
+</div>
+<div class="paragraph">
+<p>If you&#8217;d like to use more than one instrumentation then you may create
+an instance of
+<code>graphql.execution.instrumentation.ChainedInstrumentation</code> and add all
+other instrumentation instances to it, context will be passed through
+the chained instrumentation to all children.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_configuration">5.5. Configuration</h3>
 <div class="paragraph">
 <p>If you would like to disable the GraphiQL client, you can always configure the
 GraphQLModule setting the <code>activateGraphiQL</code> to <code>false</code>.</p>
@@ -2634,7 +2815,7 @@ from the module so that it could be used under any circumstances.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.2.0<br>
+Version 0.3.0<br>
 Last updated 2018-01-28 18:48:44 +00:00
 </div>
 </div>
