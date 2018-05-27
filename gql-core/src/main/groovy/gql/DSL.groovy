@@ -25,6 +25,7 @@ import graphql.schema.GraphQLSchema
 import graphql.schema.GraphQLObjectType
 import graphql.schema.TypeResolver
 import graphql.execution.ExecutionPath
+import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
@@ -122,7 +123,7 @@ final class DSL {
    * @param schema schema the query will be executed against
    * @param query the GraphQL query string
    * @param builder builder to add extra information to the execution context
-   * @return an instance of {@link Execution result} with the result of executing the query
+   * @return an instance of {@link ExecutionResult result} with the result of executing the query
    * @deprecated it will be removed in version 1.0.0
    * @since 0.3.0
    */
