@@ -1,29 +1,14 @@
 package gql.ratpack;
 
-import static java.util.Arrays.asList;
-import static gql.DSL.executeAsync;
-import static ratpack.jackson.Jackson.json;
-import static com.google.common.collect.ImmutableMap.of;
+import static gql.ratpack.GraphQLHandlerUtil.executeGraphQL;
+import static gql.ratpack.GraphQLHandlerUtil.renderGraphQL;
+import static gql.ratpack.GraphQLHandlerUtil.renderGraphQLError;
 
-import groovy.lang.Closure;
-import gql.dsl.ExecutionBuilder;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.Collection;
-import graphql.ExecutionResult;
-import graphql.schema.GraphQLSchema;
-import graphql.execution.instrumentation.Instrumentation;
-import graphql.execution.instrumentation.NoOpInstrumentation;
-import ratpack.func.Action;
-import ratpack.func.Function;
-import ratpack.exec.Blocking;
-import ratpack.exec.Promise;
-import ratpack.exec.Upstream;
-import ratpack.exec.Downstream;
-import ratpack.handling.Handler;
-import ratpack.handling.Context;
-import com.fasterxml.jackson.core.JsonLocation;
+
 import com.fasterxml.jackson.core.JsonParseException;
+import ratpack.handling.Context;
+import ratpack.handling.Handler;
 
 /**
  * GraphQL endpoint. This handler will be exposing a given GraphQL
@@ -43,64 +28,5 @@ public class GraphQLHandler implements Handler {
         .onError(JsonParseException.class, renderGraphQLError(ctx))
         .flatMap(executeGraphQL(ctx))
         .then(renderGraphQL(ctx));
-  }
-
-  private Action<JsonParseException> renderGraphQLError(Context ctx) {
-    return (JsonParseException error) -> {
-      JsonLocation location = error.getLocation();
-      Collection<Map> locations =
-        asList(of("line",
-                  location.getLineNr(),
-                  "column",
-                  location.getColumnNr()));
-
-        ctx.render(json(of("errors", of("message",
-                                        "JsonParseException: " + error.getOriginalMessage(),
-                                        "locations",
-                                        locations))));
-    };
-  }
-
-  @SuppressWarnings("unchecked")
-  private Function<Map, Promise<ExecutionResult>> executeGraphQL(Context ctx) {
-    return (Map payload) -> {
-      String query = payload.get("query").toString();
-      Map<String,Object> variables = (Map<String,Object>) payload.get("variables");
-
-      Upstream<ExecutionResult> upstream = (downstream) -> {
-        GraphQLSchema schema = ctx.get(GraphQLSchema.class);
-        Instrumentation instrumentation = ctx
-          .maybeGet(Instrumentation.class)
-          .orElse(new NoOpInstrumentation());
-
-        executeAsync(schema,
-                     query,
-                     createExecutionBuilder(ctx, variables, instrumentation))
-        .thenAccept(value -> downstream.success(value));
-      };
-
-      return Promise.async(upstream);
-    };
-  }
-
-  private Closure<ExecutionBuilder> createExecutionBuilder(Context ctx, Map<String,Object> variables, Instrumentation instrumentation) {
-    return new Closure<ExecutionBuilder>(null) {
-      public ExecutionBuilder doCall(Object o) {
-        return new ExecutionBuilder()
-          .withContext(ctx)
-          .withVariables(variables)
-          .withInstrumentation(instrumentation);
-      }
-    };
-  }
-
-  private Action<ExecutionResult> renderGraphQL(Context ctx) {
-    return (ExecutionResult result) -> {
-      Map<String,Object> resultMap = new HashMap<>();
-      resultMap.put("errors", result.getErrors());
-      resultMap.put("data", result.getData());
-
-      ctx.render(json(resultMap));
-    };
   }
 }

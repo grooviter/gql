@@ -1,12 +1,11 @@
 package gql.ratpack;
 
-import gql.ratpack.GraphQLModuleConfig;
-
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
-import ratpack.handling.Handler;
+
 import ratpack.handling.Context;
+import ratpack.handling.Handler;
 
 /**
  * GraphiQL endpoint. This handler will be exposing a given GraphiQL
