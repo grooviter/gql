@@ -32,6 +32,7 @@ public class GraphQLModule extends ConfigurableModule<GraphQLModuleConfig> {
   @Override
   public void configure() {
     bind(GraphQLHandler.class).in(Scopes.SINGLETON);
+    bind(gql.ratpack.pac4j.GraphQLHandler.class).in(Scopes.SINGLETON);
     bind(GraphiQLHandler.class).in(Scopes.SINGLETON);
   }
 }

@@ -32,7 +32,7 @@ import ratpack.handling.Context;
 public class GraphQLHandlerUtil {
 
   /**
-   * Takes a {@link JsonParseException} and renders it as JSON to the output
+   * Takes `a {@link JsonParseException} and renders it as JSON to the output
    *
    * @param ctx Ratpack's context
    * @return an [@link Action} rendering the error
