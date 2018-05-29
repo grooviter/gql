@@ -14,6 +14,7 @@ import graphql.GraphQL
 import graphql.GraphQLError
 import graphql.ExecutionInput
 import graphql.ExecutionResult
+import graphql.execution.ExecutorServiceExecutionStrategy
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLEnumType
