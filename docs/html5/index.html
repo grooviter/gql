@@ -513,7 +513,7 @@ table.CodeRay td.code>pre{padding:0}
 <div id="header">
 <h1>GQL</h1>
 <div class="details">
-<span id="revnumber">version 0.3.0</span>
+<span id="revnumber">version 0.3.1</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -588,6 +588,8 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_graphql_errors">5.3. GraphQL errors</a></li>
 <li><a href="#_instrumentation">5.4. Instrumentation</a></li>
 <li><a href="#_configuration">5.5. Configuration</a></li>
+<li><a href="#_futures_async_blocking">5.6. Futures.async/blocking</a></li>
+<li><a href="#_pac4j">5.7. Pac4j</a></li>
 </ul>
 </li>
 <li><a href="#_development">6. Development</a>
@@ -776,7 +778,7 @@ used.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="gradle">compile 'com.github.grooviter:gql-core:0.3.0'</code></pre>
+<pre class="CodeRay highlight"><code data-lang="gradle">compile 'com.github.grooviter:gql-core:0.3.1'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2793,6 +2795,88 @@ from the module so that it could be used under any circumstances.</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_futures_async_blocking">5.6. Futures.async/blocking</h3>
+<div class="paragraph">
+<p>Ratpack&#8217;s execution model requires that all blocking operations
+are done in the blocking executor. Because one of the natural return types
+of a data fetcher could be a CompletableFuture, we could use that type
+as long as it is executed in the right executor.</p>
+</div>
+<div class="paragraph">
+<p>To make this easier, from version <code>0.3.1</code> there is <code>gql.ratpack.exec.Futures</code>
+which creates a blocking CompletableFuture instances <code>Futures.blocking</code> or
+non blocking <code>Futures.async</code> using Ratpack&#8217;s correct executors.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">ratpack.handling.Context</span>
+<span class="keyword">import</span> <span class="include">graphql.schema.DataFetchingEnvironment</span>
+<span class="keyword">import</span> <span class="include">gql.ratpack.exec.Futures</span>
+
+<span class="keyword">def</span> schema = DSL.schema {
+    queries(<span class="string"><span class="delimiter">'</span><span class="content">Queries</span><span class="delimiter">'</span></span>) {
+      field(<span class="string"><span class="delimiter">'</span><span class="content">hello</span><span class="delimiter">'</span></span>) {
+        type GraphQLString
+        dataFetcher { DataFetchingEnvironment env -&gt;
+             Futures.blocking {
+                <span class="comment">// do something in the blocking executor</span>
+             }
+        }
+      }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_pac4j">5.7. Pac4j</h3>
+<div class="paragraph">
+<p>Although you can create your own <code>authentication</code> mechanisms
+using instrumentations, it&#8217;s also true that you can use already existent HTTP
+authentication mechanisms. A good example could be Pac4j integration with
+Ratpack.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grapes</span>([
+  <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">io.ratpack:ratpack-groovy:1.5.1</span><span class="delimiter">'</span></span>),
+  <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">org.slf4j:slf4j-simple:1.7.25</span><span class="delimiter">'</span></span>),
+  <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql-ratpack:0.3.0</span><span class="delimiter">'</span></span>)
+])
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">ratpack.groovy.Groovy.ratpack</span>
+
+<span class="keyword">import</span> <span class="include">gql.DSL</span>
+<span class="keyword">import</span> <span class="include">gql.ratpack.GraphQLModule</span>
+<span class="keyword">import</span> <span class="include">gql.ratpack.pac4j.GraphQLHandler</span>
+
+<span class="keyword">def</span> schema = DSL.schema { <i class="conum" data-value="1"></i><b>(1)</b>
+    queries(<span class="string"><span class="delimiter">'</span><span class="content">Queries</span><span class="delimiter">'</span></span>) {
+      field(<span class="string"><span class="delimiter">'</span><span class="content">hello</span><span class="delimiter">'</span></span>) {
+        type GraphQLString
+        fetcher { env -&gt;
+          <span class="predefined-type">Context</span> ctx = env.context <span class="keyword">as</span> <span class="predefined-type">Context</span>
+          Optional&lt;UserProfile&gt; profile = Optional
+            .ofNullable(ctx.request.get(UserProfile))
+
+          <span class="keyword">return</span> <span class="string"><span class="delimiter">'</span><span class="content">Grettings mate, you ${profile.isEmpty() ? </span><span class="delimiter">'</span></span>dont<span class="string"><span class="delimiter">'</span><span class="content"> : </span><span class="delimiter">'</span></span><span class="keyword">do</span> have<span class="string"><span class="delimiter">'</span><span class="content">} credentials</span><span class="delimiter">'</span></span>
+        }
+      }
+    }
+}
+
+ratpack {
+    bindings {
+      module GraphQLModule
+      bindInstance schema
+    }
+    handlers {
+        post(<span class="string"><span class="delimiter">'</span><span class="content">graphql</span><span class="delimiter">'</span></span>, GraphQLHandler)
+    }
+}</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2815,8 +2899,8 @@ from the module so that it could be used under any circumstances.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.3.0<br>
-Last updated 2018-01-28 18:48:44 +00:00
+Version 0.3.1<br>
+Last updated 2018-01-28 19:48:44 +01:00
 </div>
 </div>
 <script type="text/x-mathjax-config">
