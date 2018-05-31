@@ -1,34 +1,36 @@
 package gql
 
+import java.util.concurrent.CompletableFuture
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.SimpleType
+
 import gql.dsl.EnumTypeBuilder
+import gql.dsl.ExecutionBuilder
+import gql.dsl.GraphQLErrorBuilder
 import gql.dsl.InputTypeBuilder
 import gql.dsl.InterfaceBuilder
+import gql.dsl.ObjectTypeBuilder
 import gql.dsl.QueryBuilder
 import gql.dsl.ScalarTypeBuilder
 import gql.dsl.SchemaBuilder
-import gql.dsl.ObjectTypeBuilder
 import gql.dsl.SchemaMergerBuilder
-import gql.dsl.ExecutionBuilder
-import gql.dsl.GraphQLErrorBuilder
-import graphql.GraphQL
-import graphql.GraphQLError
 import graphql.ExecutionInput
 import graphql.ExecutionResult
+import graphql.GraphQL
+import graphql.GraphQLError
+import graphql.execution.ExecutionPath
+import graphql.execution.instrumentation.Instrumentation
+import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLEnumType
 import graphql.schema.GraphQLFieldDefinition
 import graphql.schema.GraphQLInputObjectType
 import graphql.schema.GraphQLInterfaceType
+import graphql.schema.GraphQLObjectType
 import graphql.schema.GraphQLScalarType
 import graphql.schema.GraphQLSchema
-import graphql.schema.GraphQLObjectType
 import graphql.schema.TypeResolver
-import graphql.execution.ExecutionPath
-import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
-import groovy.transform.stc.ClosureParams
-import groovy.transform.stc.SimpleType
-import java.util.concurrent.CompletableFuture
 
 /**
  * Functions in this class ease the creation of different GraphQL
@@ -122,7 +124,7 @@ final class DSL {
    * @param schema schema the query will be executed against
    * @param query the GraphQL query string
    * @param builder builder to add extra information to the execution context
-   * @return an instance of {@link Execution result} with the result of executing the query
+   * @return an instance of {@link ExecutionResult result} with the result of executing the query
    * @deprecated it will be removed in version 1.0.0
    * @since 0.3.0
    */

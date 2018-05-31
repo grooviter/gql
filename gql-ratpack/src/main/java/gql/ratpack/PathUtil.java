@@ -2,17 +2,17 @@ package gql.ratpack;
 
 import static ratpack.util.Exceptions.uncheck;
 
-import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
-import java.util.Optional;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.FileSystemNotFoundException;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Helps to resolve resources location

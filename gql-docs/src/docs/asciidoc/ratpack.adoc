@@ -149,3 +149,80 @@ it has online access.
 Of course, the idea for upcoming releases would be to serve everything
 from the module so that it could be used under any circumstances.
 ****
+
+=== Futures.async/blocking
+
+Ratpack's execution model requires that all blocking operations
+are done in the blocking executor. Because one of the natural return types
+of a data fetcher could be a CompletableFuture, we could use that type
+as long as it is executed in the right executor.
+
+To make this easier, from version `0.3.1` there is `gql.ratpack.exec.Futures`
+which creates a blocking CompletableFuture instances `Futures.blocking` or
+non blocking `Futures.async` using Ratpack's correct executors.
+
+[source, groovy]
+----
+import ratpack.handling.Context
+import graphql.schema.DataFetchingEnvironment
+import gql.ratpack.exec.Futures
+
+def schema = DSL.schema {
+    queries('Queries') {
+      field('hello') {
+        type GraphQLString
+        dataFetcher { DataFetchingEnvironment env ->
+             Futures.blocking {
+                // do something in the blocking executor
+             }
+        }
+      }
+    }
+}
+----
+
+=== Pac4j
+
+Although you can create your own `authentication` mechanisms
+using instrumentations, it's also true that you can use already existent HTTP
+authentication mechanisms. A good example could be Pac4j integration with
+Ratpack.
+
+[source, groovy]
+----
+@Grapes([
+  @Grab('io.ratpack:ratpack-groovy:1.5.1'),
+  @Grab('org.slf4j:slf4j-simple:1.7.25'),
+  @Grab('com.github.grooviter:gql-ratpack:0.3.0')
+])
+import static ratpack.groovy.Groovy.ratpack
+
+import gql.DSL
+import gql.ratpack.GraphQLModule
+import gql.ratpack.pac4j.GraphQLHandler
+
+def schema = DSL.schema { // <1>
+    queries('Queries') {
+      field('hello') {
+        type GraphQLString
+        fetcher { env ->
+          Context ctx = env.context as Context
+          Optional<UserProfile> profile = Optional
+            .ofNullable(ctx.request.get(UserProfile))
+
+          return 'Grettings mate, you ${profile.isEmpty() ? 'dont' : 'do have'} credentials'
+        }
+      }
+    }
+}
+
+ratpack {
+    bindings {
+      module GraphQLModule
+      bindInstance schema
+    }
+    handlers {
+        post('graphql', GraphQLHandler)
+    }
+}
+----
