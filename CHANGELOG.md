@@ -1,6 +1,18 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.3.1] - [2018-05-28]
+
+### Added
+
+- Pac4j aware handler under package `gql.ratpack.pac4j`
+- Refactor and cleaning up of handlers taking out common code
+- Added `gql.ratpack.exec.Futures` to `gql-ratpack` module to integrate CompletableFutures in Ratpack's execution model
+
+### Fixed
+
+- UTF-8 encoding issue with GraphiQL UI
+
 ## [0.3.0] - [2018-04-04]
 
 ### Added
