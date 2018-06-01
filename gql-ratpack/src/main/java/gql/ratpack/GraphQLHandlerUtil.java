@@ -1,7 +1,6 @@
 package gql.ratpack;
 
 import static com.google.common.collect.ImmutableMap.of;
-import static gql.DSL.executeAsync;
 import static java.util.Arrays.asList;
 import static ratpack.jackson.Jackson.json;
 
@@ -12,12 +11,9 @@ import java.util.concurrent.CompletableFuture;
 
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonParseException;
-import gql.dsl.ExecutionBuilder;
+import graphql.ExecutionInput;
 import graphql.ExecutionResult;
-import graphql.execution.instrumentation.Instrumentation;
-import graphql.execution.instrumentation.NoOpInstrumentation;
-import graphql.schema.GraphQLSchema;
-import groovy.lang.Closure;
+import graphql.GraphQL;
 import ratpack.exec.Promise;
 import ratpack.exec.Upstream;
 import ratpack.func.Action;
@@ -66,41 +62,36 @@ public class GraphQLHandlerUtil {
   public static Function<Map, Promise<ExecutionResult>> executeGraphQL(Context ctx) {
     return (Map payload) -> {
       String query = payload.get("query").toString();
+
+      @SuppressWarnings("unchecked")
       Map<String,Object> variables = (Map<String,Object>) payload.get("variables");
 
-      Upstream<ExecutionResult> upstream = (downstream) -> {
-        GraphQLSchema schema = ctx.get(GraphQLSchema.class);
-        Instrumentation instrumentation = ctx
-          .maybeGet(Instrumentation.class)
-          .orElse(new NoOpInstrumentation());
+      Upstream<ExecutionInput> upstreamInput = (downstream) -> {
+        ExecutionInput input = ExecutionInput
+          .newExecutionInput()
+          .query(query)
+          .context(ctx)
+          .variables(variables)
+          .build();
 
-        CompletableFuture<ExecutionResult> result =
-          executeAsync(schema, query, createExecutionBuilder(ctx, variables, instrumentation));
-
-        result.thenAccept(downstream::success);
+        CompletableFuture.supplyAsync(() -> input)
+          .thenAccept(downstream::success);
       };
 
-      return Promise.async(upstream);
-    };
-  }
+      Function<ExecutionInput, Promise<ExecutionResult>> fn = (executionInput -> {
+        return Promise.async((downstream) -> {
+          GraphQL graphQL = ctx.get(GraphQL.class);
 
-  /**
-   * Prepares the GraphQL execution context
-   *
-   * @param ctx Ratpack's context
-   * @param variables query variables
-   * @param instrumentation GraphQL {@link Instrumentation} instance
-   * @return a {@link Closure} which once execute will return an {@link ExecutionBuilder}
-   * @since 0.3.1
-   */
-  public static Closure<ExecutionBuilder> createExecutionBuilder(Context ctx, Map<String,Object> variables, Instrumentation instrumentation) {
-    return new Closure<ExecutionBuilder>(null) {
-      public ExecutionBuilder doCall(Object o) {
-        return new ExecutionBuilder()
-          .withContext(ctx)
-          .withVariables(variables)
-          .withInstrumentation(instrumentation);
-      }
+          graphQL
+            .executeAsync(executionInput)
+            .thenAccept(downstream::success);
+        });
+      });
+
+      return Promise
+        .async(upstreamInput)
+        .cache()
+        .flatMap(fn);
     };
   }
 

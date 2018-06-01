@@ -2,8 +2,7 @@ package gql.ratpack.pac4j
 
 import gql.DSL
 import gql.ratpack.SecurityChecker
-import graphql.execution.instrumentation.Instrumentation
-import graphql.schema.GraphQLSchema
+import graphql.GraphQL
 import org.pac4j.core.profile.UserProfile
 import ratpack.handling.Context
 import ratpack.jackson.JsonRender
@@ -28,7 +27,7 @@ class GraphQLHandlerSpec extends Specification {
       def requestFixture = RequestFixture
       .requestFixture()
       .registry { r ->
-        r.add(GraphQLSchema, schema)
+        r.add(GraphQL, GraphQL.newGraphQL(schema).build())
     }
 
     when: 'executing the query against the handler'
@@ -69,7 +68,7 @@ class GraphQLHandlerSpec extends Specification {
       def requestFixture = RequestFixture
       .requestFixture()
       .registry { r ->
-        r.add(GraphQLSchema, schema)
+        r.add(GraphQL, GraphQL.newGraphQL(schema).build())
     }
 
     when: 'executing the query against the handler'
@@ -102,7 +101,7 @@ class GraphQLHandlerSpec extends Specification {
       def requestFixture = RequestFixture
       .requestFixture()
       .registry { r ->
-        r.add(GraphQLSchema, schema)
+        r.add(GraphQL, GraphQL.newGraphQL(schema).build())
     }
 
     when: 'executing the query against the handler'
@@ -141,12 +140,16 @@ class GraphQLHandlerSpec extends Specification {
     '''
 
     and: 'setting the schema in the registry'
+    def graphql = GraphQL
+      .newGraphQL(schema)
+      .instrumentation(new SecurityChecker())
+      .build()
+
     def requestFixture = RequestFixture
       .requestFixture()
       .registry { r ->
-        r.add(GraphQLSchema, schema)
-         .add(Instrumentation, new SecurityChecker())
-    }
+        r.add(GraphQL, graphql)
+      }
 
     when: 'executing the query against the handler'
     def result = requestFixture
@@ -182,12 +185,16 @@ class GraphQLHandlerSpec extends Specification {
     '''
 
     and: 'setting the schema in the registry'
+    def graphql = GraphQL
+      .newGraphQL(schema)
+      .instrumentation(new SecurityChecker())
+      .build()
+
     def requestFixture = RequestFixture
       .requestFixture()
       .registry { r ->
-        r.add(GraphQLSchema, schema)
-         .add(Instrumentation, new SecurityChecker())
-    }
+         r.add(GraphQL, graphql)
+      }
 
     when: 'executing the query without credentials'
     def result = requestFixture
@@ -235,12 +242,16 @@ class GraphQLHandlerSpec extends Specification {
     '''
 
     and: 'setting the schema in the registry'
+    def graphql = GraphQL
+      .newGraphQL(schema)
+      .instrumentation(new SecurityChecker())
+      .build()
+
     def requestFixture = RequestFixture
       .requestFixture()
       .registry { r ->
-         r.add(GraphQLSchema, schema)
-          .add(Instrumentation, new SecurityChecker())
-    }
+         r.add(GraphQL, graphql)
+      }
 
     when: 'executing the query without credentials'
     def result = requestFixture
