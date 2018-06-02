@@ -1,6 +1,22 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.3.2] - [2018-06-02]
+
+### Added
+
+- Documentation to `gql-ratpack` 
+
+### Fixed
+
+- Major fix. Now we reuse the `graphql.GraphQL` making `gql-ratpack` ready for production Yey!!! :-)
+- Minor refactoring
+
+### Changed
+
+- Now `gql-ratpack` can be used without carrying dependencies to `gql-core`, `Groovy` or 
+`Ratpack`
+
 ## [0.3.1] - [2018-05-28]
 
 ### Added
