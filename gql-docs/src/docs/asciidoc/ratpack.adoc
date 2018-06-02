@@ -240,7 +240,7 @@ ratpack {
 
 .Version alignment
 |===
-|gql-ratpack | graphql-java | Ratpack
+|gql-ratpack | graphql-java | Ratpack | Groovy
 
-|0.3.x | 7.0 | 1.5.1
+|0.3.x | 7.0 | 1.5.1 | 2.4.x
 |===
