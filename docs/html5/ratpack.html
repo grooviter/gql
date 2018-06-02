@@ -523,6 +523,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_configuration">Configuration</a></li>
 <li><a href="#_futures_async_blocking">Futures.async/blocking</a></li>
 <li><a href="#_pac4j">Pac4j</a></li>
+<li><a href="#_versioning_alignment">Versioning alignment</a></li>
 </ul>
 </li>
 </ul>
@@ -534,10 +535,7 @@ table.CodeRay td.code>pre{padding:0}
 <div class="sectionbody">
 <div class="paragraph">
 <p>Ratpack <a href="http://ratpack.io" class="bare">http://ratpack.io</a> is a set of Java libraries for building
-scalable HTTP applications.</p>
-</div>
-<div class="paragraph">
-<p>You can use Ratpack to make a given GraphQL schema available through
+scalable HTTP applications. You can use Ratpack to make a given GraphQL schema available through
 HTTP.</p>
 </div>
 <div class="sect2">
@@ -551,7 +549,8 @@ through HTTP thanks to Ratpack.</p>
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grapes</span>([
   <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">io.ratpack:ratpack-groovy:1.5.1</span><span class="delimiter">'</span></span>),
   <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">org.slf4j:slf4j-simple:1.7.25</span><span class="delimiter">'</span></span>),
-  <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql-ratpack:0.3.0</span><span class="delimiter">'</span></span>)
+  <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql-core:0.3.2</span><span class="delimiter">'</span></span>),
+  <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql-ratpack:0.3.2</span><span class="delimiter">'</span></span>)
 ])
 <span class="keyword">import</span> <span class="include">static</span> <span class="include">ratpack.groovy.Groovy.ratpack</span>
 
@@ -605,6 +604,17 @@ ratpack {
 <td>Register the <code>GraphiQLHandler</code> to be able to expose GraphiQL client at <code>/graphql/browser</code>.</td>
 </tr>
 </table>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">You can use <code>gql-ratpack</code> without GQL core</div>
+<div class="paragraph">
+<p><strong>gql-ratpack</strong> is just a <strong>Java</strong> library exposing a GraphQL engine using Ratpack, it doesn&#8217;t
+have neither dependencies to GQL core nor to Groovy. That means that if you want to use Ratpack but maybe you
+would like to use another library based on <code>graphql-java</code> (or the <code>graphql-java</code> library itself)
+you only have to expose the handlers and then create the <code>graphql.Schema</code> instance the way you want.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -834,7 +844,8 @@ Ratpack.</p>
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grapes</span>([
   <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">io.ratpack:ratpack-groovy:1.5.1</span><span class="delimiter">'</span></span>),
   <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">org.slf4j:slf4j-simple:1.7.25</span><span class="delimiter">'</span></span>),
-  <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql-ratpack:0.3.0</span><span class="delimiter">'</span></span>)
+  <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql-core:0.3.2</span><span class="delimiter">'</span></span>),
+  <span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql-ratpack:0.3.2</span><span class="delimiter">'</span></span>)
 ])
 <span class="keyword">import</span> <span class="include">static</span> <span class="include">ratpack.groovy.Groovy.ratpack</span>
 
@@ -869,12 +880,40 @@ ratpack {
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_versioning_alignment">Versioning alignment</h3>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. Version alignment</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">gql-ratpack</th>
+<th class="tableblock halign-left valign-top">graphql-java</th>
+<th class="tableblock halign-left valign-top">Ratpack</th>
+<th class="tableblock halign-left valign-top">Groovy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.3.x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7.0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.5.1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2.4.x</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-31 08:46:39 +02:00
+Last updated 2018-06-02 20:15:08 +00:00
 </div>
 </div>
 </body>
