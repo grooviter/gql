@@ -1,6 +1,7 @@
 package gql.ratpack;
 
 import com.google.inject.Scopes;
+import graphql.GraphQL;
 import ratpack.guice.ConfigurableModule;
 
 /**
@@ -31,6 +32,10 @@ public class GraphQLModule extends ConfigurableModule<GraphQLModuleConfig> {
 
   @Override
   public void configure() {
+    bind(GraphQL.class)
+      .toProvider(GraphQLProvider.class)
+      .in(Scopes.SINGLETON);
+
     bind(GraphQLHandler.class).in(Scopes.SINGLETON);
     bind(gql.ratpack.pac4j.GraphQLHandler.class).in(Scopes.SINGLETON);
     bind(GraphiQLHandler.class).in(Scopes.SINGLETON);

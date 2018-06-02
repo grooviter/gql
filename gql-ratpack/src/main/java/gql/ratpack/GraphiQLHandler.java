@@ -33,8 +33,7 @@ public class GraphiQLHandler implements Handler {
 
   private Path getGraphiQLFile() throws URISyntaxException {
     URL url = GraphiQLHandler.class.getResource("/static/index.html");
-    Path path = PathUtil.toPath(url);
 
-    return path;
+    return PathUtil.toPath(url);
   }
 }

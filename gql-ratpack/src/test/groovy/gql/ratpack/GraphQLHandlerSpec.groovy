@@ -1,13 +1,13 @@
 package gql.ratpack
 
-import spock.lang.AutoCleanup
-import spock.lang.Specification
-import ratpack.jackson.JsonRender
-import ratpack.test.handling.RequestFixture
-
 import gql.DSL
-import graphql.schema.GraphQLSchema
+import graphql.GraphQL
 import graphql.execution.instrumentation.Instrumentation
+import graphql.schema.GraphQLSchema
+import ratpack.jackson.JsonRender
+import ratpack.registry.Registry
+import ratpack.test.handling.RequestFixture
+import spock.lang.Specification
 
 class GraphQLHandlerSpec extends Specification {
 
@@ -27,8 +27,8 @@ class GraphQLHandlerSpec extends Specification {
       def requestFixture = RequestFixture
       .requestFixture()
       .registry { r ->
-        r.add(GraphQLSchema, schema)
-    }
+        r.add(GraphQL, GraphQL.newGraphQL(schema).build())
+      }
 
     when: 'executing the query against the handler'
     def result = requestFixture
@@ -68,7 +68,7 @@ class GraphQLHandlerSpec extends Specification {
       def requestFixture = RequestFixture
       .requestFixture()
       .registry { r ->
-        r.add(GraphQLSchema, schema)
+        r.add(GraphQL, GraphQL.newGraphQL(schema).build())
     }
 
     when: 'executing the query against the handler'
@@ -101,7 +101,7 @@ class GraphQLHandlerSpec extends Specification {
       def requestFixture = RequestFixture
       .requestFixture()
       .registry { r ->
-        r.add(GraphQLSchema, schema)
+        r.add(GraphQL, GraphQL.newGraphQL(schema).build())
     }
 
     when: 'executing the query against the handler'
@@ -140,12 +140,16 @@ class GraphQLHandlerSpec extends Specification {
     '''
 
     and: 'setting the schema in the registry'
+    def graphql = GraphQL
+      .newGraphQL(schema)
+      .instrumentation(new SecurityChecker())
+      .build()
+
     def requestFixture = RequestFixture
       .requestFixture()
       .registry { r ->
-        r.add(GraphQLSchema, schema)
-         .add(Instrumentation, new SecurityChecker())
-    }
+          r.add(GraphQL, graphql)
+      }
 
     when: 'executing the query against the handler'
     def result = requestFixture
@@ -181,11 +185,15 @@ class GraphQLHandlerSpec extends Specification {
     '''
 
     and: 'setting the schema in the registry'
+    def graphql = GraphQL
+      .newGraphQL(schema)
+      .instrumentation(new SecurityChecker())
+      .build()
+
     def requestFixture = RequestFixture
       .requestFixture()
       .registry { r ->
-        r.add(GraphQLSchema, schema)
-         .add(Instrumentation, new SecurityChecker())
+        r.add(GraphQL, graphql)
     }
 
     when: 'executing the query without credentials'
