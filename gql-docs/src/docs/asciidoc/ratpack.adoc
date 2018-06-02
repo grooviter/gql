@@ -1,9 +1,7 @@
 == Ratpack
 
 Ratpack http://ratpack.io is a set of Java libraries for building
-scalable HTTP applications.
-
-You can use Ratpack to make a given GraphQL schema available through
+scalable HTTP applications. You can use Ratpack to make a given GraphQL schema available through
 HTTP.
 
 === Example
@@ -16,7 +14,8 @@ through HTTP thanks to Ratpack.
 @Grapes([
   @Grab('io.ratpack:ratpack-groovy:1.5.1'),
   @Grab('org.slf4j:slf4j-simple:1.7.25'),
-  @Grab('com.github.grooviter:gql-ratpack:0.3.0')
+  @Grab('com.github.grooviter:gql-core:0.3.2'),
+  @Grab('com.github.grooviter:gql-ratpack:0.3.2')
 ])
 import static ratpack.groovy.Groovy.ratpack
 
@@ -51,6 +50,15 @@ ratpack {
 <3> Add the schema to Ratpack's registry
 <4> Register the `GraphQLHandler` to handle all GrahpQL request at `/graphql`
 <5> Register the `GraphiQLHandler` to be able to expose GraphiQL client at `/graphql/browser`.
+
+[sidebar]
+.You can use `gql-ratpack` without GQL core
+****
+**gql-ratpack** is just a **Java** library exposing a GraphQL engine using Ratpack, it doesn't
+have neither dependencies to GQL core nor to Groovy. That means that if you want to use Ratpack but maybe you
+would like to use another library based on `graphql-java` (or the `graphql-java` library itself)
+you only have to expose the handlers and then create the `graphql.Schema` instance the way you want.
+****
 
 === Execution context
 
@@ -193,7 +201,8 @@ Ratpack.
 @Grapes([
   @Grab('io.ratpack:ratpack-groovy:1.5.1'),
   @Grab('org.slf4j:slf4j-simple:1.7.25'),
-  @Grab('com.github.grooviter:gql-ratpack:0.3.0')
+  @Grab('com.github.grooviter:gql-core:0.3.2'),
+  @Grab('com.github.grooviter:gql-ratpack:0.3.2')
 ])
 import static ratpack.groovy.Groovy.ratpack
 
@@ -226,3 +235,12 @@ ratpack {
     }
 }
 ----
+
+=== Versioning alignment
+
+.Version alignment
+|===
+|gql-ratpack | graphql-java | Ratpack
+
+|0.3.x | 7.0 | 1.5.1
+|===
