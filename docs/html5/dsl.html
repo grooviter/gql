@@ -541,6 +541,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_modularising">Modularising</a>
 <ul class="sectlevel3">
 <li><a href="#_custom_scalar_implementation">Custom Scalar implementation</a></li>
+<li><a href="#_type_resolvers">Type resolvers</a></li>
 </ul>
 </li>
 <li><a href="#_inputs">Inputs</a>
@@ -1367,6 +1368,105 @@ modularization mechanism, you can do it from version
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_type_resolvers">Type resolvers</h4>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+If you&#8217;re using any of the GraphQL types that require a type resolver and you forgot to
+add it to the DSL, you will get a runtime exception.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_interfaces">Interfaces</h5>
+<div class="paragraph">
+<p>At some point you may want to create an interface as a base for other types.</p>
+</div>
+<div class="listingblock">
+<div class="title">Schema</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/modularising.adoc - <span class="key">include</span>::{testResources}/gql/dsl/Interfaces.graphqls[indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When using interfaces you need to provide a type resolver to make the GraphQL engine
+capable to decide when to return one type or another depending on the object return
+by the data fetcher.</p>
+</div>
+<div class="listingblock">
+<div class="title">Type resolver usage</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/modularising.adoc - <span class="key">include</span>::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=typeResolver, indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The data fetcher returns a list of maps</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Declaring a type resolver for type <code>Raffle</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The type resolver holds a reference of every item</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The type resolver decides it is a TwitterRaffle if the map has a key <code>hashTag</code> otherwise it will be considered a <code>SimpleRaffle</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>The query wants to get the information of a <code>TwitterRaffle</code></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>typeResolver</code> method could receive both a <code>graphql.schema.TypeResolver</code> instance or a <code>Closure</code>
+keeping the contract of the <code>TypeResolver</code> functional interface like the example above.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_union_types">Union Types</h5>
+<div class="paragraph">
+<p>For union types the mechanism is the same. You only have to add a type resolver to
+the union type. Lets say we have the following schema:</p>
+</div>
+<div class="listingblock">
+<div class="title">Schema</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/modularising.adoc - <span class="key">include</span>::{testResources}/gql/dsl/UnionTypes.graphqls[indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>There are both interfaces and union types, but the way we add a type resolver to
+any of them is just the same:</p>
+</div>
+<div class="listingblock">
+<div class="title">Type resolver usage</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/modularising.adoc - <span class="key">include</span>::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=typeResolverToUnionSchema, indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then you can apply a query like the following:</p>
+</div>
+<div class="listingblock">
+<div class="title">Type resolver usage</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">Unresolved directive <span class="keyword">in</span> dsl/modularising.adoc - <span class="key">include</span>::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=typeResolverToUnionQuery, indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_inputs">Inputs</h3>
@@ -1621,7 +1721,7 @@ Unresolved directive <span class="keyword">in</span> dsl/queries.adoc - <span cl
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-01-28 18:48:44 +00:00
+Last updated 2018-06-07 09:24:55 +00:00
 </div>
 </div>
 </body>

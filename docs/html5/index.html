@@ -513,7 +513,7 @@ table.CodeRay td.code>pre{padding:0}
 <div id="header">
 <h1>GQL</h1>
 <div class="details">
-<span id="revnumber">version 0.3.2</span>
+<span id="revnumber">version 0.3.3</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -552,6 +552,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_modularising">3.5. Modularising</a>
 <ul class="sectlevel3">
 <li><a href="#_custom_scalar_implementation">3.5.1. Custom Scalar implementation</a></li>
+<li><a href="#_type_resolvers">3.5.2. Type resolvers</a></li>
 </ul>
 </li>
 <li><a href="#_inputs">3.6. Inputs</a>
@@ -779,7 +780,7 @@ used.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="gradle">compile 'com.github.grooviter:gql-core:0.3.2'</code></pre>
+<pre class="CodeRay highlight"><code data-lang="gradle">compile 'com.github.grooviter:gql-core:0.3.3'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1840,6 +1841,229 @@ type Band {
     }
   }
 }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_type_resolvers">3.5.2. Type resolvers</h4>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+If you&#8217;re using any of the GraphQL types that require a type resolver and you forgot to
+add it to the DSL, you will get a runtime exception.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_interfaces">Interfaces</h5>
+<div class="paragraph">
+<p>At some point you may want to create an interface as a base for other types.</p>
+</div>
+<div class="listingblock">
+<div class="title">Schema</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">interface</span> Raffle {
+  <span class="key">id</span>: <span class="predefined-type">String</span>
+  <span class="key">title</span>: <span class="predefined-type">String</span>
+  <span class="key">names</span>: [<span class="predefined-type">String</span>]
+}
+
+type SimpleRaffle <span class="directive">implements</span> Raffle {
+  <span class="key">id</span>: <span class="predefined-type">String</span>
+  <span class="key">title</span>: <span class="predefined-type">String</span>
+  <span class="key">names</span>: [<span class="predefined-type">String</span>]
+  <span class="key">owner</span>: <span class="predefined-type">String</span>
+}
+
+type TwitterRaffle <span class="directive">implements</span> Raffle {
+  <span class="key">id</span>: <span class="predefined-type">String</span>
+  <span class="key">title</span>: <span class="predefined-type">String</span>
+  <span class="key">hashTag</span>: <span class="predefined-type">String</span>
+  <span class="key">names</span>: [<span class="predefined-type">String</span>]
+}
+
+type Queries {
+  raffles(<span class="key">max</span>: Int): [Raffle]
+}
+
+schema {
+  <span class="key">query</span>: Queries
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When using interfaces you need to provide a type resolver to make the GraphQL engine
+capable to decide when to return one type or another depending on the object return
+by the data fetcher.</p>
+</div>
+<div class="listingblock">
+<div class="title">Type resolver usage</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">void</span> <span class="string"><span class="delimiter">'</span><span class="content">Apply a type resolver: interface (example)</span><span class="delimiter">'</span></span>() {
+  <span class="key">given</span>: <span class="string"><span class="delimiter">'</span><span class="content">a schema</span><span class="delimiter">'</span></span>
+  GraphQLSchema proxySchema = DSL.mergeSchemas {
+    byResource(<span class="string"><span class="delimiter">'</span><span class="content">gql/dsl/Interfaces.graphqls</span><span class="delimiter">'</span></span>) {
+
+      mapType(<span class="string"><span class="delimiter">'</span><span class="content">Queries</span><span class="delimiter">'</span></span>) {
+        link(<span class="string"><span class="delimiter">'</span><span class="content">raffles</span><span class="delimiter">'</span></span>) {
+          <span class="keyword">return</span> [[<span class="key">title</span>: <span class="string"><span class="delimiter">'</span><span class="content">T-Shirt</span><span class="delimiter">'</span></span>, <span class="key">hashTag</span>: <span class="string"><span class="delimiter">'</span><span class="content">#greachconf</span><span class="delimiter">'</span></span>]] <i class="conum" data-value="1"></i><b>(1)</b>
+        }
+      }
+
+      mapType(<span class="string"><span class="delimiter">'</span><span class="content">Raffle</span><span class="delimiter">'</span></span>) {
+        <i class="conum" data-value="2"></i><b>(2)</b>
+        typeResolver { TypeResolutionEnvironment env -&gt;
+          <span class="keyword">def</span> raffle = env.getObject() <span class="keyword">as</span> <span class="predefined-type">Map</span>  <i class="conum" data-value="3"></i><b>(3)</b>
+          <span class="keyword">def</span> schema = env.schema
+
+          <span class="keyword">return</span> raffle.containsKey(<span class="string"><span class="delimiter">'</span><span class="content">hashTag</span><span class="delimiter">'</span></span>) ?
+            schema.getObjectType(<span class="string"><span class="delimiter">'</span><span class="content">TwitterRaffle</span><span class="delimiter">'</span></span>) : <i class="conum" data-value="4"></i><b>(4)</b>
+            schema.getObjectType(<span class="string"><span class="delimiter">'</span><span class="content">SimpleRaffle</span><span class="delimiter">'</span></span>)
+        }
+      }
+
+    }
+  }
+
+  <span class="key">and</span>: <span class="string"><span class="delimiter">'</span><span class="content">a query with different type resolution</span><span class="delimiter">'</span></span>
+  <span class="keyword">def</span> query = <span class="string"><span class="delimiter">&quot;&quot;&quot;</span><span class="content">{
+    raffles(max: 2) {
+      title
+      ... on TwitterRaffle { <i class="conum" data-value="5"></i><b>(5)</b>
+        hashTag
+      }
+    }
+  }
+  </span><span class="delimiter">&quot;&quot;&quot;</span></span>
+
+  <span class="key">when</span>: <span class="string"><span class="delimiter">'</span><span class="content">executing the query against the schema</span><span class="delimiter">'</span></span>
+  <span class="keyword">def</span> result = DSL.execute(proxySchema, query)
+
+  <span class="key">then</span>: <span class="string"><span class="delimiter">'</span><span class="content">the result should have the type field</span><span class="delimiter">'</span></span>
+  result.data.raffles.every {
+    <span class="local-variable">it</span>.hashTag
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The data fetcher returns a list of maps</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Declaring a type resolver for type <code>Raffle</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The type resolver holds a reference of every item</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The type resolver decides it is a TwitterRaffle if the map has a key <code>hashTag</code> otherwise it will be considered a <code>SimpleRaffle</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>The query wants to get the information of a <code>TwitterRaffle</code></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>typeResolver</code> method could receive both a <code>graphql.schema.TypeResolver</code> instance or a <code>Closure</code>
+keeping the contract of the <code>TypeResolver</code> functional interface like the example above.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_union_types">Union Types</h5>
+<div class="paragraph">
+<p>For union types the mechanism is the same. You only have to add a type resolver to
+the union type. Lets say we have the following schema:</p>
+</div>
+<div class="listingblock">
+<div class="title">Schema</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">interface</span> <span class="predefined-type">Driver</span> {
+  <span class="key">name</span>: <span class="predefined-type">String</span>
+  <span class="key">age</span>: Int
+  <span class="key">team</span>: <span class="predefined-type">String</span>
+}
+
+type MotoGPDriver <span class="directive">implements</span> <span class="predefined-type">Driver</span> {
+  <span class="key">name</span>: <span class="predefined-type">String</span>
+  <span class="key">age</span>: Int
+  <span class="key">team</span>: <span class="predefined-type">String</span>
+  <span class="key">bike</span>: <span class="predefined-type">String</span>
+}
+
+type FormulaOneDriver <span class="directive">implements</span> <span class="predefined-type">Driver</span> {
+  <span class="key">name</span>: <span class="predefined-type">String</span>
+  <span class="key">age</span>: Int
+  <span class="key">team</span>: <span class="predefined-type">String</span>
+  <span class="key">engine</span>: <span class="predefined-type">String</span>
+  <span class="key">bodywork</span>: <span class="predefined-type">String</span>
+}
+
+union <span class="predefined-type">SearchResult</span> = MotoGPDriver | FormulaOneDriver
+
+type Queries {
+  searchDriversByName(<span class="key">startsWith</span>: <span class="predefined-type">String</span>): [<span class="predefined-type">SearchResult</span>]
+}
+
+schema {
+  <span class="key">query</span>: Queries
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>There are both interfaces and union types, but the way we add a type resolver to
+any of them is just the same:</p>
+</div>
+<div class="listingblock">
+<div class="title">Type resolver usage</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> schema = DSL.mergeSchemas {
+  byResource(<span class="string"><span class="delimiter">'</span><span class="content">gql/dsl/UnionTypes.graphqls</span><span class="delimiter">'</span></span>) {
+    mapType(<span class="string"><span class="delimiter">'</span><span class="content">Driver</span><span class="delimiter">'</span></span>) {
+      typeResolver(TypeResolverUtils.driversResolver())
+    }
+    mapType(<span class="string"><span class="delimiter">'</span><span class="content">SearchResult</span><span class="delimiter">'</span></span>) {
+      typeResolver(TypeResolverUtils.driversResolver())
+    }
+    mapType(<span class="string"><span class="delimiter">'</span><span class="content">Queries</span><span class="delimiter">'</span></span>) {
+      link(<span class="string"><span class="delimiter">'</span><span class="content">searchDriversByName</span><span class="delimiter">'</span></span>, TypeResolverUtils.&amp;findAllDriversByNameStartsWith)
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then you can apply a query like the following:</p>
+</div>
+<div class="listingblock">
+<div class="title">Type resolver usage</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> query = <span class="string"><span class="delimiter">&quot;&quot;&quot;</span><span class="content">{
+  searchDriversByName(startsWith: </span><span class="char">\&quot;</span><span class="inline"><span class="inline-delimiter">$</span>driverName</span><span class="char">\&quot;</span><span class="content">) {
+    ... on MotoGPDriver {
+      name
+      age
+      bike
+    }
+    ... on FormulaOneDriver {
+      name
+      age
+      bodywork
+    }
+  }
+}</span><span class="delimiter">&quot;&quot;&quot;</span></span></code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -2938,8 +3162,8 @@ ratpack {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.3.2<br>
-Last updated 2018-01-28 18:48:44 +00:00
+Version 0.3.3<br>
+Last updated 2018-06-07 09:24:55 +00:00
 </div>
 </div>
 <script type="text/x-mathjax-config">
