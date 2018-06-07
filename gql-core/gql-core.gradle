@@ -5,7 +5,6 @@ plugins {
 
 apply plugin: 'com.jfrog.bintray'
 apply from: "../gradle/quality.gradle"
-apply from: "../gradle/groovydoc.gradle"
 
 dependencies {
   compile "com.graphql-java:graphql-java:${graphql_java}"

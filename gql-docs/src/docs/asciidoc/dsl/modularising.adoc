@@ -92,3 +92,66 @@ And finally add the reference to the `DSL.mergeSchemas` body:
 ----
 include::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=mergeSchemasWithCustomScalar, indent=0]
 ----
+
+==== Type resolvers
+
+IMPORTANT: If you're using any of the GraphQL types that require a type resolver and you forgot to
+add it to the DSL, you will get a runtime exception.
+
+===== Interfaces
+
+At some point you may want to create an interface as a base for other types.
+
+[source, groovy]
+.Schema
+----
+include::{testResources}/gql/dsl/Interfaces.graphqls[indent=0]
+----
+
+When using interfaces you need to provide a type resolver to make the GraphQL engine
+capable to decide when to return one type or another depending on the object return
+by the data fetcher.
+
+
+[source, groovy]
+.Type resolver usage
+----
+include::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=typeResolver, indent=0]
+----
+
+<1> The data fetcher returns a list of maps
+<2> Declaring a type resolver for type `Raffle`
+<3> The type resolver holds a reference of every item
+<4> The type resolver decides it is a TwitterRaffle if the map has a key `hashTag` otherwise it will be considered a `SimpleRaffle`
+<5> The query wants to get the information of a `TwitterRaffle`
+
+The `typeResolver` method could receive both a `graphql.schema.TypeResolver` instance or a `Closure`
+keeping the contract of the `TypeResolver` functional interface like the example above.
+
+===== Union Types
+
+For union types the mechanism is the same. You only have to add a type resolver to
+the union type. Lets say we have the following schema:
+
+[source, groovy]
+.Schema
+----
+include::{testResources}/gql/dsl/UnionTypes.graphqls[indent=0]
+----
+
+There are both interfaces and union types, but the way we add a type resolver to
+any of them is just the same:
+
+[source, groovy]
+.Type resolver usage
+----
+include::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=typeResolverToUnionSchema, indent=0]
+----
+
+Then you can apply a query like the following:
+
+[source, groovy]
+.Type resolver usage
+----
+include::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=typeResolverToUnionQuery, indent=0]
+----

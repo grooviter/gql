@@ -2,6 +2,7 @@ package gql.dsl
 
 import gql.DSL
 import graphql.ExecutionResult
+import graphql.TypeResolutionEnvironment
 import graphql.schema.DataFetcher
 import graphql.schema.GraphQLScalarType
 import graphql.schema.DataFetchingEnvironment
@@ -168,4 +169,157 @@ class SchemaMergerBuilderSpec extends Specification {
     }
   }
   // end::customScalar[]
+
+  void 'Apply a type resolver: interface'() {
+    given: 'a schema'
+    GraphQLSchema proxySchema = DSL.mergeSchemas {
+      byResource('gql/dsl/Interfaces.graphqls') {
+        mapType('Queries') {
+          link('raffles') {
+            return [sample]
+          }
+        }
+        mapType('Raffle') {
+          typeResolver { TypeResolutionEnvironment env ->
+            def raffle = env.getObject() as Map
+            def schema = env.schema
+
+            return raffle.containsKey('hashTag') ?
+              schema.getObjectType('TwitterRaffle') :
+              schema.getObjectType('SimpleRaffle')
+          }
+        }
+      }
+    }
+
+    and: 'a query with different type resolution'
+    def query = """{
+      raffles(max: 2) {
+        title
+        ... on $typeResolved {
+          $typeField
+        }
+      }
+    }"""
+
+    when: 'executing the query against the schema'
+    def result = DSL.execute(proxySchema, query)
+
+    then: 'there should be no errors'
+    !result.errors
+
+    and: 'and the result should have the type field'
+    result.data.raffles.every {
+      it[typeField]
+    }
+    where:
+                     sample                      | typeResolved      |  typeField
+    [title: 'T-Shirt', hashTag: '#greachconf']   | "TwitterRaffle"   |    "hashTag"
+    [title: 'T-Shirt', owner: "me"]              | "SimpleRaffle"    |    "owner"
+  }
+
+  // tag::typeResolver[]
+  void 'Apply a type resolver: interface (example)'() {
+    given: 'a schema'
+    GraphQLSchema proxySchema = DSL.mergeSchemas {
+      byResource('gql/dsl/Interfaces.graphqls') {
+
+        mapType('Queries') {
+          link('raffles') {
+            return [[title: 'T-Shirt', hashTag: '#greachconf']] // <1>
+          }
+        }
+
+        mapType('Raffle') {
+          // <2>
+          typeResolver { TypeResolutionEnvironment env ->
+            def raffle = env.getObject() as Map  // <3>
+            def schema = env.schema
+
+            return raffle.containsKey('hashTag') ?
+              schema.getObjectType('TwitterRaffle') : // <4>
+              schema.getObjectType('SimpleRaffle')
+          }
+        }
+
+      }
+    }
+
+    and: 'a query with different type resolution'
+    def query = """{
+      raffles(max: 2) {
+        title
+        ... on TwitterRaffle { # <5>
+          hashTag
+        }
+      }
+    }
+    """
+
+    when: 'executing the query against the schema'
+    def result = DSL.execute(proxySchema, query)
+
+    then: 'the result should have the type field'
+    result.data.raffles.every {
+      it.hashTag
+    }
+  }
+  // end::typeResolver[]
+
+  void 'Apply a type resolver: union'() {
+    given: 'a schema'
+    // tag::typeResolverToUnionSchema[]
+    def schema = DSL.mergeSchemas {
+      byResource('gql/dsl/UnionTypes.graphqls') {
+        mapType('Driver') {
+          typeResolver(TypeResolverUtils.driversResolver())
+        }
+        mapType('SearchResult') {
+          typeResolver(TypeResolverUtils.driversResolver())
+        }
+        mapType('Queries') {
+          link('searchDriversByName', TypeResolverUtils.&findAllDriversByNameStartsWith)
+        }
+      }
+    }
+    // end::typeResolverToUnionSchema[]
+
+    and: 'a query with different type resolution'
+    // tag::typeResolverToUnionQuery[]
+    def query = """{
+      searchDriversByName(startsWith: \"$driverName\") {
+        ... on MotoGPDriver {
+          name
+          age
+          bike
+        }
+        ... on FormulaOneDriver {
+          name
+          age
+          bodywork
+        }
+      }
+    }"""
+    // end::typeResolverToUnionQuery[]
+
+    when: 'executing the query against the schema'
+    def result = DSL.execute(schema, query)
+    def driver = result?.data?.searchDriversByName?.find()
+
+    then: 'there should be no errors'
+    !result.errors
+
+    and: 'and the result should have the type field'
+    driver.name.startsWith driverName
+    driver.age == age
+    driver.bike == bike
+    driver.bodywork == bodywork
+
+    where:
+    driverName  |  age |   bike   | bodywork
+    'Lewis'     |  33  |  null    |  'Mercedes'
+    'Jorge'     |  30  | 'Ducati' | null
+    'Fernando'  |  36  |  null    | 'McLaren'
+    'Valentino' |  38  | 'Yamaha' | null
+  }
 }

@@ -1,0 +1,30 @@
+interface Driver {
+  name: String
+  age: Int
+  team: String
+}
+
+type MotoGPDriver implements Driver {
+  name: String
+  age: Int
+  team: String
+  bike: String
+}
+
+type FormulaOneDriver implements Driver {
+  name: String
+  age: Int
+  team: String
+  engine: String
+  bodywork: String
+}
+
+union SearchResult = MotoGPDriver | FormulaOneDriver
+
+type Queries {
+  searchDriversByName(startsWith: String): [SearchResult]
+}
+
+schema {
+  query: Queries
+}
