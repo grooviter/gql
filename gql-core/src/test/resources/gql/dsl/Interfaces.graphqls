@@ -1,0 +1,27 @@
+interface Raffle {
+  id: String
+  title: String
+  names: [String]
+}
+
+type SimpleRaffle implements Raffle {
+  id: String
+  title: String
+  names: [String]
+  owner: String
+}
+
+type TwitterRaffle implements Raffle {
+  id: String
+  title: String
+  hashTag: String
+  names: [String]
+}
+
+type Queries {
+  raffles(max: Int): [Raffle]
+}
+
+schema {
+  query: Queries
+}

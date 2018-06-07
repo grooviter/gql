@@ -1,6 +1,11 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.3.3] - [2018-06-06]
+### Added
+
+- A way to add a typeResolver in the `DSL.mergeSchema` DSL
+
 ## [0.3.2] - [2018-06-02]
 
 ### Added

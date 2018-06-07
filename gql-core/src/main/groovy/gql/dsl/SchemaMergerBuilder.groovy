@@ -3,6 +3,7 @@ package gql.dsl
 import graphql.schema.DataFetcher
 import graphql.schema.GraphQLSchema
 import graphql.schema.GraphQLScalarType
+import graphql.schema.TypeResolver
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.SchemaGenerator
 import graphql.schema.idl.SchemaParser
@@ -205,6 +206,30 @@ class SchemaMergerBuilder {
      */
     public <T> SchemaMappingFieldBuilder link(String fieldName, Closure<T> fetcher) {
       typeWiring = typeWiring.dataFetcher(fieldName, fetcher as DataFetcher<T>)
+      return this
+    }
+
+    /**
+     * Sets the type resolver for the selected type
+     *
+     * @param resolver the type resolver
+     * @return the current {@link SchemaMappingFieldBuilder} instance
+     * @since 0.3.3
+     */
+    public SchemaMappingFieldBuilder typeResolver(TypeResolver resolver) {
+      typeWiring = typeWiring.typeResolver(resolver)
+      return this
+    }
+
+    /**
+     * Sets the type resolver for the selected type
+     *
+     * @param resolver the type resolver
+     * @return the current {@link SchemaMappingFieldBuilder} instance
+     * @since 0.3.3
+     */
+    public SchemaMappingFieldBuilder typeResolver(@DelegatesTo(TypeResolver) Closure resolver) {
+      typeWiring = typeWiring.typeResolver(resolver as TypeResolver)
       return this
     }
 
