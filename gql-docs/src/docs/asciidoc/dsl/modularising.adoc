@@ -95,6 +95,9 @@ include::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=mergeSchemasWith
 
 ==== Type resolvers
 
+IMPORTANT: If you're using any of the GraphQL types that require a type resolver and you forgot to
+add it to the DSL, you will get a runtime exception.
+
 ===== Interfaces
 
 At some point you may want to create an interface as a base for other types.
