@@ -1,0 +1,24 @@
+type Order {
+  id: Int
+  status: String
+}
+
+input OrderFilter {
+  status: String
+  type: String
+}
+
+type Invoice {
+  id: Int
+  status: String
+}
+
+type Queries {
+  searchOrders(filter: OrderFilter): Order
+  searchInvoices(ids: [Int]): Invoice
+}
+
+schema {
+  query: Queries
+}
+
