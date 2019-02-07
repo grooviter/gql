@@ -193,6 +193,7 @@ Intro
     background-image: url(../img/bg-mac.png);
     background-position:center;
     background-repeat:no-repeat;
+    background-size: cover;
     overflow-y:hidden;
     text-align:center;
     position:relative;
