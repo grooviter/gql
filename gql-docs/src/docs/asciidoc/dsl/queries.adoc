@@ -105,6 +105,14 @@ include::{testMain}/gql/DSLSpec.groovy[tags=staticQueryUnchecked, indent=0]
 <2> Declares a set of fields but are not checked
 <3> Defines a given alias to the query result
 
+[sidebar]
+.Executing mutations directly ?
+****
+At the moment, in order to execute a mutation you have to create the mutation string first
+using `DSL.buildMutation` and then use `DSL.execute` to execute the mutation against the
+schema. Check the `Mutation string` section.
+****
+
 ===== Query string
 
 Sometimes your exposed GraphQL schema may be backed up by another third party GraphQL engine implementation, but
@@ -116,4 +124,16 @@ string against the other engine.
 import gql.DSL
 
 include::{testMain}/gql/DSLSpec.groovy[tags=queryString, indent=0]
+----
+
+===== Mutation string
+
+Of course apart from queries you may want to execute mutations.
+
+[source, groovy]
+.Mutation strings
+----
+import gql.DSL
+
+include::{testMain}/gql/dsl/MutationBuilderSpec.groovy[tags=simple_mutation, indent=0]
 ----

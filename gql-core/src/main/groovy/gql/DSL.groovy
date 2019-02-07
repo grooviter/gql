@@ -1,14 +1,11 @@
 package gql
 
-import java.util.concurrent.CompletableFuture
-import groovy.transform.stc.ClosureParams
-import groovy.transform.stc.SimpleType
-
 import gql.dsl.EnumTypeBuilder
 import gql.dsl.ExecutionBuilder
 import gql.dsl.GraphQLErrorBuilder
 import gql.dsl.InputTypeBuilder
 import gql.dsl.InterfaceBuilder
+import gql.dsl.MutationBuilder
 import gql.dsl.ObjectTypeBuilder
 import gql.dsl.QueryBuilder
 import gql.dsl.ScalarTypeBuilder
@@ -19,7 +16,6 @@ import graphql.ExecutionResult
 import graphql.GraphQL
 import graphql.GraphQLError
 import graphql.execution.ExecutionPath
-import graphql.execution.instrumentation.Instrumentation
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
@@ -31,6 +27,10 @@ import graphql.schema.GraphQLObjectType
 import graphql.schema.GraphQLScalarType
 import graphql.schema.GraphQLSchema
 import graphql.schema.TypeResolver
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.SimpleType
+
+import java.util.concurrent.CompletableFuture
 
 /**
  * Functions in this class ease the creation of different GraphQL
@@ -215,6 +215,22 @@ final class DSL {
     Closure<QueryBuilder> clos = builder.clone() as Closure<QueryBuilder>
     QueryBuilder builderSource = new QueryBuilder()
     QueryBuilder builderResult = builderSource.with(clos) ?: builderSource
+
+    return builderResult.build()
+  }
+
+  /**
+   * Builds a valid GraphQL mutation string
+   *
+   * @examples <a target="_blank" href="/gql/docs/html5/index.html#_mutation_string">Building GraphQL mutations</a>
+   * @param builder builder DSL building the mutation based on {@link MutationBuilder}
+   * @return a {@link String} containing a valid GraphQL mutation
+   * @since 0.3.4
+   */
+  static String buildMutation(@DelegatesTo(MutationBuilder) Closure builder) {
+    Closure<MutationBuilder> clos = builder.clone() as Closure<MutationBuilder>
+    MutationBuilder builderSource = new MutationBuilder()
+    MutationBuilder builderResult = builderSource.with(clos) ?: builderSource
 
     return builderResult.build()
   }

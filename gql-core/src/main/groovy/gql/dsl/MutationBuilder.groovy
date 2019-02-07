@@ -7,13 +7,13 @@ import gql.dsl.query.ReturnsBlockBuilder
 import gql.dsl.query.VariablesProcessor
 
 /**
- * Builder aimed to create a compliant GraphQL queryString using
- * a static typed DSL
  *
- * @see {@link DSL#buildQuery}
- * @since 0.1.0
+ * Builder helping to create a DSL capable of building GraphQL query strings.
+ *
+ * @see {@link DSL#buildMutation}
+ * @since 0.3.4
  */
-class QueryBuilder {
+class MutationBuilder {
 
   private String queryString = ""
 
@@ -28,8 +28,10 @@ class QueryBuilder {
    * @return an instance of {@link QueryBuilder}
    * @since 0.1.0
    */
-  public <T> QueryBuilder query(String name,
-                                @DelegatesTo(strategy = DELEGATE_FIRST, value = ReturnsBlockBuilder) Closure fields) {
+  public <T> MutationBuilder mutation(String name,
+                                      @DelegatesTo(
+                                        strategy = DELEGATE_FIRST,
+                                        value = ReturnsBlockBuilder) Closure fields) {
     Closure<ReturnsBlockBuilder> clos = fields.clone() as Closure<ReturnsBlockBuilder>
     ReturnsBlockBuilder builderSource = new ReturnsBlockBuilder(name: name)
     ReturnsBlockBuilder builderResult = builderSource.with(clos) ?: builderSource
@@ -50,7 +52,7 @@ class QueryBuilder {
    * @return an instance of {@link QueryBuilder}
    * @since 0.1.0
    */
-  public <T> QueryBuilder query(String name,
+  public <T> MutationBuilder mutation(String name,
                                 Map<String,?> variables,
                                 @DelegatesTo(strategy = DELEGATE_FIRST, value = ReturnsBlockBuilder) Closure fields) {
     Closure<ReturnsBlockBuilder> clos = fields.clone() as Closure<ReturnsBlockBuilder>
@@ -70,7 +72,7 @@ class QueryBuilder {
    * @since 0.1.0
    */
   String build() {
-    return "{ $queryString }"
+    return "mutation { $queryString }"
   }
 
   private String processVariables(Map<String, ?> variables) {

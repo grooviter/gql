@@ -1,6 +1,18 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.3.4] - [2019-02-07]
+### Added
+- DSL.buildMutation
+- DSL.buildMutation documentation
+- Groovydoc completion
+
+### Fixed
+- DSL.buildQuery doesn't render nested maps properly
+
+### Changed
+- Project's site background
+
 ## [0.3.3] - [2018-06-06]
 ### Added
 

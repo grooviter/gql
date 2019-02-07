@@ -1,0 +1,40 @@
+type Order {
+  id: Int
+  status: String
+}
+
+input OrderFilter {
+  status: String
+  type: String
+}
+
+input SaveOrder {
+  id: Int
+  status: String
+}
+
+input SaveInvoice {
+  id: Int
+  status: String
+}
+
+type Invoice {
+  id: Int
+  status: String
+}
+
+type Queries {
+  searchOrders(filter: OrderFilter): Order
+  searchInvoices(ids: [Int]): Invoice
+}
+
+type Mutations {
+  saveOrder(order: SaveOrder): Order
+  saveInvoice(invoice: SaveInvoice): Invoice
+}
+
+schema {
+  query: Queries
+  mutation: Mutations
+}
+
