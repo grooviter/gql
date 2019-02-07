@@ -682,6 +682,16 @@ Unresolved directive <span class="keyword">in</span> queries.adoc - <span class=
 </tr>
 </table>
 </div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Executing mutations directly ?</div>
+<div class="paragraph">
+<p>At the moment, in order to execute a mutation you have to create the mutation string first
+using <code>DSL.buildMutation</code> and then use <code>DSL.execute</code> to execute the mutation against the
+schema. Check the <code>Mutation string</code> section.</p>
+</div>
+</div>
+</div>
 </div>
 <div class="sect4">
 <h5 id="_query_string">Query string</h5>
@@ -698,12 +708,26 @@ Unresolved directive <span class="keyword">in</span> queries.adoc - <span class=
 </div>
 </div>
 </div>
+<div class="sect4">
+<h5 id="_mutation_string">Mutation string</h5>
+<div class="paragraph">
+<p>Of course apart from queries you may want to execute mutations.</p>
+</div>
+<div class="listingblock">
+<div class="title">Mutation strings</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+
+Unresolved directive <span class="keyword">in</span> queries.adoc - <span class="key">include</span>::{testMain}/gql/dsl/MutationBuilderSpec.groovy[tags=simple_mutation, indent=<span class="integer">0</span>]</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-06-07 09:24:55 +00:00
+Last updated 2019-02-07 00:23:17 +00:00
 </div>
 </div>
 </body>
