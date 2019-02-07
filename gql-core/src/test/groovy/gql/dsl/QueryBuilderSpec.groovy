@@ -41,6 +41,44 @@ class QueryBuilderSpec extends Specification {
     }
   }
 
+  void 'executing same query with different alias'() {
+    given: 'parameters'
+    String queryString = DSL.buildQuery {
+      query('searchOrders', [filter: [status: 'COMPLETED', type: 'NEW']]) {
+        returns(Order) {
+          id
+          status
+        }
+
+        alias('first')
+      }
+      query('searchOrders', [filter: [status: 'COMPLETED', type: 'NEW']]) {
+        returns(Order) {
+          id
+          status
+        }
+
+        alias('second')
+      }
+    }
+
+    when: 'executing the query'
+    Map<String,Map> result = DSL
+      .execute(schema, queryString)
+      .data
+
+    then: 'we should get the expected results for first query'
+    with(result.first) {
+      id == 1
+      status == 'ACTIVE'
+    }
+    and: 'expected results for the second query as well'
+    with(result.second) {
+      id == 1
+      status == 'ACTIVE'
+    }
+  }
+
   void 'nested parameters: Map'() {
     given: 'parameters'
     String queryString = DSL.buildQuery {
@@ -74,8 +112,6 @@ class QueryBuilderSpec extends Specification {
         }
       }
     }
-
-    println "$queryString"
 
     when: 'executing the query'
     Map<String,Map> result = DSL
