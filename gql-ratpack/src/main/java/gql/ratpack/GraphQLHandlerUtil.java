@@ -64,7 +64,7 @@ public class GraphQLHandlerUtil {
       String query = payload.get("query").toString();
 
       @SuppressWarnings("unchecked")
-      Map<String,Object> variables = (Map<String,Object>) payload.get("variables");
+      Map<String,Object> variables = (Map<String,Object>) payload.getOrDefault("variables",new HashMap<String, Object>());
 
       Upstream<ExecutionInput> upstreamInput = (downstream) -> {
         ExecutionInput input = ExecutionInput
