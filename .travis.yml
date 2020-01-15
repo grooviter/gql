@@ -10,7 +10,7 @@ cache:
 install: "./gradlew assemble"
 script:
   - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then bash ./gradlew clean build; fi'
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash ./gradlew clean build bintrayUpload :gql-docs:gitPublishPush'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash ./gradlew clean build bintrayUpload :gql-docs:gitPublishPush; fi'
 branches:
   only:
   - master
