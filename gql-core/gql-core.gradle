@@ -59,8 +59,8 @@ publishing {
 }
 
 bintray {
-  user         = "$bintrayUser"
-  key          = "$bintrayKey"
+  user         = System.getenv('BR_USERNAME')
+  key          = System.getenv('BR_API_KEY')
 
   publish      = true
   publications = ['gql-core']
