@@ -8,7 +8,9 @@ cache:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
 install: "./gradlew assemble"
-script: "./gradlew clean build bintrayUpload :gql-docs:gitPublishPush"
+script:
+  - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then bash ./gradlew clean build; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash ./gradlew clean build bintrayUpload :gql-docs:gitPublishPush"'
 branches:
   only:
   - master
