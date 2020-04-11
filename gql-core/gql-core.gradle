@@ -59,8 +59,9 @@ publishing {
 }
 
 bintray {
-  user         = "$bintrayUser"
-  key          = "$bintrayKey"
+  // resolves gradle.properties and environment variables
+  user         = "${properties.bintrayUser ?: System.getenv('BINTRAY_USER') }"
+  key          = "${properties.bintrayKey ?: System.getenv('BINTRAY_KEY') }"
 
   publish      = true
   publications = ['gql-core']

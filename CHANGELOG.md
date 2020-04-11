@@ -1,6 +1,14 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.3.5] - [2020-04-11]
+### Changed
+- Moving from Travis CI to Github Actions
+
+### Fixed
+- Empty variables map in Ratpack integration [#27](https://github.com/grooviter/gql/issues/27) (Thanks to @michaelschlies)
+- Resolve deploy variables from both gradle properties and environment variables [#29](https://github.com/grooviter/gql/issues/29) (Thanks to @michaelschlies)
+
 ## [0.3.4] - [2019-02-07]
 ### Added
 - DSL.buildMutation
