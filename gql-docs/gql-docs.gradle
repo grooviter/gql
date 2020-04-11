@@ -19,7 +19,7 @@ task setAuthentication() {
   doLast {
     System.setProperty(
       'org.ajoberstar.grgit.auth.username',
-      ${properties.githubToken ?: System.getenv('GITHUB_TOKEN') }
+      "${properties.githubToken ?: System.getenv('ALTERNATE_GITHUB_TOKEN') }"
     )
   }
 }
