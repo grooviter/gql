@@ -7,6 +7,7 @@ import graphql.schema.GraphQLSchema
 import ratpack.jackson.JsonRender
 import ratpack.registry.Registry
 import ratpack.test.handling.RequestFixture
+import spock.lang.Issue
 import spock.lang.Specification
 
 class GraphQLHandlerSpec extends Specification {
@@ -81,6 +82,45 @@ class GraphQLHandlerSpec extends Specification {
 
     and: 'result data should be received'
     result.rendered(JsonRender).object.data == [echoName: 'Hello John']
+  }
+
+  @Issue(["#27"])
+  void 'execute a query receiving variables without them'() {
+    given: 'the handler, the schema, and the body'
+    def handler = new GraphQLHandler()
+    def schema = DSL.schema {
+      queries('Queries') {
+        field('echoName') {
+          type GraphQLString
+          argument 'name', GraphQLString
+          fetcher { env -> "Hello ${env.arguments.name ?: 'Unknown'}" }
+        }
+      }
+    }
+    def body = '''{
+      "query": "query EchoMyName($name: String) { \
+         echoName(name: $name) \
+      }"
+    }
+    '''
+
+    and: 'setting the schema in the registry'
+    def requestFixture = RequestFixture
+      .requestFixture()
+      .registry { r ->
+        r.add(GraphQL, GraphQL.newGraphQL(schema).build())
+      }
+
+    when: 'executing the query against the handler'
+    def result = requestFixture
+      .body(body, 'application/json')
+      .handle(handler)
+
+    then: 'no errors should be found'
+    !result.rendered(JsonRender).object.errors
+
+    and: 'result data should be received'
+    result.rendered(JsonRender).object.data == [echoName: 'Hello Unknown']
   }
 
   void 'trying to execute a badly formed query'() {
