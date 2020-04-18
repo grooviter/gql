@@ -386,7 +386,7 @@ final class DSL {
     return { DataFetchingEnvironment env ->
       ExecutionPath path = parameters
         .getEnvironment()
-        .getFieldTypeInfo()
+        .getExecutionStepInfo()
         .getPath()
 
       parameters
