@@ -1,8 +1,8 @@
 package gql.dsl
 
 import gql.DSL
-import graphql.execution.instrumentation.NoOpInstrumentation
 import graphql.execution.ExecutionPath
+import graphql.execution.instrumentation.SimpleInstrumentation
 import graphql.schema.DataFetcher
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import graphql.GraphQLError
@@ -14,7 +14,7 @@ import graphql.GraphQLError
  * @since 0.3.0
  */
 // tag::instrumentation[]
-class SecurityInstrumentation extends NoOpInstrumentation {
+class SecurityInstrumentation extends SimpleInstrumentation {
   @Override
   DataFetcher<?> instrumentDataFetcher(DataFetcher<?> dataFetcher, InstrumentationFieldFetchParameters parameters) {
     String user = parameters.environment?.context?.user?.toString()
@@ -25,7 +25,7 @@ class SecurityInstrumentation extends NoOpInstrumentation {
 
     ExecutionPath path = parameters
       .getEnvironment()
-      .getFieldTypeInfo()
+      .getExecutionStepInfo()
       .getPath()
 
     GraphQLError error = DSL.error {

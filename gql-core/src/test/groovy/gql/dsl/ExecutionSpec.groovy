@@ -8,6 +8,7 @@ class ExecutionSpec extends Specification {
 
   void 'execute query providing a custom context'() {
     given: 'a simple schema'
+    // tag::executionWithContextQuery[]
     def schema = DSL.schema {
       queries('helloQuery') {
         description'simple droid'
@@ -24,6 +25,7 @@ class ExecutionSpec extends Specification {
         }
       }
     }
+    // end::executionWithContextQuery[]
 
     and: 'query'
     def query = '''
@@ -33,10 +35,12 @@ class ExecutionSpec extends Specification {
     '''
 
     when: 'executing a query without a given context'
+    // tag::executionWithContextExecution[]
     def resultWithContext = DSL.execute(schema, query) {
       withContext(user: 'john')
       withVariables(name: 'Peter')
     }
+    // end::executionWithContextExecution[]
 
     then: 'we should get unauthorized'
     resultWithContext.data.hello == 'You can pass Peter'

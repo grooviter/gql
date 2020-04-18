@@ -2,12 +2,12 @@ package gql.ratpack
 
 import ratpack.handling.Context
 import graphql.schema.DataFetcher
-import graphql.execution.instrumentation.NoOpInstrumentation
+import graphql.execution.instrumentation.SimpleInstrumentation
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 
 import gql.DSL
 
-class SecurityChecker extends NoOpInstrumentation {
+class SecurityChecker extends SimpleInstrumentation {
   @Override
   DataFetcher<?> instrumentDataFetcher(DataFetcher<?> dataFetcher, InstrumentationFieldFetchParameters parameters) {
     Context context = parameters.environment.context as Context

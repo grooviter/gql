@@ -2,7 +2,7 @@
 
 ==== Execution
 
-===== Withouth arguments
+===== Without arguments
 
 In order to execute a given query string you can use `DSL.execute(schema, string)`. Given a query:
 
@@ -55,6 +55,37 @@ include::{testMain}/gql/DSLSpec.groovy[tags=queryWithArguments, indent=0]
 ----
 include::{testMain}/gql/DSLSpec.groovy[tags=queryWithArgumentsExecution, indent=0]
 ----
+
+===== With context
+
+Execution context can be used for sharing values among instrumentations, and data fetchers. A
+typical example is when leaving an authenticated user information inside the context. Check
+the following example, if there's a user inside the context the data fetcher will return a
+welcoming message, otherwise will return `unauthorized`.
+
+[source, groovy]
+.context
+----
+include::{testMain}/gql/dsl//ExecutionSpec.groovy[tags=executionWithContextQuery, indent=0]
+----
+
+The way data can be injected when executing a query is with `withContext` method inside `DSL.execute`:
+
+[source, groovy]
+.context
+----
+include::{testMain}/gql/dsl/ExecutionSpec.groovy[tags=executionWithContextExecution, indent=0]
+----
+
+If no value has been provided for the context, then a null value is expected.
+
+[sidebar]
+.Differences from graphql-java regarding context default value
+****
+From graphql-java 12 by default when there's no explicit context declared a new GraphQLContext
+object is created. In GQL we're still keeping the old behavior, so unless you set explicitly
+a context, the context is expected to be null.
+****
 
 ==== Asynchronous Execution
 

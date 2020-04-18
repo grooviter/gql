@@ -4,7 +4,7 @@ import groovy.util.logging.Slf4j
 import groovy.transform.Immutable
 import graphql.ExecutionInput
 import graphql.execution.instrumentation.Instrumentation
-import graphql.execution.instrumentation.NoOpInstrumentation
+import graphql.execution.instrumentation.SimpleInstrumentation
 import graphql.execution.instrumentation.ChainedInstrumentation
 
 /**
@@ -26,19 +26,26 @@ class ExecutionBuilder {
     Instrumentation instrumentation
   }
 
+  /**
+   * Object to be used as context
+   *
+   * @since 0.4.0
+   */
+  private Object internalContext
+
   /*
    * Instance of type {@link ExecutionInput.Builder}
    *
    * @since 0.3.0
    */
-  ExecutionInput.Builder executionBuilder = ExecutionInput.newExecutionInput()
+  private ExecutionInput.Builder executionBuilder = ExecutionInput.newExecutionInput()
 
   /*
    * Instance of type {@link Instrumentation}
    *
    * @since 0.3.0
    */
-  Instrumentation instrumentation = new NoOpInstrumentation()
+  private Instrumentation instrumentation = new SimpleInstrumentation()
 
   /**
    * Sets variables to be used when executing the underlying query
@@ -72,7 +79,7 @@ class ExecutionBuilder {
    * @since 0.3.0
    */
   ExecutionBuilder withContext(Object context) {
-    executionBuilder.context(context ?: [:])
+    this.internalContext = context
     return this
   }
 
@@ -106,9 +113,9 @@ class ExecutionBuilder {
    * @return an instance of {@link ExecutionBuilder}
    * @since 0.3.0
    */
-  ExecutionBuilder.Result build() {
-    return new ExecutionBuilder.Result(
-      input: executionBuilder.build(),
+  Result build() {
+    return new Result(
+      input: executionBuilder.context(this.internalContext).build(),
       instrumentation: instrumentation,
     )
   }
