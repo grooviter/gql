@@ -49,6 +49,18 @@ class ArgumentBuilder {
   }
 
   /**
+   * Sets the argument default value
+   *
+   * @param defaultValue default value in case client didn't set it
+   * @return the current builder instance
+   * @since 0.4.0
+   */
+  ArgumentBuilder defaultValue(Object defaultValue) {
+    builderSource.defaultValue(defaultValue)
+    return this
+  }
+
+  /**
    * Returns the built instance of type {@link GraphQLArgument}
    *
    * @return the resulting {@link GraphQLArgument} instance

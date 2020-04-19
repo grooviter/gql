@@ -6,6 +6,7 @@ import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLInputObjectType
 import graphql.schema.GraphQLOutputType
 import graphql.schema.GraphQLSchema
+import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -122,5 +123,72 @@ class InputTypeSpec extends Specification {
       [from: 'me@somedomain.com'],
       [:],
     ]
+  }
+
+  void 'use default value in arguments'() {
+    given: 'defining the schema to query'
+    GraphQLSchema schema = DSL.schema {
+      queries {
+        field('sayHello') {
+          type(GraphQLString)
+          argument ('name',  GraphQLString) {
+            defaultValue("UNKNOWN")
+          }
+
+          fetcher { DataFetchingEnvironment env ->
+            String name = env.arguments.name
+
+            return "Hello $name"
+          }
+        }
+      }
+    }
+
+    and: 'the query'
+    def query = '''
+    {
+        sayHello
+    }
+    '''
+
+    when: 'executing the query with the required parameters'
+    ExecutionResult result = DSL.execute(schema, query)
+
+    then: 'we should get what we want'
+    result.data.sayHello == 'Hello UNKNOWN'
+  }
+
+  @Ignore("pending issue in graphql-java")
+  void 'use default value in arguments using variable reference'() {
+    given: 'defining the schema to query'
+    GraphQLSchema schema = DSL.schema {
+      queries {
+        field('sayHello') {
+          type(GraphQLString)
+          argument ('name',  GraphQLString) {
+            defaultValue("UNKNOWN")
+          }
+
+          fetcher { DataFetchingEnvironment env ->
+            String name = env.arguments.name
+
+            return "Hello $name"
+          }
+        }
+      }
+    }
+
+    and: 'the query'
+    def query = '''
+    query SayHelloQuery($name: String) {
+        sayHello(name: $name)
+    }
+    '''
+
+    when: 'executing the query with the required parameters'
+    ExecutionResult result = DSL.execute(schema, query)
+
+    then: 'we should get what we want'
+    result.data.sayHello == 'Hello UNKNOWN'
   }
 }
