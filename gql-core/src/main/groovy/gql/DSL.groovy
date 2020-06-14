@@ -1,8 +1,11 @@
 package gql
 
+import gql.dsl.Builders
 import gql.dsl.EnumTypeBuilder
 import gql.dsl.ExecutionBuilder
 import gql.dsl.GraphQLErrorBuilder
+import gql.dsl.executor.DefaultGraphQLExecutor
+import gql.dsl.executor.GraphQLExecutor
 import gql.dsl.InputTypeBuilder
 import gql.dsl.InterfaceBuilder
 import gql.dsl.MutationBuilder
@@ -91,7 +94,8 @@ final class DSL {
    * @param query the query string
    * @param arguments optional arguments passed to the query
    * @return an instance of {@link ExecutionResult}
-   * @deprecated it will be removed in version 1.0.0
+   * @deprecated it will be removed in version 1.0.0. Instead use {@link DSL#newExecutor(GraphQLSchema)}
+   * @see DSL#newExecutor(GraphQLSchema)
    * @since 0.1.0
    */
   static ExecutionResult execute(GraphQLSchema schema, String query, Map<String,Object> arguments = [:]) {
@@ -115,7 +119,7 @@ final class DSL {
    * @since 0.1.0
    */
   static ExecutionResult execute(GraphQLSchema schema, @DelegatesTo(QueryBuilder) Closure queries) {
-    return execute(schema, buildQuery(queries))
+    return execute(schema, Builders.buildQuery(queries))
   }
 
   /**
@@ -177,7 +181,7 @@ final class DSL {
    */
   static CompletableFuture<ExecutionResult> executeAsync(
     GraphQLSchema schema, @DelegatesTo(QueryBuilder) Closure queries) {
-    return executeAsync(schema, buildQuery(queries))
+    return executeAsync(schema, Builders.buildQuery(queries))
   }
 
   /**
@@ -212,11 +216,7 @@ final class DSL {
    * @since 0.1.0
    */
   static String buildQuery(@DelegatesTo(QueryBuilder) Closure builder) {
-    Closure<QueryBuilder> clos = builder.clone() as Closure<QueryBuilder>
-    QueryBuilder builderSource = new QueryBuilder()
-    QueryBuilder builderResult = builderSource.with(clos) ?: builderSource
-
-    return builderResult.build()
+    return Builders.buildQuery(builder)
   }
 
   /**
@@ -395,5 +395,64 @@ final class DSL {
 
       return null
     } as DataFetcher<?>
+  }
+
+  /**
+   * Creates a reusable {@link GraphQLExecutor} from a given {@link GraphQLSchema}.
+   *
+   * @examples <a target="_blank" href="/gql/docs/html5/index.html#_queries">Executing GraphQL queries</a>
+   * @param schema a {@link GraphQLSchema}
+   * @return an instance of type {@link GraphQLExecutor}
+   * @since 0.4.0
+   */
+  static GraphQLExecutor newExecutor(GraphQLSchema schema) {
+    GraphQL graphQL = newGraphQLBuilder(schema).build()
+
+    return new DefaultGraphQLExecutor(graphQL);
+  }
+
+  /**
+   * Returns a reusable {@link GraphQLExecutor} from a given {@link GraphQLSchema} and
+   * some options set following the {@link ExecutionBuilder} dsl.
+   *
+   * @examples <a target="_blank" href="/gql/docs/html5/index.html#_queries">Executing GraphQL queries</a>
+   * @param schema a {@link GraphQLSchema}
+   * @param options some execution options using the {@link ExecutionBuilder} dsl
+   * @return an instance of type {@link GraphQLExecutor}
+   * @since 0.4.0
+   */
+  static GraphQLExecutor newExecutor(GraphQLSchema schema, @DelegatesTo(ExecutionBuilder) Closure options) {
+    GraphQL graphQL = newGraphQLBuilder(schema, options).build()
+
+    return new DefaultGraphQLExecutor(graphQL)
+  }
+
+  /**
+   * Gets an instance of {@link GraphQL.Builder} from a {@link GraphQLSchema}. Could be
+   * interesting if you need to deal with low level GraphQL API
+   *
+   * @param schema a {@link GraphQLSchema}
+   * @return an instance of {@link GraphQL.Builder}
+   * @since 0.4.0
+   */
+  static GraphQL.Builder newGraphQLBuilder(GraphQLSchema schema) {
+    return GraphQL.newGraphQL(schema)
+  }
+
+  /**
+   * Gets an instance of {@link GraphQL.Builder} from a {@link GraphQLSchema}. Could be
+   * interesting if you need to deal with low level GraphQL API
+   *
+   * @param schema a {@link GraphQLSchema}
+   * @param options some execution options using the {@link ExecutionBuilder} dsl
+   * @return an instance of {@link GraphQL.Builder}
+   * @since 0.4.0
+   */
+  static GraphQL.Builder newGraphQLBuilder(GraphQLSchema schema, @DelegatesTo(ExecutionBuilder) Closure options) {
+    ExecutionBuilder.Result result = Builders.buildExecutionBuilderResult(options)
+
+    return GraphQL
+      .newGraphQL(schema)
+      .instrumentation(result.instrumentation)
   }
 }

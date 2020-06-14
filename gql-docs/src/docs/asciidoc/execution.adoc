@@ -1,28 +1,70 @@
-=== Queries
+== Execution
 
-==== Execution
+This chapter explains how to execute GraphQL queries using GQL.
 
-===== Withouth arguments
+=== Executor
 
-In order to execute a given query string you can use `DSL.execute(schema, string)`. Given a query:
+==== From a schema
 
-[source, groovy]
-.query
-----
-include::{testMain}/gql/DSLSpec.groovy[tags=executeQueryStringNoArgumentsQuery, indent=0]
-----
-
-You can execute it against a given schema as follows:
+In order to execute any GraphQL query first you need to get an instance of an `GraphQLExecutor`
 
 [source, groovy]
 ----
 import gql.DSL
 
+include::{testMain}/gql/DSLSpec.groovy[tags=executor, indent=0]
+----
+
+Once you have an executor you can reuse it to execute as many queries as you like without incurring in
+performance issues.
+
+[source, groovy]
+----
+def result1 = executor.execute query1
+def result2 = executor.execute query2
+...
+----
+
+[sidebar]
+.Direct execution deprecation
+****
+From version 0.4.0 direct execution of queries is deprecated in favor of reusing executor instances.
+That improves a lot GraphQL queries execution performance.
+
+Therefore calls like the following one are marked as deprecated and will be removed in the future:
+
+[source, groovy]
+----
 include::{testMain}/gql/DSLSpec.groovy[tags=executeQueryStringNoArguments, indent=0]
 ----
-<1> The result of executing a query is a `graphql.ExecutionResult`
-<2> The result could contain some data
-<3> Or could contain GraphQL errors
+<1> Executing directly the query
+<2> Getting data if no errors happened
+<3> Getting errors in case of something went wrong
+****
+
+==== With options
+
+You can also create an instance of `GraphQLExecutor` initializing some execution options like GraphQL instrumentations:
+
+[source, groovy]
+----
+include::{testMain}/gql/DSLSpec.groovy[tags=executorWithInstrumentation, indent=0]
+----
+
+=== Simple query execution
+
+Once you've got an instance of `GraphQLExecutor` you can execute a query:
+
+[source, groovy]
+----
+import gql.DSL
+
+include::{testMain}/gql/DSLSpec.groovy[tags=executorExample, indent=0]
+----
+<1> Creating an instance of `GraphQLExecutor`
+<2> The result of executing a query is a `graphql.ExecutionResult`
+<3> The result could contain some data
+<4> Or could contain GraphQL errors
 
 [sidebar]
 .ExecutionResult#getData()
@@ -40,9 +82,9 @@ data is going to return.
 
 ****
 
-===== With arguments
+=== Passing arguments
 
-In order to execute a given query with arguments you can use `DSL.execute(schema, string, variables)`:
+In order to execute a given query with arguments you can use `GraphQLExecutor#execute(string, variables)`:
 
 [source, groovy]
 .query
@@ -56,12 +98,18 @@ include::{testMain}/gql/DSLSpec.groovy[tags=queryWithArguments, indent=0]
 include::{testMain}/gql/DSLSpec.groovy[tags=queryWithArgumentsExecution, indent=0]
 ----
 
-==== Asynchronous Execution
+=== Async Execution
 
 GQL through `graphql-java` can use fully asynchronous execution when
 executing queries. You can get a
 `java.util.concurrent.CompleteableFuture` of an `ExecutionResult` by
-calling `DSL.executeAsync()` like this:
+calling `GraphQLExecutor#executeAsync()` like this:
+
+[source, groovy]
+.async
+----
+include::{testMain}/gql/dsl/executor/GraphQLExecutorSpec.groovy[tags=newExecutorExecuteAsync, indent=0]
+----
 
 If a data fetcher returns a CompletableFuture<T> object then this will
 be composed into the overall asynchronous query execution. This means
@@ -69,7 +117,7 @@ you can fire off a number of field fetching requests in
 parallel. Exactly what threading strategy you use is up to your data
 fetcher code.
 
-==== Query builders
+=== Query builders
 
 **GQL** allows you to execute queries directly or to build them to use them later via DSL
 builder. The former is useful if you already have the queries and you
@@ -77,7 +125,7 @@ are sure they work as expected. The latter is a safer way of building
 queries because it gives you some sanity checks based on the types
 used.
 
-===== Execute queries
+==== Execute queries
 
 If you're using the underlying **GQL** GraphQL engine to execute your queries, it would be nice
 to be able to declare and execute queries in one shot right ?
@@ -109,11 +157,11 @@ include::{testMain}/gql/DSLSpec.groovy[tags=staticQueryUnchecked, indent=0]
 .Executing mutations directly ?
 ****
 At the moment, in order to execute a mutation you have to create the mutation string first
-using `DSL.buildMutation` and then use `DSL.execute` to execute the mutation against the
+using `DSL.buildMutation` and then use `GraphQLExecutor#execute` to execute the mutation against the
 schema. Check the `Mutation string` section.
 ****
 
-===== Query string
+==== Query string
 
 Sometimes your exposed GraphQL schema may be backed up by another third party GraphQL engine implementation, but
 instead of writing or queries by hand we still may want to use the DSL to build the query and then use the resulting
@@ -126,7 +174,7 @@ import gql.DSL
 include::{testMain}/gql/DSLSpec.groovy[tags=queryString, indent=0]
 ----
 
-===== Mutation string
+==== Mutation string
 
 Of course apart from queries you may want to execute mutations.
 
@@ -136,4 +184,35 @@ Of course apart from queries you may want to execute mutations.
 import gql.DSL
 
 include::{testMain}/gql/dsl/MutationBuilderSpec.groovy[tags=simple_mutation, indent=0]
+----
+
+=== Exposing GraphQL
+
+==== From GraphQLExecutor
+
+From any `gql.dsl.executor.GraphQLExecutor` you can get the underlying `graphql.GraphQL` instance:
+
+[source, groovy]
+.Accessing underlying GraphQL instance
+----
+include::{testMain}/gql/dsl/executor/GraphQLExecutorSpec.groovy[tags=newExecutorGraphQL, indent=0]
+----
+
+==== Directly from DSL
+
+Because GQL can't think on every single case, there's a chance somebody may miss to access to the `graphql-java`
+low level API.
+
+[source, groovy]
+.Low level GraphQL
+----
+include::{testMain}/gql/DSLSpec.groovy[tags=newGraphQLBuilderSchema, indent=0]
+----
+
+Or if you'd like to initialize it with some options:
+
+[source, groovy]
+.Low level GraphQL (Options)
+----
+include::{testMain}/gql/DSLSpec.groovy[tags=newGraphQLBuilderOptions, indent=0]
 ----
