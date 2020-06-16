@@ -9,7 +9,7 @@ Lets say we have a query to filter our mail inbox by `from` and `to`:
 [source, groovy]
 .query
 ----
-include::{testMain}/gql/dsl/InputTypeSpec.groovy[tags=inputTypeQuery, indent=0]
+include::{testMain2}/gql/dsl/InputTypeSpec.groovy[tags=inputTypeQuery, indent=0]
 ----
 
 We can model the `MailFilter` input type as:
@@ -17,7 +17,7 @@ We can model the `MailFilter` input type as:
 [source, groovy]
 .declaration
 ----
-include::{testMain}/gql/dsl/InputTypeSpec.groovy[tags=inputTypeDeclaration, indent=0]
+include::{testMain2}/gql/dsl/InputTypeSpec.groovy[tags=inputTypeDeclaration, indent=0]
 ----
 
 And finally when executing the query we can pass a map with the mail filter values.
@@ -25,7 +25,7 @@ And finally when executing the query we can pass a map with the mail filter valu
 [source, groovy]
 .execution
 ----
-include::{testMain}/gql/dsl/InputTypeSpec.groovy[tags=inputTypeQueryExecution, indent=0]
+include::{testMain2}/gql/dsl/InputTypeSpec.groovy[tags=inputTypeQueryExecution, indent=0]
 ----
 
 ==== Arguments
@@ -37,7 +37,7 @@ can be of input type `X`:
 [source, groovy]
 .arguments
 ----
-include::{testMain}/gql/dsl/InputTypeSpec.groovy[tags=inputTypeArgument, indent=0]
+include::{testMain2}/gql/dsl/InputTypeSpec.groovy[tags=inputTypeArgument, indent=0]
 ----
 
 [sidebar]

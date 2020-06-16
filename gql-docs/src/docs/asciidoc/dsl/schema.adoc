@@ -13,9 +13,9 @@ fields under the **mutation** node:
 [source, groovy]
 ----
 import gql.DSL
-include::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=0]
+include::{testMain2}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=0]
 
-include::{testMain}/gql/DSLSpec.groovy[tags=queriesAndMutations, indent=0]
+include::{testMain2}/gql/DSLSpec.groovy[tags=queriesAndMutations, indent=0]
 ----
 <1> Queries
 <2> Mutations
@@ -32,9 +32,9 @@ Sometimes you may want to expose constant values, values that are unlikely to ch
 [source, groovy]
 ----
 import gql.DSL
-include::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=0]
+include::{testMain2}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=0]
 
-include::{testMain}/gql/DSLSpec.groovy[tags=simpleSchema, indent=0]
+include::{testMain2}/gql/DSLSpec.groovy[tags=simpleSchema, indent=0]
 ----
 
 <1> Declares a schema
@@ -80,9 +80,9 @@ data. The requested data should be of the same type of the declared type, or a m
 [source, groovy]
 ----
 import gql.DSL
-include::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=0]
+include::{testMain2}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=0]
 
-include::{testMain}/gql/DSLSpec.groovy[tags=schemaWithFetcherAsClosure, indent=0]
+include::{testMain2}/gql/DSLSpec.groovy[tags=schemaWithFetcherAsClosure, indent=0]
 ----
 
 ===== As a method closure
@@ -96,9 +96,9 @@ as only parameter and returning an object of the correct type).
 [source, groovy]
 ----
 import gql.DSL
-include::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=0]
+include::{testMain2}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=0]
 
-include::{testMain}/gql/DSLSpec.groovy[tags=schemaWithFetcherAsFunctionReference, indent=0]
+include::{testMain2}/gql/DSLSpec.groovy[tags=schemaWithFetcherAsFunctionReference, indent=0]
 ----
 
 ===== Environment
@@ -113,9 +113,9 @@ to get the proper film:
 [source, groovy]
 ----
 import gql.DSL
-include::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=0]
+include::{testMain2}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=0]
 
-include::{testMain}/gql/DSLSpec.groovy[tags=findByYearSchema, indent=0]
+include::{testMain2}/gql/DSLSpec.groovy[tags=findByYearSchema, indent=0]
 ----
 
 If we look to the method's implementation, we'll see how the `DataFetchingEnvironment` has a `getArguments()` method
@@ -123,9 +123,9 @@ returning a Map with the arguments values stored by their names:
 
 [source, groovy]
 ----
-include::{testMain}/gql/test/util/Queries.groovy[tags=importDataFetchingEnvironment, indent=0]
+include::{testMain2}/gql/test/util/Queries.groovy[tags=importDataFetchingEnvironment, indent=0]
 
-include::{testMain}/gql/test/util/Queries.groovy[tags=findByYear, indent=0]
+include::{testMain2}/gql/test/util/Queries.groovy[tags=findByYear, indent=0]
 ----
 
 IMPORTANT: The `DataFetchingEnvironment` object has a few more options that are worth knowing. I would recommend

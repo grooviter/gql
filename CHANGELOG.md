@@ -1,6 +1,12 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - [2020-06-16]
+### Added
+- GraphQLExecutor to reuse underlying execution instances [#26](https://github.com/grooviter/gql/issues/26)
+### Changed
+- Docs to reflect GraphQLExecutor preference at executing GraphQL queries [#26](https://github.com/grooviter/gql/issues/26)
+
 ## [0.3.5] - [2020-04-11]
 ### Changed
 - Moving from Travis CI to Github Actions

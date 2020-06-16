@@ -257,7 +257,7 @@ class SchemaMergerBuilderSpec extends Specification {
     """
 
     when: 'executing the query against the schema'
-    def result = DSL.execute(proxySchema, query)
+    def result = DSL.newExecutor(proxySchema).execute(query)
 
     then: 'the result should have the type field'
     result.data.raffles.every {

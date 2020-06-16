@@ -13,19 +13,19 @@ create a sigle schema:
 [source, groovy]
 .films
 ----
-include::{testResources}/gql/dsl/films.graphqls[indent=0]
+include::{testResources2}/gql/dsl/films.graphqls[indent=0]
 ----
 
 [source, groovy]
 .bands
 ----
-include::{testResources}/gql/dsl/bands.graphqls[indent=0]
+include::{testResources2}/gql/dsl/bands.graphqls[indent=0]
 ----
 
 [source, groovy]
 .qandm.graphqls
 ----
-include::{testResources}/gql/dsl/qandm.graphqls[indent=0]
+include::{testResources2}/gql/dsl/qandm.graphqls[indent=0]
 ----
 
 In this first example we will be using `java.util.URI` instances to locate our files, but as we will see later,
@@ -34,7 +34,7 @@ we can just use a `java.lang.String` to indicate where those files are within th
 [source, groovy]
 .as URIs
 ----
-include::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=uris, indent=0]
+include::{testMain2}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=uris, indent=0]
 ----
 
 Then you can merge all of them. In this example we'll only be mapping the query fields with the data fetchers
@@ -45,7 +45,7 @@ needed to return some response.
 ----
 import gql.DSL
 
-include::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=urisSchema, indent=0]
+include::{testMain2}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=urisSchema, indent=0]
 ----
 
 <1> Merging schema fragment (only type definitions)
@@ -60,7 +60,7 @@ And using just strings to indicate where the files are in the classpath:
 ----
 import gql.DSL
 
-include::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=resourcesSchema, indent=0]
+include::{testMain2}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=resourcesSchema, indent=0]
 ----
 
 ==== Custom Scalar implementation
@@ -74,7 +74,7 @@ Declare the scalar in the schema:
 [source, groovy]
 .IDL
 ----
-include::{testResources}/gql/dsl/bands.graphqls[indent=0]
+include::{testResources2}/gql/dsl/bands.graphqls[indent=0]
 ----
 
 Then create the scalar implementation with the Groovy DSL:
@@ -82,7 +82,7 @@ Then create the scalar implementation with the Groovy DSL:
 [source, groovy]
 .Custom scalar
 ----
-include::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=customScalar, indent=0]
+include::{testMain2}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=customScalar, indent=0]
 ----
 
 And finally add the reference to the `DSL.mergeSchemas` body:
@@ -90,7 +90,7 @@ And finally add the reference to the `DSL.mergeSchemas` body:
 [source, groovy]
 .Schema
 ----
-include::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=mergeSchemasWithCustomScalar, indent=0]
+include::{testMain2}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=mergeSchemasWithCustomScalar, indent=0]
 ----
 
 ==== Type resolvers
@@ -105,7 +105,7 @@ At some point you may want to create an interface as a base for other types.
 [source, groovy]
 .Schema
 ----
-include::{testResources}/gql/dsl/Interfaces.graphqls[indent=0]
+include::{testResources2}/gql/dsl/Interfaces.graphqls[indent=0]
 ----
 
 When using interfaces you need to provide a type resolver to make the GraphQL engine
@@ -116,7 +116,7 @@ by the data fetcher.
 [source, groovy]
 .Type resolver usage
 ----
-include::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=typeResolver, indent=0]
+include::{testMain2}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=typeResolver, indent=0]
 ----
 
 <1> The data fetcher returns a list of maps
@@ -136,7 +136,7 @@ the union type. Lets say we have the following schema:
 [source, groovy]
 .Schema
 ----
-include::{testResources}/gql/dsl/UnionTypes.graphqls[indent=0]
+include::{testResources2}/gql/dsl/UnionTypes.graphqls[indent=0]
 ----
 
 There are both interfaces and union types, but the way we add a type resolver to
@@ -145,7 +145,7 @@ any of them is just the same:
 [source, groovy]
 .Type resolver usage
 ----
-include::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=typeResolverToUnionSchema, indent=0]
+include::{testMain2}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=typeResolverToUnionSchema, indent=0]
 ----
 
 Then you can apply a query like the following:
@@ -153,5 +153,5 @@ Then you can apply a query like the following:
 [source, groovy]
 .Type resolver usage
 ----
-include::{testMain}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=typeResolverToUnionQuery, indent=0]
+include::{testMain2}/gql/dsl/SchemaMergerBuilderSpec.groovy[tags=typeResolverToUnionQuery, indent=0]
 ----

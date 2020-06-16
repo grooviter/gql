@@ -16,7 +16,7 @@ instrumentation.
 
 [source, groovy]
 ----
-include::{testMain}/gql/dsl/SecurityInstrumentation.groovy[tags=instrumentation, indent=0]
+include::{testMain2}/gql/dsl/SecurityInstrumentation.groovy[tags=instrumentation, indent=0]
 ----
 
 You can create a `GraphQLError` using `DSL.error`. But if what you
@@ -25,7 +25,7 @@ context, this could be improved using `DSL.errorFetcher`:
 
 [source, groovy]
 ----
-include::{ratpack}/src/test/groovy/gql/ratpack/SecurityChecker.groovy[indent=0]
+include::{ratpack2}/src/test/groovy/gql/ratpack/SecurityChecker.groovy[indent=0]
 ----
 
 In the previous example if there's no `Authorization` header then an
