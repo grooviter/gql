@@ -22,8 +22,8 @@
 <html>
 <head>
 
-<title>gql.dsl.query (gql-core API)</title>
-<meta name="keywords" content="gql.dsl.query package">
+<title>gql.dsl.executor (gql-core API)</title>
+<meta name="keywords" content="gql.dsl.executor package">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" title="Style">
 <link href="../../../groovy.ico" type="image/x-icon" rel="shortcut icon">
@@ -31,7 +31,7 @@
 <script type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="gql.dsl.query (gql-core API)";
+    parent.document.title="gql.dsl.executor (gql-core API)";
 }
 </script>
 <noscript>
@@ -60,7 +60,7 @@ function windowTitle()
 
 <div class="subNav">
     <ul class="navList">
-        <li><a href="../../../index.html?gql/dsl/query/package-summary.html" target="_top">Frames</a></li>
+        <li><a href="../../../index.html?gql/dsl/executor/package-summary.html" target="_top">Frames</a></li>
         <li><a href="package-summary.html" target="_top">No Frames</a></li>
     </ul>
 </div>
@@ -68,18 +68,45 @@ function windowTitle()
 <!-- ========= END OF TOP NAVBAR ========= -->
 
 <div class="header">
-    <h1 class="title">Package gql.dsl.query</h1>
+    <h1 class="title">Package gql.dsl.executor</h1>
 </div>
 
 
-<h2 title="Package gql.dsl.query Description" class="title">Package gql.dsl.query Description</h2>
-<div class="header"> This package contains utility classes to process GraphQL queries
+<h2 title="Package gql.dsl.executor Description" class="title">Package gql.dsl.executor Description</h2>
+<div class="header"> This package contains GraphQLExecutor which reuses underlying instances to improve execution performance
  
 </div>
 
 
 <div class="contentContainer">
 
+
+    <div class="summary">
+        <ul class="blockList">
+            <li class="blockList">
+                <table border="0" cellpadding="3" cellspacing="0" summary="Interface Summary">
+                    <caption><span>Interface Summary</span><span class="tabEnd">&nbsp;</span></caption>
+                    <tbody>
+                    <tr>
+                        <th class="colFirst" scope="col">Interface</th>
+                        <th class="colLast" scope="col">Description</th>
+                    </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="GraphQLExecutor.html" title="class in gql/dsl/executor">
+                                    GraphQLExecutor
+                                </a></strong>
+                            </td>
+                            <td>Instances implementing this interface MUST reuse a <a href='http://graphql-java.github.io/graphql-java/graphql/GraphQL.html' title='GraphQL'>GraphQL</a> instance
+ in order to improve performance when executing GraphQL operations.</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </li>
+            </ul>
+        </div>
+    
 
 
 
@@ -95,19 +122,11 @@ function windowTitle()
                     </tr>
 <tr class="altColor">
                             <td class="colOne">
-                                <strong><a href="ReturnsBlockBuilder.html" title="class in gql/dsl/query">
-                                    ReturnsBlockBuilder
+                                <strong><a href="DefaultGraphQLExecutor.html" title="class in gql/dsl/executor">
+                                    DefaultGraphQLExecutor
                                 </a></strong>
                             </td>
-                            <td>Builds the body and return parts of a given GraphQL query/mutation</td>
-                        </tr>
-<tr class="altColor">
-                            <td class="colOne">
-                                <strong><a href="VariablesProcessor.html" title="class in gql/dsl/query">
-                                    VariablesProcessor
-                                </a></strong>
-                            </td>
-                            <td>Processes query variables. </td>
+                            <td>Default implementation of the <a href='../../../gql/dsl/executor/GraphQLExecutor.html' title='GraphQLExecutor'>GraphQLExecutor</a></td>
                         </tr>
 
                     </tbody>
