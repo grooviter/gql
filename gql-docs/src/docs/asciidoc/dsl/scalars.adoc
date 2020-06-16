@@ -37,7 +37,7 @@ scalars (`GraphQLString` or `GraphQLFloat`) or custom scalars like `GraphQLPrice
 
 [source, groovy]
 ----
-include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=usingScalarInType, indent=0]
+include::{testMain2}/gql/dsl/ScalarsSpec.groovy[tags=usingScalarInType, indent=0]
 ----
 
 <1> **subject**: A string describing what is this order about
@@ -48,7 +48,7 @@ The `GraphQLPrice` scalar has been defined as:
 
 [source, groovy]
 ----
-include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=fullScalarDeclaration, indent=0]
+include::{testMain2}/gql/dsl/ScalarsSpec.groovy[tags=fullScalarDeclaration, indent=0]
 ----
 
 <1> Setting scalar's name
@@ -73,7 +73,7 @@ Now think of a situation where you want to set the price of a given product incl
 [source, groovy]
 .Query with a literal
 ----
-include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=queryParseLiteral, indent=0]
+include::{testMain2}/gql/dsl/ScalarsSpec.groovy[tags=queryParseLiteral, indent=0]
 ----
 
 We want to keep the information, but contained in a map so that we could handle the number and the symbol separately.
@@ -82,7 +82,7 @@ For that we use the `parseLiteral` function.
 [source, groovy]
 .parseLiteral
 ----
-include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=definingParseLiteral, indent=0]
+include::{testMain2}/gql/dsl/ScalarsSpec.groovy[tags=definingParseLiteral, indent=0]
 ----
 
 The `parseLiteral` function will parse every literal of a `Price` scalar and it will separate the number from the
@@ -129,7 +129,7 @@ https://github.com/graphql-java/graphql-java/tree/master/src/main/java/graphql/l
 [source, groovy]
 .fetcher
 ----
-include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=parseLiteralFetcher, indent=0]
+include::{testMain2}/gql/dsl/ScalarsSpec.groovy[tags=parseLiteralFetcher, indent=0]
 ----
 
 ===== Variables
@@ -141,7 +141,7 @@ query:
 [source, groovy]
 .Query with variables
 ----
-include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=queryWithVariables, indent=0]
+include::{testMain2}/gql/dsl/ScalarsSpec.groovy[tags=queryWithVariables, indent=0]
 ----
 
 Now if look at the execution of the query:
@@ -149,7 +149,7 @@ Now if look at the execution of the query:
 [source, groovy]
 .Query execution
 ----
-include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=queryWithVariableExecution, indent=0]
+include::{testMain2}/gql/dsl/ScalarsSpec.groovy[tags=queryWithVariableExecution, indent=0]
 ----
 
 Now how can I convert that string value coming from a variable to a map that I could receive in my data fetcher:
@@ -157,7 +157,7 @@ Now how can I convert that string value coming from a variable to a map that I c
 [source, groovy]
 .parseValue
 ----
-include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=queryWithVariablesScalar, indent=0]
+include::{testMain2}/gql/dsl/ScalarsSpec.groovy[tags=queryWithVariablesScalar, indent=0]
 ----
 
 IMPORTANT: `parseLiteral` parameters are simple Java parameters, not GraphQL node values as they were for the
@@ -168,7 +168,7 @@ Finally I can get the parsed value in the data fetcher:
 [source, groovy]
 .fetcher
 ----
-include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=queryWithVariablesFetcher, indent=0]
+include::{testMain2}/gql/dsl/ScalarsSpec.groovy[tags=queryWithVariablesFetcher, indent=0]
 ----
 
 ==== Serialization
@@ -182,7 +182,7 @@ a given tuple to a meaninful literal with the `serialize` function.
 
 [source, groovy]
 ----
-include::{testMain}/gql/dsl/ScalarsSpec.groovy[tags=serializingScalar, indent=0]
+include::{testMain2}/gql/dsl/ScalarsSpec.groovy[tags=serializingScalar, indent=0]
 ----
 
 <1> Declaring the `Price` scalar type

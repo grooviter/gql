@@ -14,7 +14,7 @@ In order to define a full type using **GQL** the only thing you have to do is to
 ----
 import gql.DSL
 
-include::{testMain}/gql/DSLSpec.groovy[tags=fullType, indent=0]
+include::{testMain2}/gql/DSLSpec.groovy[tags=fullType, indent=0]
 ----
 
 <1> Defines a new type called `Film`
@@ -36,9 +36,9 @@ The following example adds three different fields to the `Droid` type:
 [source, groovy]
 ----
 import gql.DSL
-include::{testMain}/gql/DSLSpec.groovy[tags=importGraphQLObjectType, indent=0]
+include::{testMain2}/gql/DSLSpec.groovy[tags=importGraphQLObjectType, indent=0]
 
-include::{testMain}/gql/DSLSpec.groovy[tags=shortest, indent=0]
+include::{testMain2}/gql/DSLSpec.groovy[tags=shortest, indent=0]
 ----
 
 ==== Adding external fields
@@ -52,7 +52,7 @@ In the following example a field called name. It will always return its value in
 ----
 import gql.DSL
 
-include::{testMain}/gql/DSLSpec.groovy[tags=standaloneFieldDefinition, indent=0]
+include::{testMain2}/gql/DSLSpec.groovy[tags=standaloneFieldDefinition, indent=0]
 ----
 
 [sidebar]
@@ -72,7 +72,7 @@ the left hand side.
 ----
 import gql.DSL
 
-include::{testMain}/gql/DSLSpec.groovy[tags=fieldStaticCompilation, indent=0]
+include::{testMain2}/gql/DSLSpec.groovy[tags=fieldStaticCompilation, indent=0]
 ----
 
 <1> **DataFetchingEnvironment#getSource()** casts its result to the left side element
@@ -88,7 +88,7 @@ every person's name will be returned in uppercase.
 ----
 import gql.DSL
 
-include::{testMain}/gql/DSLSpec.groovy[tags=addField, indent=0]
+include::{testMain2}/gql/DSLSpec.groovy[tags=addField, indent=0]
 ----
 
 

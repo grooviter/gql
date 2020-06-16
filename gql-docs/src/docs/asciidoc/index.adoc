@@ -2,8 +2,8 @@
 :revnumber: {releaseVersion}
 :numbered:
 :imagesDir: images/
-:baseDir: ../../../../..
-:baseDirFirstLevel: ../../../..
+:baseDir: ../../../..
+:baseDirSecondLevel: ../../../../..
 :stem:
 
 :core: {baseDir}/gql-core
@@ -11,6 +11,12 @@
 :testMain: {core}/src/test/groovy
 :testResources: {core}/src/test/resources
 :ratpack: {baseDir}/gql-ratpack
+
+:core2: {baseDirSecondLevel}/gql-core
+:coreMain2: {core2}/src/main/java
+:testMain2: {core2}/src/test/groovy
+:testResources2: {core2}/src/test/resources
+:ratpack2: {baseDirSecondLevel}/gql-ratpack
 
 [quote]
 GQL is a library created to make it easier to expose and consume
@@ -27,6 +33,8 @@ include::intro.adoc[]
 include::getting.adoc[]
 
 include::dsl.adoc[]
+
+include::execution.adoc[]
 
 include::relay.adoc[]
 

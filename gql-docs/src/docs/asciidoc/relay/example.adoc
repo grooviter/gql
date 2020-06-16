@@ -5,7 +5,7 @@ In this example we would like to get a certain number of the ships of the rebel 
 [source, groovy]
 .GraphQL query
 ----
-include::{testMain}/gql/relay/RelaySpec.groovy[tags=query, indent=0]
+include::{testMain2}/gql/relay/RelaySpec.groovy[tags=query, indent=0]
 ----
 
 So first thing to do is to declare the **Faction** type:
@@ -13,7 +13,7 @@ So first thing to do is to declare the **Faction** type:
 [source, groovy]
 .Node
 ----
-include::{testMain}/gql/relay/RelaySpec.groovy[tags=nodeWithListFetcher, indent=0]
+include::{testMain2}/gql/relay/RelaySpec.groovy[tags=nodeWithListFetcher, indent=0]
 ----
 <1> A faction has a **name**
 <2> A faction has **ships** which is a one-to-many relationship
@@ -32,7 +32,7 @@ a hash locating every edge in the relationship, it could be taken as if it were 
 [source, groovy]
 .Connection
 ----
-include::{testMain}/gql/relay/RelaySpec.groovy[tags=connection, indent=0]
+include::{testMain2}/gql/relay/RelaySpec.groovy[tags=connection, indent=0]
 ----
 
 And finally declare the schema:
@@ -40,7 +40,7 @@ And finally declare the schema:
 [source, groovy]
 .Schema
 ----
-include::{testMain}/gql/relay/RelaySpec.groovy[tags=schema, indent=0]
+include::{testMain2}/gql/relay/RelaySpec.groovy[tags=schema, indent=0]
 ----
 
 Now when executing the query, that's how the execution flow will be:

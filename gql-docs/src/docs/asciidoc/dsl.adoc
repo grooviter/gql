@@ -12,6 +12,3 @@ include::dsl/modularising.adoc[]
 
 include::dsl/inputs.adoc[]
 
-include::dsl/queries.adoc[]
-
-

@@ -174,11 +174,9 @@ class ScalarsSpec extends Specification {
     '''
     // end::queryWithVariables[]
     // tag::queryWithVariableExecution[]
-    def result = DSL.execute(
-      schema,
-      query,
-      [price: '1.25PTA'],
-    )
+    def result = DSL
+      .newExecutor(schema)
+      .execute(query, [price: '1.25PTA'])
     // end::queryWithVariableExecution[]
 
     then: 'we should get expected serialized output'

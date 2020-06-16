@@ -1,8 +1,14 @@
 package gql
 
+import gql.dsl.executor.GraphQLExecutor
+
 // tag::importExecutionResult[]
 import graphql.ExecutionResult
+import graphql.GraphQL
+import graphql.execution.instrumentation.NoOpInstrumentation
+import graphql.execution.instrumentation.tracing.TracingInstrumentation
 import graphql.schema.DataFetchingEnvironment
+import graphql.schema.GraphQLType
 
 // end::importExecutionResult[]
 
@@ -313,7 +319,50 @@ class DSLSpec extends Specification {
     '''
   }
 
+  @Deprecated
   void 'execute parametrized query'() {
+    given: 'a type'
+    GraphQLObjectType filmType = DSL.type('film') {
+      field('title') {
+        description 'title of the film'
+        type GraphQLString
+      }
+      field('year') {
+        description 'title of the film'
+        type GraphQLString
+      }
+    }
+
+    and: 'a schema'
+    GraphQLSchema schema = DSL.schema {
+      queries {
+        field('byYear') {
+          type filmType
+          fetcher Queries.&findByYear
+          argument 'year', GraphQLString
+        }
+      }
+    }
+
+    and: 'a query'
+    def queryString = '''
+      query FindBondByYear($year: String) {
+        byYear(year: $year) {
+          year
+          title
+        }
+      }
+    '''
+
+    when: 'executing a queryString against that schema'
+    def result = DSL.execute(schema, queryString, [year: "1962"])
+
+    then: 'we should get the expected name'
+    !result.errors
+    result.data.byYear.title == 'DR. NO'
+  }
+
+  void 'execute parametrized query with executor'() {
     given: 'a type'
     GraphQLObjectType filmType = DSL.type('film') {
       field('title') {
@@ -351,7 +400,7 @@ class DSLSpec extends Specification {
 
     when: 'executing a queryString against that schema'
     // tag::queryWithArgumentsExecution[]
-    def result = DSL.execute(schema, queryString, [year: "1962"])
+    def result = DSL.newExecutor(schema).execute(queryString, [year: "1962"])
     // end::queryWithArgumentsExecution[]
 
     then: 'we should get the expected name'
@@ -424,7 +473,7 @@ class DSLSpec extends Specification {
 
     when: 'executing a queryString against that schema'
     // tag::staticQueryChecked[]
-    ExecutionResult result = DSL.execute(schema) {
+    ExecutionResult result = DSL.newExecutor(schema).execute {
       query('byYear', [year: '1962']) { // <1>
         returns(Film) { // <2>
           title
@@ -442,7 +491,7 @@ class DSLSpec extends Specification {
 
     when:
     // tag::staticQueryUnchecked[]
-    ExecutionResult result2 = DSL.execute(schema) {
+    ExecutionResult result2 = DSL.newExecutor(schema).execute {
       query('byYear', [year: '2015']) { // <1>
         returns { // <2>
           title
@@ -571,6 +620,7 @@ class DSLSpec extends Specification {
     result.data.last.bond == 'Daniel Craig'
   }
 
+  @Deprecated
   @SuppressWarnings('TrailingWhitespace')
   void 'check getting started script'() {
     expect:
@@ -606,6 +656,44 @@ class DSLSpec extends Specification {
       assert result.data.lastFilm.year == 2015
       assert result.data.lastFilm.title == 'SPECTRE'
      // end::grabExample[]
+    '''
+  }
+
+  @SuppressWarnings('TrailingWhitespace')
+  void 'check getting started script with executor'() {
+    expect:
+    GroovyAssert.assertScript '''
+      // tag::grabExampleExecutor[]
+      import gql.DSL
+
+      def GraphQLFilm = DSL.type('Film') { // <1>
+        field 'title', GraphQLString
+        field 'year', GraphQLInt
+      }
+
+      def schema = DSL.schema { // <2>
+        queries {
+          field('lastFilm') {
+            type GraphQLFilm
+            staticValue(title: 'SPECTRE', year: 2015)
+          }
+        }
+      }
+
+      def query = """
+        {
+          lastFilm {
+            year
+            title
+          }
+        }
+      """
+
+      def result = DSL.newExecutor(schema).execute(query) // <3>
+
+      assert result.data.lastFilm.year == 2015
+      assert result.data.lastFilm.title == 'SPECTRE'
+     // end::grabExampleExecutor[]
     '''
   }
 
@@ -702,5 +790,171 @@ class DSLSpec extends Specification {
 
     then: 'the query should return the name in upper case'
     result.data.director.name == 'PETER'
+  }
+
+  void 'executor example'() {
+    given: 'a simple schema'
+    GraphQLType movie = DSL.type("movie") {
+      field("title", GraphQLString)
+    }
+    GraphQLSchema schema = DSL.schema {
+      queries {
+        field('movies') {
+          type list(movie)
+          staticValue([
+            [title: "Origin", director: "Christopher Nolan"],
+          ])
+        }
+        field('directorByMovie') {
+          type GraphQLString
+          argument("movieId", GraphQLInt)
+          staticValue 'Christopher Nolan'
+        }
+      }
+    }
+
+    when: 'creating an executor with a specific query'
+    // tag::executorExample[]
+    GraphQLExecutor executor = DSL.newExecutor(schema) // <1>
+
+    String query1 = '''
+    {
+      movies {
+        title
+      }
+    }
+    '''
+
+    ExecutionResult result = executor.execute(query1) // <2>
+    Map<String, ?> data = result.data // <3>
+    List<?> errors = result.errors // <4>
+    // end::executorExample[]
+
+    then: 'there is no errors'
+    !errors
+
+    and: 'we get the expected result'
+    data.movies.first().title == 'Origin'
+  }
+
+  void 'create an executor from an schema'() {
+    given: 'a simple schema'
+    GraphQLType movie = DSL.type("movie") {
+      field("title", GraphQLString)
+    }
+    GraphQLSchema schema = DSL.schema {
+      queries {
+        field('movies') {
+          type list(movie)
+          staticValue([
+            [title: "Origin", director: "Christopher Nolan"],
+          ])
+        }
+        field('directorByMovie') {
+          type GraphQLString
+          argument("movieId", GraphQLInt)
+          staticValue 'Christopher Nolan'
+        }
+      }
+    }
+
+    when: 'creating an executor with a specific query'
+    // tag::executor[]
+    GraphQLExecutor executor = DSL.newExecutor(schema)
+    // end::executor[]
+
+    String query1 = '''
+    {
+      movies {
+        title
+      }
+    }
+    '''
+
+    then: 'we can use the executor to execute the query'
+    executor.execute(query1).data.movies.first() == [title: 'Origin']
+
+    when: ''
+    String query2 = '''
+    {
+      directorByMovie(movieId: 2)
+    }
+    '''
+    then: 'reuse it to execute a different query'
+    executor.execute(query2).data.directorByMovie == 'Christopher Nolan'
+  }
+
+  void 'create an executor from an execution builder'() {
+    given: 'a simple schema'
+    GraphQLSchema schema = DSL.schema {
+      queries {
+        field('director') {
+          type GraphQLString
+          staticValue "John"
+        }
+      }
+    }
+
+    when: 'creating an executor with a specific query'
+    // tag::executorWithInstrumentation[]
+    GraphQLExecutor executor = DSL.newExecutor(schema) {
+      withInstrumentation(new NoOpInstrumentation())
+      withInstrumentation(new TracingInstrumentation())
+    }
+    // end::executorWithInstrumentation[]
+
+    then: 'we can simply use the executor to execute the query'
+    executor.execute("{ director }").data.director == 'John'
+
+    and: 'keep executing it without passing the query every time we need to execute it'
+    executor.execute("{ director }").data.director == 'John'
+  }
+
+  void 'create a GraphQL.Builder from schema'() {
+    given:
+    GraphQLSchema schema = DSL.schema {
+      queries {
+        field('director') {
+          type GraphQLString
+          staticValue "John"
+        }
+      }
+    }
+
+    and: "a GraphQL instance"
+    // tag::newGraphQLBuilderSchema[]
+    GraphQL graphQL = DSL.newGraphQLBuilder(schema).build()
+    // end::newGraphQLBuilderSchema[]
+
+    when: "executing a query against the GraphQL instance"
+    ExecutionResult result = graphQL.execute(" { director } ")
+
+    then: "we should get the expected result"
+    result.data.director == 'John'
+  }
+
+  void 'create a GraphQL.Builder from schema and options'() {
+    given:
+    GraphQLSchema schema = DSL.schema {
+      queries {
+        field('director') {
+          type GraphQLString
+          staticValue "John"
+        }
+      }
+    }
+
+    and: "initializing builder"
+    // tag::newGraphQLBuilderOptions[]
+    GraphQL.Builder builder = DSL.newGraphQLBuilder(schema) {
+      withInstrumentation(new NoOpInstrumentation())
+    }
+    // end::newGraphQLBuilderOptions[]
+
+    when: "getting GraphQL instance and execute"
+    ExecutionResult result = builder.build().execute(" { director } ")
+
+    then: "we should get the expected director's name"
+    result.data.director == "John"
   }
 }

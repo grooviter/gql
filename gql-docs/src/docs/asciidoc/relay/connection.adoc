@@ -13,7 +13,7 @@ Every edge has two fields:
 
 [source, groovy]
 ----
-include::{testMain}/gql/relay/RelaySpec.groovy[tags=connection, indent=0]
+include::{testMain2}/gql/relay/RelaySpec.groovy[tags=connection, indent=0]
 ----
 
 <1> Declaring a connection type

@@ -60,8 +60,9 @@ class InputTypeSpec extends Specification {
 
     when: 'executing the query with the required parameters'
     // tag::inputTypeQueryExecution[]
-    ExecutionResult result =
-      DSL.execute(schema, query, [filter: [from: 'me@somedomain.com', to: 'you@somedomain.com']])
+    ExecutionResult result = DSL
+      .newExecutor(schema)
+      .execute(query, [filter: [from: 'me@somedomain.com', to: 'you@somedomain.com']])
     // end::inputTypeQueryExecution[]
 
     then: 'we should get what we want'
