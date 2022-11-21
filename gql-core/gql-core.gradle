@@ -1,5 +1,6 @@
 plugins {
   id 'groovy'
+  id 'java-library'
   id 'maven-publish'
 }
 
@@ -7,11 +8,15 @@ apply plugin: 'com.jfrog.bintray'
 apply from: "../gradle/quality.gradle"
 
 dependencies {
-  compile "com.graphql-java:graphql-java:${graphql_java}"
-  compile "org.codehaus.groovy:groovy-all:$groovy"
+  api "com.graphql-java:graphql-java:${graphql_java}"
+  api "org.codehaus.groovy:groovy:$groovy"
 
-  testCompile "org.spockframework:spock-core:$spock"
-  testCompile 'junit:junit:4.12'
+  testImplementation "org.spockframework:spock-core:$spock"
+  testImplementation 'junit:junit:4.12'
+  testImplementation "org.codehaus.groovy:groovy:$groovy"
+  testImplementation "org.codehaus.groovy:groovy-json:$groovy"
+  testImplementation "org.codehaus.groovy:groovy-test:$groovy"
+  testImplementation "org.codehaus.groovy:groovy-dateutil:$groovy"
 }
 
 compileGroovy {

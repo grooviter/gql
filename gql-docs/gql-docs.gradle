@@ -1,5 +1,5 @@
 plugins {
-  id 'org.asciidoctor.convert' version '1.5.3'
+  id("org.asciidoctor.jvm.convert") version "2.4.0"
 }
 
 apply plugin: "org.ajoberstar.git-publish"
@@ -43,14 +43,19 @@ gitPublishPush {
 
 
 asciidoctor {
-  requires 'asciidoctor-diagram'
-
+  //requires 'asciidoctor-diagram'
+  sourceDir 'src/docs/asciidoc'
   outputDir file("$buildDir/site/docs")
-  attributes 'endpoint-url': 'http://github.com/grooviter/gql',
-    'source-highlighter': 'coderay',
-    'releaseVersion': releaseVersion,
-    'imagesdir': './images',
-    'toc': 'left',
-    'icons': 'font',
-    'toclevels': 3
+
+  sources {
+    include 'index.adoc'
+  }
+
+  attributes  'endpoint-url'       : 'http://github.com/grooviter/gql',
+              'source-highlighter' : 'coderay',
+              'releaseVersion'     : releaseVersion,
+              'imagesdir'          : './images',
+              'toc'                : 'left',
+              'icons'              : 'font',
+              'toclevels'          : 3
 }

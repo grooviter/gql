@@ -1,6 +1,12 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [0.5.0] - [2022-11-21]
+### Updated
+- Ratpack version to 1.6.0
+- Groovy version to 2.5.19
+- Spock version to 2.3-groovy-2.5
+
 ## [0.4.0] - [2020-06-16]
 ### Added
 - GraphQLExecutor to reuse underlying execution instances [#26](https://github.com/grooviter/gql/issues/26)

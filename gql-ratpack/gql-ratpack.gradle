@@ -4,17 +4,17 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
 dependencies {
-  compileOnly "com.graphql-java:graphql-java:$graphql_java"
-  compileOnly "io.ratpack:ratpack-core:$ratpack"
-  compileOnly "io.ratpack:ratpack-guice:$ratpack"
-  compileOnly "io.ratpack:ratpack-pac4j:$ratpack"
+  implementation "com.graphql-java:graphql-java:$graphql_java"
+  implementation "io.ratpack:ratpack-core:$ratpack"
+  implementation "io.ratpack:ratpack-guice:$ratpack"
+  implementation "io.ratpack:ratpack-pac4j:$ratpack"
 
-  testCompile project(':gql-core')
-  testCompile "io.ratpack:ratpack-pac4j:$ratpack"
-  testCompile "io.ratpack:ratpack-groovy-test:$ratpack"
+  testImplementation project(':gql-core')
+  testImplementation "io.ratpack:ratpack-pac4j:$ratpack"
+  testImplementation "io.ratpack:ratpack-groovy-test:$ratpack"
 
-  testCompile "org.spockframework:spock-core:$spock"
-  testCompile 'org.objenesis:objenesis:2.1'
+  testImplementation "org.spockframework:spock-core:$spock"
+  testImplementation 'org.objenesis:objenesis:2.1'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
