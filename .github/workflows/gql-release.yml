@@ -16,6 +16,7 @@ jobs:
       - name: build
         run: ./gradlew build
       - name: release
+        environment: release
         env:
           ORG_GRADLE_PROJECT_PUBLISH_SIGN_ENABLED: true
           ORG_GRADLE_PROJECT_PUBLISH_SIGN_KEY_ID: ${{ secrets.PUBLISH_SIGN_KEY_ID }}
