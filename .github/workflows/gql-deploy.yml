@@ -17,9 +17,11 @@ jobs:
         run: ./gradlew build
       - name: release
         env:
-          PUBLISH_ENABLED: true
-          PUBLISH_KEY_ID: ${{ secrets.PUBLISH_KEY_ID }}
-          PUBLISH_KEY: ${{ secrets.PUBLISH_KEY }}
-          PUBLISH_SECRET: ${{ secrets.PUBLISH_SECRET }}
-          ALTERNATE_GITHUB_TOKEN: ${{ secrets.ALTERNATE_GITHUB_TOKEN }}
+          PUBLISH_SIGN_ENABLED: true
+          PUBLISH_SIGN_KEY_ID: ${{ secrets.PUBLISH_SIGN_KEY_ID }}
+          PUBLISH_SIGN_KEY: ${{ secrets.PUBLISH_SIGN_KEY }}
+          PUBLISH_SIGN_SECRET: ${{ secrets.SIGN_SECRET }}
+          PUBLISH_REPO_USERNAME: ${{ secrets.PUBLISH_REPO_USERNAME }}
+          PUBLISH_REPO_PASSWORD: ${{ secrets.PUBLISH_REPO_PASSWORD }}
+          PUBLISH_GH_TOKEN: ${{ secrets.PUBLISH_GH_TOKEN }}
         run: ./gradlew clean build release
