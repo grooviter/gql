@@ -6,14 +6,14 @@ of [GraphQL-java](https://github.com/graphql-java/graphql-java) that
 make it easier to build GraphQL schemas and execute **GraphQL**
 queries without losing type safety.
 
-In order to use `GQL` in your Groovy code you can find it in Bintray:
+In order to use `GQL` in your Groovy code you can find it in maven central:
 
     repositories {
-        jcenter()
+        mavenCentral()
     }
 
 Then you can add the dependency to your project:
 
-    compile 'com.github.grooviter:gql-core:0.4.0'
+    compile 'com.github.grooviter:gql-core:0.5.0'
 
 Current documentation is available at: http://grooviter.github.io/gql/
