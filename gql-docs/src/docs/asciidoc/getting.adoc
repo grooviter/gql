@@ -4,9 +4,9 @@
 
 This is how a full GraphQL life cycle app looks like using **GQL**:
 
-[source, groovy]
+[source, groovy, subs="attributes+"]
 ----
-@Grab('com.github.grooviter:gql-core:0.4.0')
+@Grab('com.github.grooviter:gql-core:{releaseVersion}')
 include::{baseDir}/gql-core/src/test/groovy/gql/DSLSpec.groovy[tags=grabExampleExecutor, indent=0]
 ----
 
@@ -26,7 +26,7 @@ used.
 
 You can add the following dependency to your Gradle project
 
-[source, gradle, subs="attributes"]
+[source, groovy, subs="attributes+"]
 ----
 compile 'com.github.grooviter:gql-core:{releaseVersion}'
 ----
@@ -38,6 +38,6 @@ in your Gradle script.
 [source, groovy]
 ----
 repositories {
-   jcenter()
+   mavenCentral()
 }
 ----

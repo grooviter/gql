@@ -2,9 +2,9 @@ plugins {
   id 'groovy'
   id 'java-library'
   id 'maven-publish'
+  id 'signing'
 }
 
-apply plugin: 'com.jfrog.bintray'
 apply from: "../gradle/quality.gradle"
 
 dependencies {
@@ -20,6 +20,8 @@ dependencies {
 }
 
 compileGroovy {
+  sourceCompatibility = "1.8"
+  targetCompatibility = "1.8"
   groovyOptions.configurationScript = new File(projectDir, folder_compiler)
 }
 
@@ -35,8 +37,8 @@ groovydoc {
   link 'https://docs.oracle.com/javase/8/docs/api/', 'java'
   link 'http://docs.groovy-lang.org/latest/html/api/', 'groovy', 'org.codehaus.groovy'
   link 'http://graphql-java.github.io/graphql-java', 'graphql'
-  docTitle project.name
 
+  docTitle = project.name
   destinationDir = file("../gql-docs/build/site/api")
   classpath = sourceSets.groovydoc.output + classpath
 }
@@ -59,34 +61,33 @@ publishing {
 
       from components.java
       artifact sourcesJar
+
+      pom {
+        name = "gql-core"
+        description = "GQL core Release"
+        url = "http://grooviter.github.io/gql/"
+        licenses {
+          license {
+            name = "Apache-2.0"
+            url = "https://www.apache.org/licenses/LICENSE-2.0"
+          }
+        }
+        scm {
+          connection = "https://github.com/grooviter/gql.git"
+          developerConnection = "https://github.com/grooviter/gql.git"
+          url = "https://github.com/grooviter/gql.git"
+        }
+      }
     }
   }
 }
 
-bintray {
-  // resolves gradle.properties and environment variables
-  user         = "${properties.bintrayUser ?: System.getenv('BINTRAY_USER') }"
-  key          = "${properties.bintrayKey ?: System.getenv('BINTRAY_KEY') }"
-
-  publish      = true
-  publications = ['gql-core']
-
-  pkg {
-    repo            = 'maven'
-    name            = 'gql'
-    userOrg         = 'grooviter'
-    desc            =  "$releaseDescription"
-    websiteUrl      = 'http://grooviter.github.io/gql/'
-    issueTrackerUrl = 'https://github.com/grooviter/gql/issues'
-    licenses        = ['Apache-2.0']
-    vcsUrl          = 'https://github.com/grooviter/gql.git'
-    labels          = ['groovy', 'graphql', 'dsl', 'asts']
-
-    version {
-      name      = "$releaseVersion"
-      desc      = 'GQL Release'
-      released  = new Date()
-      vcsTag    = "$releaseVersion"
-    }
-  }
+signing {
+  required(properties.isRelease ?: false)
+  sign(publishing.publications.'gql-core')
+  useInMemoryPgpKeys(
+    findProperty("signingKeyId"),
+    findProperty("signingKey"),
+    findProperty("signingPassword")
+  )
 }

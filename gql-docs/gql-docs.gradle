@@ -1,8 +1,7 @@
 plugins {
   id("org.asciidoctor.jvm.convert") version "2.4.0"
+  id('org.ajoberstar.git-publish') version "3.0.1"
 }
-
-apply plugin: "org.ajoberstar.git-publish"
 
 task generateDocumentation() {
   dependsOn ':gql-core:groovydoc',':gql-ratpack:javadoc', asciidoctor
@@ -27,20 +26,17 @@ task setAuthentication() {
 gitPublish {
   repoUri = 'https://github.com/grooviter/gql.git'
   branch = 'gh-pages'
+  commitMessage = "Released version ${releaseVersion}"
 
   contents {
     from file('build/site')
   }
-
-  commitMessage = "Released version ${releaseVersion}"
 }
 
 gitPublishPush {
   dependsOn 'setAuthentication'
   dependsOn 'generateDocumentation'
 }
-
-
 
 asciidoctor {
   sourceDir 'src/docs/asciidoc'

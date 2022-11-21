@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 - Ratpack version to 1.6.0
 - Groovy version to 2.5.19
 - Spock version to 2.3-groovy-2.5
+- Gradle plugin org.asciidoctor.jvm.convert to 2.4.0
+- Gradle plugin org.ajoberstar.git-publish to 3.0.1
+
+### Removed
+- Bintray repositories/plugins
+
+### Fixed
+- Links in javadocs
 
 ## [0.4.0] - [2020-06-16]
 ### Added

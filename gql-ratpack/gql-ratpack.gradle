@@ -1,7 +1,9 @@
-apply plugin: 'groovy'
-apply plugin: 'jacoco'
-apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
+plugins {
+  id 'groovy'
+  id 'jacoco'
+  id 'maven-publish'
+  id 'signing'
+}
 
 dependencies {
   implementation "com.graphql-java:graphql-java:$graphql_java"
@@ -15,6 +17,11 @@ dependencies {
 
   testImplementation "org.spockframework:spock-core:$spock"
   testImplementation 'org.objenesis:objenesis:2.1'
+}
+
+compileGroovy {
+  sourceCompatibility = "1.8"
+  targetCompatibility = "1.8"
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -35,34 +42,33 @@ publishing {
 
       from components.java
       artifact sourcesJar
+
+      pom {
+        name = "gql-core"
+        description = "GQL Ratpack integration Release"
+        url = "http://grooviter.github.io/gql/"
+        licenses {
+          license {
+            name = "Apache-2.0"
+            url = "https://www.apache.org/licenses/LICENSE-2.0"
+          }
+        }
+        scm {
+          connection = "https://github.com/grooviter/gql.git"
+          developerConnection = "https://github.com/grooviter/gql.git"
+          url = "https://github.com/grooviter/gql.git"
+        }
+      }
     }
   }
 }
 
-bintray {
-  // resolves gradle.properties and environment variables
-  user         = "${properties.bintrayUser ?: System.getenv('BINTRAY_USER') }"
-  key          = "${properties.bintrayKey ?: System.getenv('BINTRAY_KEY') }"
-
-  publish      = true
-  publications = ['gql-ratpack']
-
-  pkg {
-    repo            = 'maven'
-    name            = 'gql'
-    userOrg         = 'grooviter'
-    desc            =  "$releaseDescription"
-    websiteUrl      = 'http://grooviter.github.io/gql/'
-    issueTrackerUrl = 'https://github.com/grooviter/gql/issues'
-    licenses        = ['Apache-2.0']
-    vcsUrl          = 'https://github.com/grooviter/gql.git'
-    labels          = ['groovy', 'graphql', 'dsl', 'asts']
-
-    version {
-      name      = "$releaseVersion"
-      desc      = 'GQL Ratpack integration Release'
-      released  = new Date()
-      vcsTag    = "$releaseVersion"
-    }
-  }
+signing {
+  required(properties.isRelease ?: false)
+  sign(publishing.publications.'gql-ratpack')
+  useInMemoryPgpKeys(
+    findProperty("signingKeyId"),
+    findProperty("signingKey"),
+    findProperty("signingPassword")
+  )
 }
