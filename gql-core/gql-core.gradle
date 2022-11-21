@@ -53,15 +53,22 @@ artifacts {
 }
 
 publishing {
+  repositories {
+    maven {
+      credentials(PasswordCredentials)
+      name = version.endsWith('SNAPSHOT') ? 'snapshots' : 'releases'
+      url  = version.endsWith('SNAPSHOT')
+        ? 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+        : 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+    }
+  }
   publications {
     'gql-core'(MavenPublication) {
       groupId    "$releaseGroup"
       artifactId 'gql-core'
       version    "$releaseVersion"
-
-      from components.java
-      artifact sourcesJar
-
+      from       components.java
+      artifact   sourcesJar
       pom {
         name = "gql-core"
         description = "GQL core Release"
@@ -85,9 +92,5 @@ publishing {
 signing {
   required(System.getenv("PUBLISH_ENABLED"))
   sign(publishing.publications.'gql-core')
-  useInMemoryPgpKeys(
-    System.getenv("PUBLISH_KEY_ID"),
-    System.getenv("PUBLISH_KEY"),
-    System.getenv("PUBLISH_SECRET"),
-  )
+  useInMemoryPgpKeys(System.getenv("PUBLISH_KEY_ID"), System.getenv("PUBLISH_KEY"), System.getenv("PUBLISH_SECRET"))
 }
