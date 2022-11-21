@@ -43,7 +43,6 @@ gitPublishPush {
 
 
 asciidoctor {
-  //requires 'asciidoctor-diagram'
   sourceDir 'src/docs/asciidoc'
   outputDir file("$buildDir/site/docs")
 
@@ -58,4 +57,10 @@ asciidoctor {
               'toc'                : 'left',
               'icons'              : 'font',
               'toclevels'          : 3
+}
+
+asciidoctorj {
+  modules {
+    diagram.version '1.5.4.1'
+  }
 }
