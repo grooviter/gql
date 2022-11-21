@@ -6,10 +6,6 @@ subprojects {
         url "https://oss.sonatype.org/content/groups/public"
       }
     }
-    dependencies {
-      //classpath "org.ajoberstar:gradle-git-publish:0.3.3"
-      //classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4"
-    }
   }
   repositories {
     mavenCentral()
@@ -20,5 +16,5 @@ subprojects {
 }
 
 task release() {
-  dependsOn ':gql-core:bintrayUpload', ':gql-ratpack:bintrayUpload', ':gql-docs:gitPublishPush'
+  dependsOn ':gql-core:publish', ':gql-docs:gitPublishPush'
 }

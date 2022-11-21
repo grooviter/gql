@@ -12,12 +12,14 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v1
         with:
-          java-version: '8'
+          java-version: '11'
       - name: build
         run: ./gradlew build
-      - name: deploy
+      - name: release
         env:
-          BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
-          BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
+          PUBLISH_ENABLED: true
+          PUBLISH_KEY_ID: ${{ secrets.PUBLISH_KEY_ID }}
+          PUBLISH_KEY: ${{ secrets.PUBLISH_KEY }}
+          PUBLISH_SECRET: ${{ secrets.PUBLISH_SECRET }}
           ALTERNATE_GITHUB_TOKEN: ${{ secrets.ALTERNATE_GITHUB_TOKEN }}
-        run: ./gradlew clean build bintrayUpload :gql-docs:gitPublishPush
+        run: ./gradlew clean build release
