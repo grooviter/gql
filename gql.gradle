@@ -16,5 +16,5 @@ subprojects {
 }
 
 task release() {
-  dependsOn ':gql-core:publish', ':gql-docs:gitPublishPush'
+  dependsOn ':gql-core:publish', 'gql-ratpack:publish', ':gql-docs:gitPublishPush'
 }

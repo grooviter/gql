@@ -55,13 +55,13 @@ artifacts {
 publishing {
   repositories {
     maven {
-      name = version.endsWith('SNAPSHOT') ? 'snapshots' : 'releases'
-      url  = version.endsWith('SNAPSHOT')
+      name = releaseVersion.endsWith('SNAPSHOT') ? 'snapshots' : 'releases'
+      url  = releaseVersion.endsWith('SNAPSHOT')
         ? 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
         : 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
       credentials {
-        username(System.getenv("PUBLISH_REPO_USERNAME"))
-        password(System.getenv("PUBLISH_REPO_PASSWORD"))
+        username(findProperty("PUBLISH_REPO_USERNAME"))
+        password(findProperty("PUBLISH_REPO_PASSWORD"))
       }
     }
   }
@@ -94,10 +94,10 @@ publishing {
 
 signing {
   sign(publishing.publications.'gql-core')
-  required(System.getenv("PUBLISH_SIGN_ENABLED"))
+  required(findProperty("PUBLISH_SIGN_ENABLED"))
   useInMemoryPgpKeys(
-    System.getenv("PUBLISH_SIGN_KEY_ID"),
-    System.getenv("PUBLISH_SIGN_KEY"),
-    System.getenv("PUBLISH_SIGN_SECRET")
+    findProperty("PUBLISH_SIGN_KEY_ID"),
+    findProperty("PUBLISH_SIGN_KEY"),
+    findProperty("PUBLISH_SIGN_SECRET")
   )
 }
