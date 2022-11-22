@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: release
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v1
@@ -16,13 +17,12 @@ jobs:
       - name: build
         run: ./gradlew build
       - name: release
-        environment: release
         env:
-          ORG_GRADLE_PROJECT_PUBLISH_SIGN_ENABLED: true
-          ORG_GRADLE_PROJECT_PUBLISH_SIGN_KEY_ID: ${{ secrets.PUBLISH_SIGN_KEY_ID }}
-          ORG_GRADLE_PROJECT_PUBLISH_SIGN_KEY: ${{ secrets.PUBLISH_SIGN_KEY }}
-          ORG_GRADLE_PROJECT_PUBLISH_SIGN_SECRET: ${{ secrets.SIGN_SECRET }}
-          ORG_GRADLE_PROJECT_PUBLISH_REPO_USERNAME: ${{ secrets.PUBLISH_REPO_USERNAME }}
-          ORG_GRADLE_PROJECT_PUBLISH_REPO_PASSWORD: ${{ secrets.PUBLISH_REPO_PASSWORD }}
-          ORG_GRADLE_PROJECT_PUBLISH_GH_TOKEN: ${{ secrets.PUBLISH_GH_TOKEN }}
+          ORG_GRADLE_PROJECT_PUBLISH_SIGN_ENABLED: ${{ secrets.ORG_GRADLE_PROJECT_PUBLISH_SIGN_ENABLED }}
+          ORG_GRADLE_PROJECT_PUBLISH_SIGN_KEY_ID: ${{ secrets.ORG_GRADLE_PROJECT_PUBLISH_SIGN_KEY_ID }}
+          ORG_GRADLE_PROJECT_PUBLISH_SIGN_KEY: ${{ secrets.ORG_GRADLE_PROJECT_PUBLISH_SIGN_KEY }}
+          ORG_GRADLE_PROJECT_PUBLISH_SIGN_SECRET: ${{ secrets.ORG_GRADLE_PROJECT_PUBLISH_SIGN_SECRET }}
+          ORG_GRADLE_PROJECT_PUBLISH_REPO_USERNAME: ${{ secrets.ORG_GRADLE_PROJECT_PUBLISH_REPO_USERNAME }}
+          ORG_GRADLE_PROJECT_PUBLISH_REPO_PASSWORD: ${{ secrets.ORG_GRADLE_PROJECT_PUBLISH_REPO_PASSWORD }}
+          ORG_GRADLE_PROJECT_PUBLISH_GH_TOKEN: ${{ secrets.ORG_GRADLE_PROJECT_PUBLISH_GH_TOKEN }}
         run: ./gradlew clean build release
