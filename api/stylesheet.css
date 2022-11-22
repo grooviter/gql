@@ -2305,6 +2305,11 @@ a span.strong {
     font-weight: normal
 }
 
-h2 img {
-    vertical-align: bottom;
+h2.title {
+    display: flex;
+    align-items: center;
+}
+
+h2.title svg {
+    margin-left: 1em;
 }
