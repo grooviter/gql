@@ -1,20 +1,27 @@
 plugins {
   id 'groovy'
+  id 'java-library'
   id 'maven-publish'
+  id 'signing'
 }
 
-apply plugin: 'com.jfrog.bintray'
 apply from: "../gradle/quality.gradle"
 
 dependencies {
-  compile "com.graphql-java:graphql-java:${graphql_java}"
-  compile "org.codehaus.groovy:groovy-all:$groovy"
+  api "com.graphql-java:graphql-java:${graphql_java}"
+  api "org.codehaus.groovy:groovy:$groovy"
 
-  testCompile "org.spockframework:spock-core:$spock"
-  testCompile 'junit:junit:4.12'
+  testImplementation "org.spockframework:spock-core:$spock"
+  testImplementation 'junit:junit:4.12'
+  testImplementation "org.codehaus.groovy:groovy:$groovy"
+  testImplementation "org.codehaus.groovy:groovy-json:$groovy"
+  testImplementation "org.codehaus.groovy:groovy-test:$groovy"
+  testImplementation "org.codehaus.groovy:groovy-dateutil:$groovy"
 }
 
 compileGroovy {
+  sourceCompatibility = "1.8"
+  targetCompatibility = "1.8"
   groovyOptions.configurationScript = new File(projectDir, folder_compiler)
 }
 
@@ -30,8 +37,8 @@ groovydoc {
   link 'https://docs.oracle.com/javase/8/docs/api/', 'java'
   link 'http://docs.groovy-lang.org/latest/html/api/', 'groovy', 'org.codehaus.groovy'
   link 'http://graphql-java.github.io/graphql-java', 'graphql'
-  docTitle project.name
 
+  docTitle = project.name
   destinationDir = file("../gql-docs/build/site/api")
   classpath = sourceSets.groovydoc.output + classpath
 }
@@ -46,42 +53,51 @@ artifacts {
 }
 
 publishing {
+  repositories {
+    maven {
+      name = releaseVersion.endsWith('SNAPSHOT') ? 'snapshots' : 'releases'
+      url  = releaseVersion.endsWith('SNAPSHOT')
+        ? 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+        : 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+      credentials {
+        username(findProperty("PUBLISH_REPO_USERNAME"))
+        password(findProperty("PUBLISH_REPO_PASSWORD"))
+      }
+    }
+  }
   publications {
     'gql-core'(MavenPublication) {
       groupId    "$releaseGroup"
       artifactId 'gql-core'
       version    "$releaseVersion"
-
-      from components.java
-      artifact sourcesJar
+      from       components.java
+      artifact   sourcesJar
+      pom {
+        name = "gql-core"
+        description = "GQL core Release"
+        url = "http://grooviter.github.io/gql/"
+        licenses {
+          license {
+            name = "Apache-2.0"
+            url = "https://www.apache.org/licenses/LICENSE-2.0"
+          }
+        }
+        scm {
+          connection = "https://github.com/grooviter/gql.git"
+          developerConnection = "https://github.com/grooviter/gql.git"
+          url = "https://github.com/grooviter/gql.git"
+        }
+      }
     }
   }
 }
 
-bintray {
-  // resolves gradle.properties and environment variables
-  user         = "${properties.bintrayUser ?: System.getenv('BINTRAY_USER') }"
-  key          = "${properties.bintrayKey ?: System.getenv('BINTRAY_KEY') }"
-
-  publish      = true
-  publications = ['gql-core']
-
-  pkg {
-    repo            = 'maven'
-    name            = 'gql'
-    userOrg         = 'grooviter'
-    desc            =  "$releaseDescription"
-    websiteUrl      = 'http://grooviter.github.io/gql/'
-    issueTrackerUrl = 'https://github.com/grooviter/gql/issues'
-    licenses        = ['Apache-2.0']
-    vcsUrl          = 'https://github.com/grooviter/gql.git'
-    labels          = ['groovy', 'graphql', 'dsl', 'asts']
-
-    version {
-      name      = "$releaseVersion"
-      desc      = 'GQL Release'
-      released  = new Date()
-      vcsTag    = "$releaseVersion"
-    }
-  }
+signing {
+  sign(publishing.publications.'gql-core')
+  required(findProperty("PUBLISH_SIGN_ENABLED"))
+  useInMemoryPgpKeys(
+    findProperty("PUBLISH_SIGN_KEY_ID"),
+    findProperty("PUBLISH_SIGN_KEY"),
+    findProperty("PUBLISH_SIGN_SECRET")
+  )
 }

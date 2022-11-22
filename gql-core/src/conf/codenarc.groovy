@@ -23,9 +23,9 @@ ruleset {
     'SpaceAroundMapEntryColon' {
       enabled = false
     }
-    'ClassJavadoc' {
-      enabled = false
-    }
+//    'ClassJavadoc' {
+//      enabled = false
+//    }
     'FileEndsWithoutNewline' {
       enabled = false
     }

@@ -1,8 +1,7 @@
 plugins {
-  id 'org.asciidoctor.convert' version '1.5.3'
+  id("org.asciidoctor.jvm.convert") version "2.4.0"
+  id('org.ajoberstar.git-publish') version "3.0.1"
 }
-
-apply plugin: "org.ajoberstar.git-publish"
 
 task generateDocumentation() {
   dependsOn ':gql-core:groovydoc',':gql-ratpack:javadoc', asciidoctor
@@ -19,7 +18,7 @@ task setAuthentication() {
   doLast {
     System.setProperty(
       'org.ajoberstar.grgit.auth.username',
-      "${properties.githubToken ?: System.getenv('ALTERNATE_GITHUB_TOKEN') }"
+      "${properties.githubToken ?: System.getenv('PUBLISH_GH_TOKEN') }"
     )
   }
 }
@@ -27,12 +26,11 @@ task setAuthentication() {
 gitPublish {
   repoUri = 'https://github.com/grooviter/gql.git'
   branch = 'gh-pages'
+  commitMessage = "Released version ${releaseVersion}"
 
   contents {
     from file('build/site')
   }
-
-  commitMessage = "Released version ${releaseVersion}"
 }
 
 gitPublishPush {
@@ -40,17 +38,25 @@ gitPublishPush {
   dependsOn 'generateDocumentation'
 }
 
-
-
 asciidoctor {
-  requires 'asciidoctor-diagram'
-
+  sourceDir 'src/docs/asciidoc'
   outputDir file("$buildDir/site/docs")
-  attributes 'endpoint-url': 'http://github.com/grooviter/gql',
-    'source-highlighter': 'coderay',
-    'releaseVersion': releaseVersion,
-    'imagesdir': './images',
-    'toc': 'left',
-    'icons': 'font',
-    'toclevels': 3
+
+  sources {
+    include 'index.adoc'
+  }
+
+  attributes  'endpoint-url'       : 'http://github.com/grooviter/gql',
+              'source-highlighter' : 'coderay',
+              'releaseVersion'     : releaseVersion,
+              'imagesdir'          : './images',
+              'toc'                : 'left',
+              'icons'              : 'font',
+              'toclevels'          : 3
+}
+
+asciidoctorj {
+  modules {
+    diagram.version '1.5.4.1'
+  }
 }
