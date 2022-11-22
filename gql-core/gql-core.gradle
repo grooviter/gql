@@ -52,6 +52,11 @@ artifacts {
   archives sourcesJar
 }
 
+task groovydocJar(type: Jar, dependsOn: groovydoc) {
+  classifier 'javadoc' // must use javadoc classifier to be able to deploy to Sonatype
+  from groovydoc.destinationDir
+}
+
 publishing {
   repositories {
     maven {
@@ -72,6 +77,10 @@ publishing {
       version    "$releaseVersion"
       from       components.java
       artifact   sourcesJar
+
+      artifact(groovydocJar) {
+        classifier = 'javadoc'
+      }
       pom {
         name = "gql-core"
         description = "GQL core Release"
@@ -80,6 +89,12 @@ publishing {
           license {
             name = "Apache-2.0"
             url = "https://www.apache.org/licenses/LICENSE-2.0"
+          }
+        }
+        developers {
+          developer {
+            id = 'mario'
+            name = 'Mario Garcia'
           }
         }
         scm {
