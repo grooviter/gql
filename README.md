@@ -1,4 +1,4 @@
-[![license](https://img.shields.io/github/license/grooviter/gql.svg)]() ![main](https://github.com/grooviter/gql/workflows/main/badge.svg)
+[![license](https://img.shields.io/github/license/grooviter/gql.svg)]()
 
 ## Description
 
