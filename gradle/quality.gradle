@@ -1,8 +1,0 @@
-apply plugin: 'jacoco'
-apply plugin: 'codenarc'
-
-codenarc {
-  configFile     = new File(projectDir, "$folder_codenarc")
-  ignoreFailures = codenarc_ignore_failures as Boolean
-  reportFormat   = "${codenarc_format}"
-}

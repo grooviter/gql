@@ -2,10 +2,7 @@ package gql.ratpack
 
 import gql.DSL
 import graphql.GraphQL
-import graphql.execution.instrumentation.Instrumentation
-import graphql.schema.GraphQLSchema
 import ratpack.jackson.JsonRender
-import ratpack.registry.Registry
 import ratpack.test.handling.RequestFixture
 import spock.lang.Issue
 import spock.lang.Specification

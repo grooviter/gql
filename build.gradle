@@ -1,0 +1,129 @@
+plugins {
+  id 'org.kordamp.gradle.groovy-project'
+}
+
+config {
+  release = Boolean.valueOf(findProperty("PUBLISH_RELEASE"))
+
+  info {
+    name        = 'GQL'
+    vendor      = 'Grooviter'
+    description = 'GQL makes it easier to build GraphQL schemas and execute **GraphQL** using Groovy'
+
+    links {
+      website      = 'http://grooviter.github.io/gql/'
+      issueTracker = 'https://github.com/grooviter/gql/issues'
+      scm          = 'https://github.com/grooviter/gql.git'
+    }
+    people {
+      person {
+        id = 'mariogarcia'
+        name = 'Mario Garcia'
+        roles = ['developer']
+      }
+    }
+    repositories {
+      repository {
+        name = 'releases'
+        url  = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+        credentials {
+          username = findProperty("PUBLISH_REPO_USERNAME")
+          password = findProperty("PUBLISH_REPO_PASSWORD")
+        }
+      }
+      repository {
+        name = 'snapshots'
+        url  = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+        credentials {
+          username = findProperty("PUBLISH_REPO_USERNAME")
+          password = findProperty("PUBLISH_REPO_PASSWORD")
+        }
+      }
+    }
+  }
+  artifacts {
+    minpom {
+      enabled
+    }
+  }
+  publishing {
+    releasesRepository  = "releases"
+    snapshotsRepository = "snapshots"
+    signing {
+      enabled   = findProperty("PUBLISH_SIGN_ENABLED")
+      keyId     = findProperty("PUBLISH_SIGN_KEY_ID")
+      secretKey = findProperty("PUBLISH_SIGN_KEY")
+      password  = findProperty("PUBLISH_SIGN_SECRET")
+    }
+    pom {
+      overwriteInceptionYear = "2015"
+    }
+  }
+  docs {
+    guide {
+      publish {
+        enabled = true
+      }
+    }
+    sourceHtml {
+      enabled = false
+      aggregate {
+        enabled = false
+      }
+    }
+    groovydoc {
+      options {
+        docTitle    = "Groovy GraphQL library"
+        windowTitle =  "GQL: Groovy GraphQL library"
+        link 'https://docs.oracle.com/javase/11/docs/api/', 'java'
+        link 'http://docs.groovy-lang.org/latest/html/api/', 'groovy', 'org.codehaus.groovy'
+        link "https://javadoc.io/doc/com.graphql-java/graphql-java/$graphql_java", 'graphql'
+      }
+      aggregate {
+        enabled        = true
+        replaceJavadoc = true
+      }
+    }
+  }
+  licensing {
+    enabled = false
+    licenses {
+      license {
+        id = 'Apache-2.0'
+        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+      }
+    }
+  }
+  quality {
+    codenarc {
+      configFile = file("$rootDir/config/codenarc.groovy")
+    }
+  }
+  coverage {
+    jacoco {
+      enabled = true
+    }
+  }
+}
+
+allprojects {
+  repositories {
+    mavenCentral()
+  }
+}
+
+subprojects {
+  pluginManager.withPlugin("java", {
+    test {
+      useJUnitPlatform()
+    }
+    compileJava {
+      sourceCompatibility = "1.8"
+      targetCompatibility = "1.8"
+    }
+  })
+}
+
+task release() {
+  dependsOn ':gql-core:publish', 'gql-ratpack:publish', ':gql-docs:gitPublishPush'
+}

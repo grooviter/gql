@@ -1,7 +1,6 @@
 package gql.dsl
 
 import gql.DSL
-import graphql.language.StringValue
 import spock.lang.Specification
 
 /**

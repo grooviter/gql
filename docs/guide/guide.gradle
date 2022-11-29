@@ -1,12 +1,16 @@
 plugins {
-  id("org.asciidoctor.jvm.convert") version "2.4.0"
-  id('org.ajoberstar.git-publish') version "3.0.1"
+  id 'org.kordamp.gradle.guide'
+  id 'org.ajoberstar.git-publish'
 }
 
 task generateDocumentation() {
-  dependsOn ':gql-core:groovydoc',':gql-ratpack:javadoc', asciidoctor
+  dependsOn ':gql-core:groovydoc',':gql-ratpack:javadoc', "::aggregateGroovydoc", asciidoctor
 
   doLast {
+    copy {
+      from "$rootDir/build/docs/aggregate-groovydoc"
+      into "$buildDir/site/api/"
+    }
     copy {
       from "src/docs/site"
       into "$buildDir/site"
@@ -23,7 +27,7 @@ task setAuthentication() {
 gitPublish {
   repoUri = 'https://github.com/grooviter/gql.git'
   branch = 'gh-pages'
-  commitMessage = "Released version ${releaseVersion}"
+  commitMessage = "Released version $version"
 
   contents {
     from file('build/site')
@@ -37,7 +41,7 @@ gitPublishPush {
 
 asciidoctor {
   sourceDir 'src/docs/asciidoc'
-  outputDir file("$buildDir/site/docs")
+  outputDir file("$buildDir/site/docs/html5")
 
   sources {
     include 'index.adoc'
@@ -45,7 +49,7 @@ asciidoctor {
 
   attributes  'endpoint-url'       : 'http://github.com/grooviter/gql',
               'source-highlighter' : 'coderay',
-              'releaseVersion'     : releaseVersion,
+              'releaseVersion'     : version,
               'imagesdir'          : './images',
               'toc'                : 'left',
               'icons'              : 'font',
@@ -54,6 +58,6 @@ asciidoctor {
 
 asciidoctorj {
   modules {
-    diagram.version '1.5.4.1'
+    diagram.version '2.1.0'
   }
 }

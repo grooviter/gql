@@ -1,0 +1,20 @@
+plugins {
+  id 'jacoco'
+  id 'groovy'
+  id 'java-library'
+}
+
+dependencies {
+  implementation "org.codehaus.groovy:groovy:$groovy"
+  implementation "com.graphql-java:graphql-java:$graphql_java"
+  implementation "io.ratpack:ratpack-core:$ratpack"
+  implementation "io.ratpack:ratpack-guice:$ratpack"
+  implementation "io.ratpack:ratpack-pac4j:$ratpack"
+
+  testImplementation project(':gql-core')
+  testImplementation "org.codehaus.groovy:groovy:$groovy"
+  testImplementation "io.ratpack:ratpack-pac4j:$ratpack"
+  testImplementation "io.ratpack:ratpack-groovy-test:$ratpack"
+  testImplementation "org.spockframework:spock-core:$spock"
+  testImplementation "org.objenesis:objenesis:$objenesis"
+}

@@ -1,6 +1,6 @@
 package gql.dsl
 
-import gql.dsl.TypeResolverUtils.Driver
+
 import graphql.GraphQLException
 import graphql.TypeResolutionEnvironment
 import graphql.schema.DataFetchingEnvironment

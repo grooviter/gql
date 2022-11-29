@@ -1,14 +1,18 @@
-include 'gql-docs'
-include 'gql-core'
-include 'gql-ratpack'
-
-rootProject.name = 'gql'
-
-def setBuildFile(project) {
-  project.buildFileName = "${project.name}.gradle"
-  project.children.each {
-    setBuildFile(it)
+buildscript {
+  repositories { gradlePluginPortal() }
+  dependencies {
+    classpath "org.kordamp.gradle:java-project-gradle-plugin:$kordamp"
+    classpath "org.kordamp.gradle:groovy-project-gradle-plugin:$kordamp"
+    classpath "org.kordamp.gradle:settings-gradle-plugin:$kordamp"
+    classpath "org.kordamp.gradle:guide-gradle-plugin:$kordamp"
+    classpath "org.ajoberstar:gradle-git-publish:$ajoberstar"
   }
 }
 
-setBuildFile(rootProject)
+apply plugin: 'org.kordamp.gradle.settings'
+rootProject.name = 'gql'
+
+projects {
+  directories = ['docs', 'modules']
+}
+
