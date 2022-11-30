@@ -35,6 +35,9 @@ ruleset {
     'MissingBlankLineAfterPackage' {
       enabled = false
     }
+    'Indentation' {
+      spacesPerIndentLevel = 2
+    }
   }
   ruleset('rulesets/naming.xml') {
     'MethodName' {
@@ -48,6 +51,9 @@ ruleset {
     }
   }
   ruleset('rulesets/convention.xml') {
+    'CompileStatic' {
+      enabled = false
+    }
     'NoDef' {
       enabled = false
     }

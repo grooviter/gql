@@ -99,9 +99,9 @@ config {
     /* #TODO I'm unable to tell kordamp to exclude *Spec */
     codenarc {
       ignoreFailures         = true // #TODO not working on kordamp 47.0
-      maxPriority1Violations = 5000
-      maxPriority2Violations = 5000
-      maxPriority3Violations = 5000
+      maxPriority1Violations = 0
+      maxPriority2Violations = 0
+      maxPriority3Violations = 260
     }
   }
   coverage {
