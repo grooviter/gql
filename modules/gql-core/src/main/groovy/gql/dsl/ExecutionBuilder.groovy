@@ -1,10 +1,10 @@
 package gql.dsl
 
+import graphql.execution.instrumentation.SimpleInstrumentation
 import groovy.util.logging.Slf4j
 import groovy.transform.Immutable
 import graphql.ExecutionInput
 import graphql.execution.instrumentation.Instrumentation
-import graphql.execution.instrumentation.NoOpInstrumentation
 import graphql.execution.instrumentation.ChainedInstrumentation
 
 /**
@@ -14,6 +14,8 @@ import graphql.execution.instrumentation.ChainedInstrumentation
  */
 @Slf4j
 class ExecutionBuilder {
+
+  private static final String DEFAULT_QUERY = '{}'
 
   /**
    * Gathers data required to execute queries
@@ -38,7 +40,16 @@ class ExecutionBuilder {
    *
    * @since 0.3.0
    */
-  Instrumentation instrumentation = new NoOpInstrumentation()
+  Instrumentation instrumentation = new SimpleInstrumentation()
+
+  /**
+   * Default constructor
+   *
+   * @since 1.0.0
+   */
+  ExecutionBuilder() {
+    executionBuilder.query(DEFAULT_QUERY)
+  }
 
   /**
    * Sets variables to be used when executing the underlying query
@@ -72,7 +83,7 @@ class ExecutionBuilder {
    * @since 0.3.0
    */
   ExecutionBuilder withContext(Object context) {
-    executionBuilder.context(context ?: [:])
+    executionBuilder.graphQLContext(context as Map ?: [:])
     return this
   }
 
@@ -106,10 +117,7 @@ class ExecutionBuilder {
    * @return an instance of {@link ExecutionBuilder}
    * @since 0.3.0
    */
-  ExecutionBuilder.Result build() {
-    return new ExecutionBuilder.Result(
-      input: executionBuilder.build(),
-      instrumentation: instrumentation,
-    )
+  Result build() {
+    return new Result(input: executionBuilder.build(), instrumentation: instrumentation)
   }
 }

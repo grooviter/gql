@@ -161,7 +161,7 @@ class AsyncExecutionSpec extends Specification {
             assert env.arguments.filter.from == 'me@somedomain.com'
             assert env.arguments.filter.to == 'you@somedomain.com'
 
-            return [[subject: "just this email here ${env.context.user}!"]]
+            return [[subject: "just this email here ${env.graphQlContext.get("user")}!"]]
           }
         }
       }

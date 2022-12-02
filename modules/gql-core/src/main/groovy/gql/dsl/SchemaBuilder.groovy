@@ -42,9 +42,19 @@ class SchemaBuilder {
       .name(name)
       .description("description of type $name")
     ObjectTypeBuilder builderResult = builderSource.with(clos) ?: builderSource
-    GraphQLObjectType qurs = builderResult.build()
+    GraphQLObjectType queries = builderResult.build()
 
-    builder.query(qurs)
+    if (queries.fieldDefinitions.isEmpty()) {
+      builder.query(builderSource.with {
+        field("_") {
+          type GraphQLString
+          staticValue("")
+        }
+      }.build())
+    } else {
+      builder.query(queries)
+    }
+
     return this
   }
 

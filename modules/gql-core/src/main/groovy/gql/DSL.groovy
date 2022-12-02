@@ -18,7 +18,7 @@ import graphql.ExecutionInput
 import graphql.ExecutionResult
 import graphql.GraphQL
 import graphql.GraphQLError
-import graphql.execution.ExecutionPath
+import graphql.execution.ResultPath
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
@@ -99,7 +99,7 @@ final class DSL {
    * @since 0.1.0
    */
   static ExecutionResult execute(GraphQLSchema schema, String query, Map<String,Object> arguments = [:]) {
-    GraphQL graphQL = new GraphQL(schema)
+    GraphQL graphQL = GraphQL.newGraphQL(schema).build()
 
     /* GraphQL java assumes arguments can't be empty if you're using
        the method that allows arguments */
@@ -159,7 +159,7 @@ final class DSL {
    */
   static CompletableFuture<ExecutionResult> executeAsync(
     GraphQLSchema schema, String query, Map<String,Object> arguments = [:]) {
-    GraphQL graphQL = new GraphQL(schema)
+    GraphQL graphQL = GraphQL.newGraphQL(schema).build()
     ExecutionInput executionInput = ExecutionInput
       .newExecutionInput()
       .query(query)
@@ -384,10 +384,7 @@ final class DSL {
     final GraphQLError error = error(options)
 
     return { DataFetchingEnvironment env ->
-      ExecutionPath path = parameters
-        .getEnvironment()
-        .getFieldTypeInfo()
-        .getPath()
+      ResultPath path = parameters.environment.executionStepInfo.path
 
       parameters
         .getExecutionContext()

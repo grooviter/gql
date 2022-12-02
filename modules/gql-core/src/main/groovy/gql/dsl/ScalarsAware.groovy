@@ -15,14 +15,22 @@ interface ScalarsAware {
 
   GraphQLScalarType GraphQLInt = Scalars.GraphQLInt
   GraphQLScalarType GraphQLString = Scalars.GraphQLString
-  GraphQLScalarType GraphQLLong = Scalars.GraphQLLong
-  GraphQLScalarType GraphQLShort = Scalars.GraphQLShort
-  GraphQLScalarType GraphQLByte = Scalars.GraphQLByte
-  GraphQLScalarType GraphQLFloat = Scalars.GraphQLFloat
-  GraphQLScalarType GraphQLBigInteger = Scalars.GraphQLBigInteger
-  GraphQLScalarType GraphQLBigDecimal = Scalars.GraphQLBigDecimal
   GraphQLScalarType GraphQLBoolean = Scalars.GraphQLBoolean
   GraphQLScalarType GraphQLID = Scalars.GraphQLID
-  GraphQLScalarType GraphQLChar = Scalars.GraphQLChar
+
+  @Deprecated
+  GraphQLScalarType GraphQLLong = Scalars.GraphQLInt
+  @Deprecated
+  GraphQLScalarType GraphQLShort = Scalars.GraphQLInt
+  @Deprecated
+  GraphQLScalarType GraphQLByte = Scalars.GraphQLInt
+  @Deprecated
+  GraphQLScalarType GraphQLFloat = Scalars.GraphQLFloat
+  @Deprecated
+  GraphQLScalarType GraphQLBigInteger = Scalars.GraphQLInt
+  @Deprecated
+  GraphQLScalarType GraphQLBigDecimal = Scalars.GraphQLFloat
+  @Deprecated
+  GraphQLScalarType GraphQLChar = Scalars.GraphQLString
 
 }

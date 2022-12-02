@@ -93,7 +93,7 @@ class ScalarTypeBuilder {
    * @since 0.1.3
    */
   GraphQLScalarType build() {
-    return new GraphQLScalarType(name, description ?: name, new Coercing() {
+    return GraphQLScalarType.newScalar().name(name).description(description ?: name).coercing(new Coercing() {
       @Override
       Object serialize(Object input) {
         return serialization.call(input)
@@ -108,6 +108,6 @@ class ScalarTypeBuilder {
       Object parseLiteral(Object input) {
         return fromLiteral.call(input)
       }
-    })
+    }).build()
   }
 }

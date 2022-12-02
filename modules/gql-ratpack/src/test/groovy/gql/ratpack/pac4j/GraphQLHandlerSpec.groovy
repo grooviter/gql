@@ -220,7 +220,7 @@ class GraphQLHandlerSpec extends Specification {
           argument 'name', GraphQLString
           fetcher { env ->
             String name = env.arguments.name
-            Context ctx = env.context as Context
+            Context ctx = env.graphQlContext.get("ratpackContext") as Context
             List<String> roles = ctx
               .request
               .get(UserProfile)

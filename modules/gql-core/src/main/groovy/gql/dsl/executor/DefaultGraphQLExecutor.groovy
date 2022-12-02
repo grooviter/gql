@@ -23,9 +23,7 @@ class DefaultGraphQLExecutor implements GraphQLExecutor {
   @Override
   ExecutionResult execute(String query, Map<String, Object> arguments = [:]) {
     ExecutionInput.Builder builder = ExecutionInput.newExecutionInput().query(query);
-    ExecutionInput executionInput = arguments ?
-      builder.context(null).variables(arguments).build() :
-      builder.context(null).build()
+    ExecutionInput executionInput = arguments ? builder.variables(arguments).build() : builder.build()
 
     return graphQL.execute(executionInput)
   }

@@ -5,7 +5,7 @@ import gql.dsl.executor.GraphQLExecutor
 // tag::importExecutionResult[]
 import graphql.ExecutionResult
 import graphql.GraphQL
-import graphql.execution.instrumentation.NoOpInstrumentation
+import graphql.execution.instrumentation.SimpleInstrumentation
 import graphql.execution.instrumentation.tracing.TracingInstrumentation
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLType
@@ -898,7 +898,7 @@ class DSLSpec extends Specification {
     when: 'creating an executor with a specific query'
     // tag::executorWithInstrumentation[]
     GraphQLExecutor executor = DSL.newExecutor(schema) {
-      withInstrumentation(new NoOpInstrumentation())
+      withInstrumentation(new SimpleInstrumentation())
       withInstrumentation(new TracingInstrumentation())
     }
     // end::executorWithInstrumentation[]
@@ -947,7 +947,7 @@ class DSLSpec extends Specification {
     and: "initializing builder"
     // tag::newGraphQLBuilderOptions[]
     GraphQL.Builder builder = DSL.newGraphQLBuilder(schema) {
-      withInstrumentation(new NoOpInstrumentation())
+      withInstrumentation(new SimpleInstrumentation())
     }
     // end::newGraphQLBuilderOptions[]
 

@@ -98,21 +98,22 @@ class ConnectionFieldBuilder extends ObjectTypeBuilder.FieldBuilder {
         .arguments
         .collectEntries(this.&convertEntry) as Map<String,Object>
 
-      DataFetchingEnvironment newEnvironment =
-        new DataFetchingEnvironmentImpl(
-          env.getSource(),
-          newArguments,
-          env.getContext(),
-          env.getRoot(),
-          env.getFieldDefinition(),
-          env.getFields(),
-          env.getFieldType(),
-          env.getParentType(),
-          env.getGraphQLSchema(),
-          env.getFragmentsByName(),
-          env.getExecutionId(),
-          env.getSelectionSet(),
-          env.getFieldTypeInfo())
+      DataFetchingEnvironment newEnvironment = new DataFetchingEnvironmentImpl.Builder()
+        .source(env.getSource())
+        .arguments(newArguments)
+        .graphQLContext(env.graphQlContext)
+        .context(env.context)
+        .root(env.getRoot())
+        .fieldDefinition(env.getFieldDefinition())
+        .queryDirectives(env.getQueryDirectives())
+        .fieldType(env.getFieldType())
+        .parentType(env.getParentType())
+        .graphQLSchema(env.getGraphQLSchema())
+        .fragmentsByName(env.getFragmentsByName())
+        .executionId(env.getExecutionId())
+        .selectionSet(env.getSelectionSet())
+        .executionStepInfo(env.getExecutionStepInfo())
+        .build()
 
       List<T> data = closure(newEnvironment)
 

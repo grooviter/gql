@@ -1,0 +1,3 @@
+moduleName=Extension Module for graphql-java classes
+moduleVersion=1.0.0
+extensionClasses=gql.extensions.DataFetchingEnvironmentExtension

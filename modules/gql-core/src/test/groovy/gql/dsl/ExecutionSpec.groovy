@@ -17,7 +17,7 @@ class ExecutionSpec extends Specification {
           argument 'name', GraphQLString
           fetcher { DataFetchingEnvironment env ->
             def name = env.arguments.name
-            def user = env?.context?.user
+            def user = env.graphQlContext.get("user")
 
             user ? "You can pass $name" : "unauthorized"
           }
@@ -95,5 +95,25 @@ class ExecutionSpec extends Specification {
     then: 'we should be allowed to pass'
     sampleError.message == 'No user present'
     sampleError.extensions == [i18n: 'error.not.present']
+  }
+
+  void 'accessing context values via contextMap'() {
+    given: 'a simple schema'
+    def schema = DSL.schema {
+      queries {
+        field('loggedUser') {
+          type GraphQLString
+          fetcher { DataFetchingEnvironment env -> env.contextAsMap.user }
+        }
+      }
+    }
+
+    when: 'executing a query with some context values'
+    def result = DSL.execute(schema, "query { loggedUser }") {
+      withContext(user: 'john')
+    }
+
+    then: 'we should get the logged user'
+    result.data.loggedUser == 'john'
   }
 }
