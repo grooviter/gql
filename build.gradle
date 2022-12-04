@@ -73,6 +73,7 @@ config {
       }
     }
     groovydoc {
+      excludes = ["META-INF"]
       options {
         docTitle    = "Groovy GraphQL library"
         windowTitle =  "GQL: Groovy GraphQL library"
