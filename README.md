@@ -1,4 +1,4 @@
-[![license](https://img.shields.io/github/license/grooviter/gql.svg)]()
+[![license](https://img.shields.io/github/license/grooviter/gql.svg)]() [![main](https://github.com/grooviter/gql/actions/workflows/gql-release.yml/badge.svg)](https://github.com/grooviter/gql/actions/workflows/gql-release.yml) ![Maven Central](https://img.shields.io/maven-central/v/com.github.grooviter/gql-core)
 
 ## Description
 
@@ -18,5 +18,7 @@ In order to use `GQL` in your Groovy code you can find it in maven central:
 Then you can add the dependency to your project:
 
     implementation 'com.github.grooviter:gql-core:0.5.0'
+
+## Documentation
 
 Current documentation is available at: http://grooviter.github.io/gql/
