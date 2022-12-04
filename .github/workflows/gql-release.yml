@@ -15,7 +15,7 @@ jobs:
         with:
           java-version: '11'
       - name: build
-        run: ./gradlew build
+        run: ./gradlew build -x aggregateCodenarc
 #      - name: release
 #        env:
 #          ORG_GRADLE_PROJECT_PUBLISH_SIGN_ENABLED: ${{ secrets.ORG_GRADLE_PROJECT_PUBLISH_SIGN_ENABLED }}
