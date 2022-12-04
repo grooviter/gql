@@ -2,8 +2,8 @@
 :revnumber: {releaseVersion}
 :numbered:
 :imagesDir: images/
-:baseDir: ../../../..
-:baseDirSecondLevel: ../../../../..
+:baseDir: ../../../../../modules
+:baseDirSecondLevel: ../../../../../../modules
 :stem:
 
 :core: {baseDir}/gql-core

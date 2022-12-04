@@ -1,0 +1,3 @@
+moduleName=Extension Module for graphql-java classes in gql-ratpack module
+moduleVersion=1.0.0
+extensionClasses=gql.ratpack.extensions.DataFetchingEnvironmentExtension

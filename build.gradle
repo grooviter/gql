@@ -85,6 +85,9 @@ config {
         replaceJavadoc = true
       }
     }
+    javadoc {
+      enabled = false
+    }
   }
   licensing {
     enabled = false

@@ -4,12 +4,17 @@ plugins {
   id 'java-library'
 }
 
+configurations {
+  groovydocs
+}
+
 dependencies {
-  implementation "org.codehaus.groovy:groovy:$groovy"
-  implementation "com.graphql-java:graphql-java:$graphql_java"
-  implementation "io.ratpack:ratpack-core:$ratpack"
-  implementation "io.ratpack:ratpack-guice:$ratpack"
-  implementation "io.ratpack:ratpack-pac4j:$ratpack"
+  api project(":gql-core")
+  api "io.ratpack:ratpack-groovy:$ratpack"
+  api "io.ratpack:ratpack-guice:$ratpack"
+  api "io.ratpack:ratpack-pac4j:$ratpack"
+
+  groovydocs "org.codehaus.groovy:groovy-dateutil:$groovy"
 
   testImplementation project(':gql-core')
   testImplementation "org.codehaus.groovy:groovy:$groovy"
@@ -17,4 +22,8 @@ dependencies {
   testImplementation "io.ratpack:ratpack-groovy-test:$ratpack"
   testImplementation "org.spockframework:spock-core:$spock"
   testImplementation "org.objenesis:objenesis:$objenesis"
+}
+
+groovydoc {
+  groovyClasspath = classpath + configurations.groovydocs
 }

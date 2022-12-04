@@ -18,8 +18,11 @@ import graphql.GraphQLError
 class SecurityInstrumentation extends SimpleInstrumentation {
   @Override
   DataFetcher<?> instrumentDataFetcher(
-    DataFetcher<?> dataFetcher, InstrumentationFieldFetchParameters parameters, InstrumentationState state) {
-    String user = parameters.environment?.graphQlContext?.get("user")?.toString()
+    DataFetcher<?> dataFetcher,
+    InstrumentationFieldFetchParameters parameters,
+    InstrumentationState state
+  ) {
+    String user = parameters.environment.contextAsMap.user?.toString()
 
     if (user) {
       return dataFetcher

@@ -11,12 +11,7 @@ through HTTP thanks to Ratpack.
 
 [source, groovy]
 ----
-@Grapes([
-  @Grab('io.ratpack:ratpack-groovy:1.5.1'),
-  @Grab('org.slf4j:slf4j-simple:1.7.25'),
-  @Grab('com.github.grooviter:gql-core:0.3.2'),
-  @Grab('com.github.grooviter:gql-ratpack:0.3.2')
-])
+@Grab('com.github.grooviter:gql-ratpack:1.0.0')
 import static ratpack.groovy.Groovy.ratpack
 
 import gql.DSL
@@ -51,20 +46,18 @@ ratpack {
 <4> Register the `GraphQLHandler` to handle all GrahpQL request at `/graphql`
 <5> Register the `GraphiQLHandler` to be able to expose GraphiQL client at `/graphql/browser`.
 
-[sidebar]
-.You can use `gql-ratpack` without GQL core
-****
-**gql-ratpack** is just a **Java** library exposing a GraphQL engine using Ratpack, it doesn't
-have neither dependencies to GQL core nor to Groovy. That means that if you want to use Ratpack but maybe you
-would like to use another library based on `graphql-java` (or the `graphql-java` library itself)
-you only have to expose the handlers and then create the `graphql.Schema` instance the way you want.
-****
-
 === Execution context
 
-`GQL` Ratpack integration uses the Ratpack's handle context as the
-GraphQL execution context. That enables to access Ratpack's context from
-a data fetcher.
+`GQL` Ratpack integration exposes the Ratpack's handle context as the
+via the extension module adding the `DataFetchingEnvironment#getRatpackContext()` method.
+
+[sidebar]
+.Deprecated
+****
+`GQL` Ratpack integration still can access the Ratpack's handle context as the
+via the getContext() method but it's already deprecated from the `graphql-java`
+project
+****
 
 [source, groovy]
 ----
@@ -76,7 +69,8 @@ def schema = DSL.schema {
       field('hello') {
         type GraphQLString
         dataFetcher { DataFetchingEnvironment env ->
-          Context context = env.context as Context
+          // Context context = env.context as Context --> Deprecated
+          Context context = env.ratpackContext
 
           return context
             .header('Authorization')       // <1>
@@ -198,12 +192,7 @@ Ratpack.
 
 [source, groovy]
 ----
-@Grapes([
-  @Grab('io.ratpack:ratpack-groovy:1.5.1'),
-  @Grab('org.slf4j:slf4j-simple:1.7.25'),
-  @Grab('com.github.grooviter:gql-core:0.3.2'),
-  @Grab('com.github.grooviter:gql-ratpack:0.3.2')
-])
+@Grab('com.github.grooviter:gql-ratpack:1.0.0')
 import static ratpack.groovy.Groovy.ratpack
 
 import gql.DSL
@@ -215,11 +204,9 @@ def schema = DSL.schema { // <1>
       field('hello') {
         type GraphQLString
         fetcher { env ->
-          Context ctx = env.context as Context
-          Optional<UserProfile> profile = Optional
-            .ofNullable(ctx.request.get(UserProfile))
+          UserProfile profile = env.ratpackContext.request.get(UserProfile)
 
-          return 'Grettings mate, you ${profile.isEmpty() ? 'dont' : 'do have'} credentials'
+          return profile ? "You pass" : "You shall not pass!"
         }
       }
     }
@@ -243,4 +230,5 @@ ratpack {
 |gql-ratpack | graphql-java | Ratpack | Groovy
 
 |0.3.x | 7.0 | 1.5.1 | 2.4.x
+|1.0.0 | 19  | 1.6.0 | 2.5.19
 |===

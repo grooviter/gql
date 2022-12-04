@@ -27,6 +27,8 @@ import ratpack.handling.Context;
  */
 public class GraphQLHandlerUtil {
 
+  public static final String RATPACK_CONTEXT_KEY = "ratpackContext";
+
   /**
    * Takes `a {@link JsonParseException} and renders it as JSON to the output
    *
@@ -72,6 +74,7 @@ public class GraphQLHandlerUtil {
           .newExecutionInput()
           .query(query)
           .context(ctx)
+          .graphQLContext(graphqlContext -> graphqlContext.of(RATPACK_CONTEXT_KEY, ctx))
           .variables(variables)
           .build();
 
