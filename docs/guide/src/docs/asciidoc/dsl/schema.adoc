@@ -68,14 +68,15 @@ Because `DataFetcher` is a
 https://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html[functional interface] it is
 possible to use the following options as arguments of the `fetcher` method:
 
-- A closure
-- A method closure
+- A lambda/closure
+- A method reference/closure
 - An instance of an implementation of `DataFetcher`
 
-===== As a closure
+===== As a lambda/closure
 
-The closure receives a `graphql.schema.DataFetchingEnvironment` instance as parameter and will return the requested
-data. The requested data should be of the same type of the declared type, or a map that complies with the defined type.
+The lambda expression or the closure receives a `graphql.schema.DataFetchingEnvironment` instance as parameter and
+will return the requested data. The requested data should be of the same type of the declared type, or a map that
+complies with the defined type.
 
 [source, groovy]
 ----
@@ -85,13 +86,11 @@ include::{testMain2}/gql/DSLSpec.groovy[tags=importGraphQLSchema, indent=0]
 include::{testMain2}/gql/DSLSpec.groovy[tags=schemaWithFetcherAsClosure, indent=0]
 ----
 
-===== As a method closure
+===== As a method reference/closure
 
-A method closure is like a Java's method reference. It represents a function that can be passed as parameter to another
-function.
-
-The function should obey the signature of the `DataFetcher#get` method (receiving a DataFetchingEnvironment
-as only parameter and returning an object of the correct type).
+You can use either method closure or a Java's method reference as a fetcher. The function should obey the signature
+of the `DataFetcher#get` method (receiving a DataFetchingEnvironment as only parameter and returning an object of the
+correct type).
 
 [source, groovy]
 ----

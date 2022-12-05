@@ -1,7 +1,7 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
-## [1.0.0] - [2022-12-05]
+## [1.0.0] - [2022-12-06]
 ### Breaking changes
 - `DataFetchingEnvironment#getContext()` is deprecated by `graphql-java`. Now it's recommended to use
   `DataFetchingEnvironment#getGraphQLContext()` and then access values with `GraphQLContext@get(key)` or
@@ -14,7 +14,9 @@ All notable changes to this project will be documented in this file.
 - gql-ratpack: `DataFetchingEnvironment.getRatpackContext()` extension module function
 
 ### Updated
-- graphql-java 19
+- graphql-java 19.2
+- ratpack 1.9.0
+- groovy 3.0.13
 
 ## [0.5.0] - [2022-11-21]
 ### Updated
