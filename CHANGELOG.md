@@ -1,6 +1,21 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
+## [1.0.0] - [2022-12-05]
+### Breaking changes
+- `DataFetchingEnvironment#getContext()` is deprecated by `graphql-java`. Now it's recommended to use
+  `DataFetchingEnvironment#getGraphQLContext()` and then access values with `GraphQLContext@get(key)` or
+  use GQL `DataFetchingEnvironment#contextAsMap` and then access values as a map
+- All numeric scalar types are narrowed down to GraphQLInt and GraphQLFloat (Deprecated)
+- All string-like scalar types are narrowed to GraphQLString (Deprecated)
+
+### Added
+- gql-core: `DataFetchingEnvironment.getContextAsMap()` extension module function
+- gql-ratpack: `DataFetchingEnvironment.getRatpackContext()` extension module function
+
+### Updated
+- graphql-java 19
+
 ## [0.5.0] - [2022-11-21]
 ### Updated
 - Ratpack version to 1.6.0

@@ -4,7 +4,7 @@ plugins {
 }
 
 config {
-  release = Boolean.valueOf(findProperty("PUBLISH_RELEASE"))
+  release = !version.endsWith('SNAPSHOT')
 
   info {
     name        = 'GQL'
@@ -51,7 +51,7 @@ config {
     releasesRepository  = "releases"
     snapshotsRepository = "snapshots"
     signing {
-      enabled   = findProperty("PUBLISH_SIGN_ENABLED")
+      enabled   = !version.endsWith("SNAPSHOT")
       keyId     = findProperty("PUBLISH_SIGN_KEY_ID")
       secretKey = findProperty("PUBLISH_SIGN_KEY")
       password  = findProperty("PUBLISH_SIGN_SECRET")
@@ -137,5 +137,7 @@ subprojects {
 }
 
 task release() {
-  dependsOn ':gql-core:publish', 'gql-ratpack:publish', ':gql-docs:gitPublishPush'
+  dependsOn(version.endsWith('SNAPSHOT')
+    ? ['publishAllPublicationsToSnapshotsRepository']
+    : [':gql-core:publish', 'gql-ratpack:publish', ':gql-docs:gitPublishPush'])
 }
