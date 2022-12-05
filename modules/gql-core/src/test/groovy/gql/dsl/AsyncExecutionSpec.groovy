@@ -84,7 +84,7 @@ class AsyncExecutionSpec extends Specification {
       queries {
         field('byYear') {
           type filmType
-          fetcher Queries.&findByYear
+          fetcher Queries::findByYear
           argument 'year', GraphQLString
         }
       }

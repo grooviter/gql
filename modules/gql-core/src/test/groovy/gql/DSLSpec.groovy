@@ -213,7 +213,8 @@ class DSLSpec extends Specification {
         field('lastFilm') {
           description'last film'
           type filmType
-          fetcher Queries.&findLastFilm
+          fetcher Queries::findLastFilm
+          // fetcher Queries.&findLastFilm <-- method closure
         }
       }
     }
@@ -258,7 +259,8 @@ class DSLSpec extends Specification {
         field('lastFilm') {
           description'last film'
           type filmType
-          fetcher { env -> [title: 'SPECTRE'] }
+          fetcher(env -> [title: 'SPECTRE'])
+          // fetcher { env ->  [title: 'SPECTRE']} <-- as a Closure
         }
       }
     }

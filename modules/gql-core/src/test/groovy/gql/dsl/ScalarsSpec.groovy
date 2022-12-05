@@ -189,11 +189,11 @@ class ScalarsSpec extends Specification {
       description 'currency unit' // <2>
 
       // deserialization
-      parseLiteral this.&stringValueToMap // <3>
-      parseValue this.&stringValueToMap // <4>
+      parseLiteral this::stringValueToMap // <3>
+      parseValue this::stringValueToMap // <4>
 
       // serialization
-      serialize this.&fromMapToString // <5>
+      serialize this::fromMapToString // <5>
     }
     // end::fullScalarDeclaration[]
 

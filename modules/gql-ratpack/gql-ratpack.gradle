@@ -16,6 +16,8 @@ dependencies {
 
   groovydocs "org.codehaus.groovy:groovy-dateutil:$groovy"
 
+  codenarc "org.codenarc:CodeNarc:$codenarc"
+
   testImplementation project(':gql-core')
   testImplementation "org.codehaus.groovy:groovy:$groovy"
   testImplementation "io.ratpack:ratpack-pac4j:$ratpack"

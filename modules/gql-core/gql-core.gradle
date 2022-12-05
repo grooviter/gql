@@ -7,6 +7,8 @@ dependencies {
   api "org.codehaus.groovy:groovy:$groovy"
   api "com.graphql-java:graphql-java:$graphql_java"
 
+  codenarc "org.codenarc:CodeNarc:$codenarc"
+
   testImplementation "org.codehaus.groovy:groovy:$groovy"
   testImplementation "org.codehaus.groovy:groovy-json:$groovy"
   testImplementation "org.codehaus.groovy:groovy-test:$groovy"
