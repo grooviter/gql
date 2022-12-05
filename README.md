@@ -1,4 +1,4 @@
-[![license](https://img.shields.io/github/license/grooviter/gql.svg)]() [![main](https://github.com/grooviter/gql/actions/workflows/gql-release.yml/badge.svg)](https://github.com/grooviter/gql/actions/workflows/gql-release.yml) ![Maven Central](https://img.shields.io/maven-central/v/com.github.grooviter/gql-core)
+[![license](https://img.shields.io/github/license/grooviter/gql.svg)]() [![main](https://github.com/grooviter/gql/actions/workflows/gql-release.yml/badge.svg)](https://github.com/grooviter/gql/actions/workflows/gql-release.yml) ![Maven Central](https://img.shields.io/maven-central/v/com.github.grooviter/gql-core) ![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/com.github.grooviter/gql-core?server=https%3A%2F%2Fs01.oss.sonatype.org)
 
 ## Description
 
