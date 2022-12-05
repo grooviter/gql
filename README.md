@@ -8,16 +8,77 @@ of [GraphQL-java](https://github.com/graphql-java/graphql-java) that
 make it easier to build GraphQL schemas and execute **GraphQL**
 queries without losing type safety.
 
+## Getting Started
+
+You can directly execute the following example in your Groovy console:
+
+```groovy
+@Grab('com.github.grooviter:gql-core:0.5.0')
+import gql.DSL
+
+def GraphQLFilm = DSL.type('Film') {
+  field 'title', GraphQLString
+  field 'year', GraphQLInt
+}
+
+def schema = DSL.schema {
+  queries {
+    field('lastFilm') {
+      type GraphQLFilm
+      staticValue(title: 'SPECTRE', year: 2015)
+    }
+  }
+}
+
+def query = """
+  {
+    lastFilm {
+      year
+      title
+    }
+  }
+"""
+
+def result = DSL.newExecutor(schema).execute(query)
+
+assert result.data.lastFilm.year == 2015
+assert result.data.lastFilm.title == 'SPECTRE'
+```
+
 ## Gradle
+
+### Releases
 In order to use `GQL` in your Groovy code you can find it in maven central:
 
-    repositories {
-        mavenCentral()
-    }
+```groovy
+repositories {
+    mavenCentral()
+}
+```
 
 Then you can add the dependency to your project:
 
-    implementation 'com.github.grooviter:gql-core:0.5.0'
+```groovy
+implementation 'com.github.grooviter:gql-core:0.5.0'
+```
+
+### Snapshots
+Snapshots are published to Sonatype. You can evaluate a snapshot version adding the snapshot repository to
+your gradle dependencies:
+
+```groovy
+repositories {
+    maven {
+        url 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+    }
+}
+```
+
+And then add the implementation dependency:
+
+```groovy
+implementation 'com.github.grooviter:gql-core:1.0.0-SNAPSHOT'
+```
 
 ## Documentation
 
