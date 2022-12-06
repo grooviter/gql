@@ -10,12 +10,12 @@ task generateDocumentation() {
     copy {
       from "$rootDir/build/docs/aggregate-groovydoc"
       into "$buildDir/site/api/"
-      duplicatesStrategy DuplicatesStrategy.INCLUDE
+      duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
     copy {
       from "src/docs/site"
       into "$buildDir/site"
-      duplicatesStrategy DuplicatesStrategy.INCLUDE
+      duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
   }
 }
