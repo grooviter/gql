@@ -124,12 +124,12 @@ jreleaser {
       changelog {
         formatted = 'ALWAYS'
         preset    = 'conventional-commits'
+        hide {
+          uncategorized = true
+        }
       }
       prerelease {
         enabled = version.endsWith("SNAPSHOT")
-      }
-      hide {
-        uncategorized = true
       }
     }
   }
