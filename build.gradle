@@ -133,6 +133,12 @@ jreleaser {
       }
     }
   }
+  signing {
+    active = 'NEVER'
+  }
+  deploy {
+    maven { active = 'NEVER' }
+  }
 }
 
 allprojects {
