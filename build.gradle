@@ -165,5 +165,5 @@ subprojects {
 task release() {
   dependsOn(version.endsWith('SNAPSHOT')
     ? [':gql-core:publishAllPublicationsToSnapshotsRepository', ':gql-ratpack:publishAllPublicationsToSnapshotsRepository', 'jreleaserRelease']
-    : [':gql-core:publish', 'gql-ratpack:publish', ':guide:gitPublishPush', 'jreleaserFullRelease'])
+    : [':gql-core:publish', 'gql-ratpack:publish', ':guide:gitPublishPush'])
 }
