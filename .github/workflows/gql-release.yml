@@ -24,4 +24,4 @@ jobs:
           ORG_GRADLE_PROJECT_PUBLISH_REPO_USERNAME: ${{ secrets.ORG_GRADLE_PROJECT_PUBLISH_REPO_USERNAME }}
           ORG_GRADLE_PROJECT_PUBLISH_REPO_PASSWORD: ${{ secrets.ORG_GRADLE_PROJECT_PUBLISH_REPO_PASSWORD }}
           ORG_GRADLE_PROJECT_PUBLISH_GH_TOKEN: ${{ secrets.ORG_GRADLE_PROJECT_PUBLISH_GH_TOKEN }}
-        run: ./gradlew clean build release -x aggregateCodenarc
+        run: ./gradlew clean build release -x aggregateCodenarc -x aggregateGroovydoc

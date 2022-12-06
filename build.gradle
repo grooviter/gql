@@ -128,6 +128,9 @@ jreleaser {
       prerelease {
         enabled = version.endsWith("SNAPSHOT")
       }
+      hide {
+        uncategorized = true
+      }
     }
   }
 }
