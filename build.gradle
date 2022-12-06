@@ -119,7 +119,6 @@ config {
 jreleaser {
   release {
     github {
-      repoOwner = 'mariogarcia'
       token     = findProperty('PUBLISH_GH_TOKEN')
       overwrite = true
       changelog {
