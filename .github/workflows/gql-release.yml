@@ -21,7 +21,5 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: '11'
-      - name: build
-        run: ./gradlew build -x aggregateCodenarc
       - name: release
-        run: ./gradlew clean build release -x aggregateCodenarc -x aggregateGroovydoc
+        run: ./gradlew build release -x aggregateCodenarc -x aggregateGroovydoc
