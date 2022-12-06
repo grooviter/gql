@@ -122,7 +122,8 @@ jreleaser {
       token     = findProperty('PUBLISH_GH_TOKEN')
       overwrite = true
       changelog {
-        preset = 'conventional-commits'
+        formatted = 'ALWAYS'
+        preset    = 'conventional-commits'
       }
       prerelease {
         enabled = version.endsWith("SNAPSHOT")
