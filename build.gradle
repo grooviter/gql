@@ -74,7 +74,8 @@ config {
       }
     }
     groovydoc {
-      excludes = ["META-INF"]
+      excludes       = ["META-INF"]
+      replaceJavadoc = true
       options {
         docTitle    = "Groovy GraphQL library"
         windowTitle =  "GQL: Groovy GraphQL library"
@@ -88,7 +89,9 @@ config {
       }
     }
     javadoc {
-      enabled = false
+      autoLinks {
+        useJavadocIo = true
+      }
     }
   }
   licensing {
