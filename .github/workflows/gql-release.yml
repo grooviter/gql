@@ -1,9 +1,10 @@
-name: main
+name: Azure
+
 
 on:
   push:
     branches:
-      - main
+     Azure 
 
 jobs:
   build:
