@@ -1,7 +1,9 @@
 package gql.dsl
 
 import gql.DSL
+import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLSchema
+import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -20,6 +22,13 @@ class MutationBuilderSpec extends Specification {
 
   static class Order extends IdAware { }
 
+  static class OrderEntry {
+    Integer id
+    String subject
+    Integer count
+    BigDecimal price
+  }
+
   static class Invoice extends IdAware { }
 
   @Shared GraphQLSchema schema
@@ -33,6 +42,14 @@ class MutationBuilderSpec extends Specification {
           }
           link('saveInvoice') { env ->
             return env.arguments.invoice
+          }
+        }
+        mapType('Order') {
+          link('entries') { DataFetchingEnvironment env ->
+            return [
+              [id: 1, subject: 't-shirt', count: 1, price: 10.50],
+              [id: 2, subject: 'jeans', count: 2, price: 44.99]
+            ]
           }
         }
       }
@@ -146,6 +163,44 @@ class MutationBuilderSpec extends Specification {
     with(data.second) {
       id     == 1000
       status == 'ACTIVE'
+    }
+  }
+
+  @Issue("https://github.com/grooviter/gql/issues/36")
+  void "nesting queries in a mutation"() {
+    setup:
+    Map order = [id: 1000, status: 'ACTIVE']
+
+    and:
+    // tag::nestedQueries[]
+    String mutation = DSL.buildMutation {
+      mutation('saveOrder', [order: order]) {
+        returns(Order) {
+          id
+          status
+          query('entries', [first: 2]) {
+            returns(OrderEntry) {
+              id
+              subject
+              count
+              price
+            }
+          }
+        }
+      }
+    }
+    // end::nestedQueries[]
+
+    when: 'executing the mutation'
+    Map<String,?> data = DSL
+      .execute(schema, mutation)
+      .data
+
+    then: 'we should get the expected result back'
+    with(data.saveOrder){
+      id == 1000
+      status == 'ACTIVE'
+      entries.size() == 2
     }
   }
 }

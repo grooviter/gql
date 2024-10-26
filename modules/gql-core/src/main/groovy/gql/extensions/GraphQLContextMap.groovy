@@ -5,7 +5,7 @@ import groovy.transform.TupleConstructor
 
 @TupleConstructor
 class GraphQLContextMap implements Map<String, Object> {
-  private static RuntimeException NOT_IMPLEMENTED = new RuntimeException("map function not implemented")
+  private static final RuntimeException NOT_IMPLEMENTED = new RuntimeException("map function not implemented")
 
   GraphQLContext context
   @Override

@@ -1,21 +1,21 @@
 package gql.dsl
 
+import groovy.transform.InheritConstructors
+
 import static groovy.lang.Closure.DELEGATE_FIRST
 
 import gql.DSL
 import gql.dsl.query.ReturnsBlockBuilder
-import gql.dsl.query.VariablesProcessor
 
 /**
- *
- * Builder helping to create a DSL capable of building GraphQL query strings.
+ * Builder helping to create a DSL capable of building GraphQL
+ * query strings.
  *
  * @see {@link DSL#buildMutation}
  * @since 0.3.4
  */
-class MutationBuilder {
-
-  private String queryString = ""
+@InheritConstructors
+class MutationBuilder extends QueryBuilder {
 
   /**
    * Builds a GraphQL queryString with a given name. The class passed
@@ -28,17 +28,10 @@ class MutationBuilder {
    * @return an instance of {@link QueryBuilder}
    * @since 0.1.0
    */
-  public <T> MutationBuilder mutation(String name,
-                                      @DelegatesTo(
-                                        strategy = DELEGATE_FIRST,
-                                        value = ReturnsBlockBuilder) Closure fields) {
-    Closure<ReturnsBlockBuilder> clos = fields.clone() as Closure<ReturnsBlockBuilder>
-    ReturnsBlockBuilder builderSource = new ReturnsBlockBuilder(name: name)
-    ReturnsBlockBuilder builderResult = builderSource.with(clos) ?: builderSource
-
-    this.queryString += builderResult.build()
-
-    return this
+  MutationBuilder mutation(
+    String name,
+    @DelegatesTo(strategy = DELEGATE_FIRST, value = ReturnsBlockBuilder) Closure fields) {
+    return this.mutation(name, [:], fields)
   }
 
   /**
@@ -52,16 +45,16 @@ class MutationBuilder {
    * @return an instance of {@link QueryBuilder}
    * @since 0.1.0
    */
-  public <T> MutationBuilder mutation(String name,
-                                Map<String,?> variables,
-                                @DelegatesTo(strategy = DELEGATE_FIRST, value = ReturnsBlockBuilder) Closure fields) {
-    Closure<ReturnsBlockBuilder> clos = fields.clone() as Closure<ReturnsBlockBuilder>
+  MutationBuilder mutation(
+    String name,
+    Map<String,?> variables,
+    @DelegatesTo(strategy = DELEGATE_FIRST, value = ReturnsBlockBuilder) Closure fields) {
     String variablesString = processVariables(variables)
-    ReturnsBlockBuilder builderSource = new ReturnsBlockBuilder(name: name, variables: variablesString)
+    ReturnsBlockBuilder builderSource =
+      new ReturnsBlockBuilder(name: name, variables: variablesString, level: level + 1)
+    Closure<ReturnsBlockBuilder> clos = fields.clone() as Closure<ReturnsBlockBuilder>
     ReturnsBlockBuilder builderResult = builderSource.with(clos) ?: builderSource
-
-    this.queryString += builderResult.build()
-
+    this.queries << builderResult.build()
     return this
   }
 
@@ -71,13 +64,8 @@ class MutationBuilder {
    * @return the queryString resulting of parsing the DSL
    * @since 0.1.0
    */
+  @Override
   String build() {
-    return "mutation { $queryString }"
-  }
-
-  private String processVariables(Map<String, ?> variables) {
-    String processed = new VariablesProcessor().process(variables.entrySet())
-
-    return processed ? "($processed)" : ""
+    return "mutation {\n${queries.join("\n")}\n}"
   }
 }

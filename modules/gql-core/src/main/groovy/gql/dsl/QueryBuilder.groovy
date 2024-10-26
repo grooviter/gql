@@ -1,5 +1,7 @@
 package gql.dsl
 
+import groovy.transform.InheritConstructors
+
 import static groovy.lang.Closure.DELEGATE_FIRST
 
 import gql.DSL
@@ -13,9 +15,15 @@ import gql.dsl.query.VariablesProcessor
  * @see {@link DSL#buildQuery}
  * @since 0.1.0
  */
-class QueryBuilder {
+@InheritConstructors
+class QueryBuilder extends Leveled {
 
-  private String queryString = ""
+  /**
+   * Queries that should appear at the same level
+   *
+   * @since 1.1.0
+   */
+  protected List<String> queries = []
 
   /**
    * Builds a GraphQL queryString with a given name. The class passed
@@ -28,15 +36,10 @@ class QueryBuilder {
    * @return an instance of {@link QueryBuilder}
    * @since 0.1.0
    */
-  public <T> QueryBuilder query(String name,
-                                @DelegatesTo(strategy = DELEGATE_FIRST, value = ReturnsBlockBuilder) Closure fields) {
-    Closure<ReturnsBlockBuilder> clos = fields.clone() as Closure<ReturnsBlockBuilder>
-    ReturnsBlockBuilder builderSource = new ReturnsBlockBuilder(name: name)
-    ReturnsBlockBuilder builderResult = builderSource.with(clos) ?: builderSource
-
-    this.queryString += builderResult.build()
-
-    return this
+  QueryBuilder query(
+    String name,
+    @DelegatesTo(strategy = DELEGATE_FIRST, value = ReturnsBlockBuilder) Closure fields) {
+    return this.query(name, [:], fields)
   }
 
   /**
@@ -50,16 +53,16 @@ class QueryBuilder {
    * @return an instance of {@link QueryBuilder}
    * @since 0.1.0
    */
-  public <T> QueryBuilder query(String name,
-                                Map<String,?> variables,
-                                @DelegatesTo(strategy = DELEGATE_FIRST, value = ReturnsBlockBuilder) Closure fields) {
-    Closure<ReturnsBlockBuilder> clos = fields.clone() as Closure<ReturnsBlockBuilder>
+  QueryBuilder query(
+    String name,
+    Map<String,?> variables,
+    @DelegatesTo(strategy = DELEGATE_FIRST, value = ReturnsBlockBuilder) Closure fields) {
     String variablesString = processVariables(variables)
-    ReturnsBlockBuilder builderSource = new ReturnsBlockBuilder(name: name, variables: variablesString)
+    ReturnsBlockBuilder builderSource =
+      new ReturnsBlockBuilder(name: name, variables: variablesString, level: level + 1)
+    Closure<ReturnsBlockBuilder> clos = fields.clone() as Closure<ReturnsBlockBuilder>
     ReturnsBlockBuilder builderResult = builderSource.with(clos) ?: builderSource
-
-    this.queryString += builderResult.build()
-
+    this.queries << builderResult.build()
     return this
   }
 
@@ -70,12 +73,31 @@ class QueryBuilder {
    * @since 0.1.0
    */
   String build() {
-    return "{ $queryString }"
+    return "{\n${queries.join("\n")}\n}"
   }
 
-  private String processVariables(Map<String, ?> variables) {
-    String processed = new VariablesProcessor().process(variables.entrySet())
+  /**
+   * Return the queries aggregated one level deeper
+   *
+   * @return the aggregated nested queries
+   * @since 1.1.0
+   */
+  String buildNested() {
+    return queries.find()
+  }
 
-    return processed ? "($processed)" : ""
+  /**
+   * Processes query variables applying a {@link VariablesProcessor} and returns
+   * the {@link String} representing those processed variables
+   *
+   * @return a {@link String} representation of the processed variables
+   * @since 1.0.0
+   */
+  protected static String processVariables(Map<String, ?> variables) {
+    String processed = new VariablesProcessor().process(variables.entrySet())
+    if (!processed) {
+      return StringUtils.EMPTY
+    }
+    return "($processed)"
   }
 }
