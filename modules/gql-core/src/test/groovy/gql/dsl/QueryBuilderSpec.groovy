@@ -1,6 +1,7 @@
 package gql.dsl
 
 import gql.DSL
+import graphql.ExecutionResult
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLSchema
 import spock.lang.Issue
@@ -169,6 +170,36 @@ class QueryBuilderSpec extends Specification {
 
     then:
     with(result){
+      searchOrders.id == 1
+      searchOrders.status == 'ACTIVE'
+      searchOrders.entries.size() == 2
+    }
+  }
+
+  @Issue("https://github.com/grooviter/gql/issues/36")
+  void "create nested Queries (executor)"() {
+    when:
+    ExecutionResult result = DSL.newExecutor(schema).execute {
+      query('searchOrders', [filter: [status: 'ACTIVE']]) {
+        returns(Order) {
+          id
+          status
+          query('entries', [first: 2]) {
+            returns(OrderEntry) {
+              id
+              subject
+              count
+              price
+            }
+          }
+        }
+      }
+    }
+    and:
+    Map<String, Map> data = result.data
+
+    then:
+    with(data){
       searchOrders.id == 1
       searchOrders.status == 'ACTIVE'
       searchOrders.entries.size() == 2

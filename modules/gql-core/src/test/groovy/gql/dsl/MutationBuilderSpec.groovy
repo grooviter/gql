@@ -1,6 +1,7 @@
 package gql.dsl
 
 import gql.DSL
+import graphql.ExecutionResult
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLSchema
 import spock.lang.Issue
@@ -195,6 +196,40 @@ class MutationBuilderSpec extends Specification {
     Map<String,?> data = DSL
       .execute(schema, mutation)
       .data
+
+    then: 'we should get the expected result back'
+    with(data.saveOrder){
+      id == 1000
+      status == 'ACTIVE'
+      entries.size() == 2
+    }
+  }
+
+  @Issue("https://github.com/grooviter/gql/issues/36")
+  void "nesting queries in a mutation (executor)"() {
+    setup:
+    Map order = [id: 1000, status: 'ACTIVE']
+
+    when:
+    ExecutionResult result = DSL.newExecutor(schema).executeMutation {
+      mutation('saveOrder', [order: order]) {
+        returns(Order) {
+          id
+          status
+          query('entries', [first: 2]) {
+            returns(OrderEntry) {
+              id
+              subject
+              count
+              price
+            }
+          }
+        }
+      }
+    }
+
+    and: 'extracting data from result'
+    Map<String,Map> data = result.data
 
     then: 'we should get the expected result back'
     with(data.saveOrder){

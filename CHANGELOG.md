@@ -1,9 +1,11 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
-## [1.1.0] - [2024-10-28]
+## [1.1.0] - [2024-11-04]
 ### Added
 - Building nested queries: now you create nested queries using `DSL.buildQuery {}`.
+- New `DSL#buildMutation`
+- New `GraphQLExecutor#executeMutation` and `GraphQLExecutor#executeAsyncMutation`
 
 ## [1.0.0] - [2022-12-06]
 ### Breaking changes
