@@ -9,6 +9,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
+          distribution: 'corretto'
           java-version: '11'
       - name: build and test
         run: ./gradlew build
