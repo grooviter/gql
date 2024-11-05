@@ -1,6 +1,7 @@
 package gql.dsl.executor
 
 import gql.dsl.Builders
+import gql.dsl.MutationBuilder
 import gql.dsl.QueryBuilder
 import graphql.ExecutionInput
 import graphql.ExecutionResult
@@ -34,6 +35,11 @@ class DefaultGraphQLExecutor implements GraphQLExecutor {
   }
 
   @Override
+  ExecutionResult executeMutation(@DelegatesTo(MutationBuilder) Closure mutation) {
+    return execute(Builders.buildMutation(mutation), [:])
+  }
+
+  @Override
   CompletableFuture<ExecutionResult> executeAsync(String query, Map<String, Object> arguments = [:]) {
     ExecutionInput executionInput = ExecutionInput
       .newExecutionInput()
@@ -47,5 +53,10 @@ class DefaultGraphQLExecutor implements GraphQLExecutor {
   @Override
   CompletableFuture<ExecutionResult> executeAsync(@DelegatesTo(QueryBuilder) Closure queries) {
     return executeAsync(Builders.buildQuery(queries), [:])
+  }
+
+  @Override
+  CompletableFuture<ExecutionResult> executeAsyncMutation(@DelegatesTo(MutationBuilder) Closure mutation) {
+    return executeAsync(Builders.buildMutation(mutation), [:])
   }
 }

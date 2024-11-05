@@ -38,6 +38,9 @@ ruleset {
     'Indentation' {
       spacesPerIndentLevel = 2
     }
+    'ClassEndsWithBlankLine' {
+      enabled = false
+    }
   }
   ruleset('rulesets/naming.xml') {
     'MethodName' {

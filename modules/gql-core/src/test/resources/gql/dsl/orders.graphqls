@@ -1,6 +1,14 @@
+type OrderEntry {
+  id: Int
+  subject: String
+  count: Int
+  price: Float
+}
+
 type Order {
   id: Int
   status: String
+  entries(first: Int): [OrderEntry]
 }
 
 input OrderFilter {

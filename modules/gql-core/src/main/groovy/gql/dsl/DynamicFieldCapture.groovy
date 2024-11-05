@@ -7,7 +7,7 @@ package gql.dsl
  *
  * @since 0.1.0
  */
-class DynamicFieldCapture {
+class DynamicFieldCapture extends QueryBuilder {
 
   /**
    * If the captured fields should belong to a

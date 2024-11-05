@@ -1,8 +1,10 @@
 package gql.dsl
 
 import gql.DSL
+import graphql.ExecutionResult
 import graphql.schema.DataFetchingEnvironment
 import graphql.schema.GraphQLSchema
+import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -18,7 +20,17 @@ class QueryBuilderSpec extends Specification {
     String status
   }
 
-  static class Order extends IdAware { }
+  static class Order extends IdAware {
+    String subject
+    List<OrderEntry> entries
+  }
+
+  static class OrderEntry {
+    Integer id
+    String subject
+    Integer count
+    BigDecimal price
+  }
 
   static class Invoice extends IdAware { }
 
@@ -33,8 +45,15 @@ class QueryBuilderSpec extends Specification {
           }
           link('searchInvoices') { DataFetchingEnvironment env ->
             List<Long> ids = env.arguments.ids as List<Long>
-
             return [id: ids.last(), status: 'DISABLED']
+          }
+        }
+        mapType('Order') {
+          link('entries') { DataFetchingEnvironment env ->
+            return [
+              [id: 1, subject: 't-shirt', count: 1, price: 10.50],
+              [id: 2, subject: 'jeans', count: 2, price: 44.99]
+            ]
           }
         }
       }
@@ -122,6 +141,68 @@ class QueryBuilderSpec extends Specification {
     with(result) {
       searchInvoices.id     == 4
       searchInvoices.status == 'DISABLED'
+    }
+  }
+
+  @Issue("https://github.com/grooviter/gql/issues/36")
+  void "create nested Queries"() {
+    setup:
+    // tag::nestedQueries[]
+    String queryString = DSL.buildQuery {
+      query('searchOrders', [filter: [status: 'ACTIVE']]) {
+        returns(Order) {
+          id
+          status
+          query('entries', [first: 2]) {
+            returns(OrderEntry) {
+              id
+              subject
+              count
+              price
+            }
+          }
+        }
+      }
+    }
+    // end::nestedQueries[]
+    when:
+    Map<String,Map> result = DSL.execute(schema, queryString).data
+
+    then:
+    with(result){
+      searchOrders.id == 1
+      searchOrders.status == 'ACTIVE'
+      searchOrders.entries.size() == 2
+    }
+  }
+
+  @Issue("https://github.com/grooviter/gql/issues/36")
+  void "create nested Queries (executor)"() {
+    when:
+    ExecutionResult result = DSL.newExecutor(schema).execute {
+      query('searchOrders', [filter: [status: 'ACTIVE']]) {
+        returns(Order) {
+          id
+          status
+          query('entries', [first: 2]) {
+            returns(OrderEntry) {
+              id
+              subject
+              count
+              price
+            }
+          }
+        }
+      }
+    }
+    and:
+    Map<String, Map> data = result.data
+
+    then:
+    with(data){
+      searchOrders.id == 1
+      searchOrders.status == 'ACTIVE'
+      searchOrders.entries.size() == 2
     }
   }
 }
