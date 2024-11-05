@@ -23,4 +23,4 @@ jobs:
           distribution: 'corretto'
           java-version: '11'
       - name: release
-        run: ./gradlew build release -x aggregateCodenarc -x aggregateGroovydoc
+        run: ./gradlew build release --stacktrace -x aggregateCodenarc -x aggregateGroovydoc
