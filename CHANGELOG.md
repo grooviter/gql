@@ -1,7 +1,7 @@
 # Change log
 All notable changes to this project will be documented in this file.
 
-## [1.1.0] - [2024-11-04]
+## [1.1.0] - [2024-11-05]
 ### Added
 - Building nested queries: now you create nested queries using `DSL.buildQuery {}`.
 - New `DSL#buildMutation`

@@ -34,7 +34,7 @@ dependencies {
 You can directly execute the following example in your Groovy console:
 
 ```groovy
-@Grab('com.github.grooviter:gql-core:0.5.0')
+@Grab('com.github.grooviter:gql-core:1.1.0')
 import gql.DSL
 
 def GraphQLFilm = DSL.type('Film') {
@@ -46,7 +46,7 @@ def schema = DSL.schema {
   queries {
     field('lastFilm') {
       type GraphQLFilm
-      staticValue(title: 'SPECTRE', year: 2015)
+      staticValue(title: 'No Time to die', year: 2021)
     }
   }
 }
@@ -62,8 +62,8 @@ def query = """
 
 def result = DSL.newExecutor(schema).execute(query)
 
-assert result.data.lastFilm.year == 2015
-assert result.data.lastFilm.title == 'SPECTRE'
+assert result.data.lastFilm.year == 2021
+assert result.data.lastFilm.title == 'No time to die'
 ```
 
 ## Documentation
