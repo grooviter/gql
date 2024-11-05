@@ -14,7 +14,7 @@
 <div id="header">
 <h1>GQL</h1>
 <div class="details">
-<span id="revnumber">version 1.0.0</span>
+<span id="revnumber">version 1.1.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -78,7 +78,8 @@
 <ul class="sectlevel3">
 <li><a href="#_execute_queries">4.5.1. Execute queries</a></li>
 <li><a href="#_query_string">4.5.2. Query string</a></li>
-<li><a href="#_mutation_string">4.5.3. Mutation string</a></li>
+<li><a href="#_nested_queries">4.5.3. Nested queries</a></li>
+<li><a href="#_mutation_string">4.5.4. Mutation string</a></li>
 </ul>
 </li>
 <li><a href="#_exposing_graphql">4.6. Exposing GraphQL</a>
@@ -216,7 +217,7 @@ a look at the official tutorial at <a href="http://graphql.org/learn/" class="ba
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql-core:1.0.0</span><span class="delimiter">'</span></span>)
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Grab</span>(<span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql-core:1.1.0</span><span class="delimiter">'</span></span>)
 <span class="keyword">import</span> <span class="include">gql.DSL</span>
 
 <span class="keyword">def</span> GraphQLFilm = DSL.type(<span class="string"><span class="delimiter">'</span><span class="content">Film</span><span class="delimiter">'</span></span>) { <i class="conum" data-value="1"></i><b>(1)</b>
@@ -300,7 +301,7 @@ used.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">compile <span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql-core:1.0.0</span><span class="delimiter">'</span></span></code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">compile <span class="string"><span class="delimiter">'</span><span class="content">com.github.grooviter:gql-core:1.1.0</span><span class="delimiter">'</span></span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2018,7 +2019,36 @@ string against the other engine.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_mutation_string"><a class="anchor" href="#_mutation_string"></a>4.5.3. Mutation string</h4>
+<h4 id="_nested_queries"><a class="anchor" href="#_nested_queries"></a>4.5.3. Nested queries</h4>
+<div class="paragraph">
+<p>From version 1.1.0 you can create nested queries:</p>
+</div>
+<div class="listingblock">
+<div class="title">Nested queries</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+
+<span class="predefined-type">String</span> queryString = DSL.buildQuery {
+  query(<span class="string"><span class="delimiter">'</span><span class="content">searchOrders</span><span class="delimiter">'</span></span>, [<span class="key">filter</span>: [<span class="key">status</span>: <span class="string"><span class="delimiter">'</span><span class="content">ACTIVE</span><span class="delimiter">'</span></span>]]) {
+    returns(Order) {
+      id
+      status
+      query(<span class="string"><span class="delimiter">'</span><span class="content">entries</span><span class="delimiter">'</span></span>, [<span class="key">first</span>: <span class="integer">2</span>]) {
+        returns(OrderEntry) {
+          id
+          subject
+          count
+          price
+        }
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_mutation_string"><a class="anchor" href="#_mutation_string"></a>4.5.4. Mutation string</h4>
 <div class="paragraph">
 <p>Of course apart from queries you may want to execute mutations.</p>
 </div>
@@ -2032,6 +2062,32 @@ string against the other engine.</p>
     returns(Order) {
       id
       status
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Nesting also works for mutations:</p>
+</div>
+<div class="listingblock">
+<div class="title">Nested queries in mutations</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">gql.DSL</span>
+
+<span class="predefined-type">String</span> mutation = DSL.buildMutation {
+  mutation(<span class="string"><span class="delimiter">'</span><span class="content">saveOrder</span><span class="delimiter">'</span></span>, [<span class="key">order</span>: order]) {
+    returns(Order) {
+      id
+      status
+      query(<span class="string"><span class="delimiter">'</span><span class="content">entries</span><span class="delimiter">'</span></span>, [<span class="key">first</span>: <span class="integer">2</span>]) {
+        returns(OrderEntry) {
+          id
+          subject
+          count
+          price
+        }
+      }
     }
   }
 }</code></pre>
@@ -2852,8 +2908,8 @@ ratpack {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.0<br>
-Last updated 2022-12-07 00:48:06 UTC
+Version 1.1.0<br>
+Last updated 2024-11-05 10:12:00 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">
